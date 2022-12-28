@@ -94,6 +94,7 @@ commands.add_command("trigger-map-cleanup",
     "Force immediate removal of all expired chunks (unused chunk removal mod)",
     RegrowthForceRemoveChunksCmd)
 
+
 --------------------------------------------------------------------------------
 -- ALL EVENT HANLDERS ARE HERE IN ONE PLACE!
 --------------------------------------------------------------------------------
@@ -276,14 +277,15 @@ end)
 -- Player Events
 ----------------------------------------
 script.on_event(defines.events.on_player_joined_game, function(event)
-log("on_event::On Player Joined: " .. game.players[event.player_index].name)
+log("on_event::On Player Joined Game " .. game.players[event.player_index].name)
     PlayerJoinedMessages(event)
     ServerWriteFile("player_events", game.players[event.player_index].name .. " joined the game." .. "\n")
 end)
 
 ----------------------------------------
 script.on_event(defines.events.on_player_created, function(event)
-    local player = game.players[event.player_index]
+local player = game.players[event.player_index]
+
 log("on_event::On Player created: " .. player.name)
 
     -- Move the player to the game surface immediately.
@@ -335,7 +337,7 @@ end)
 
 
 script.on_event(defines.events.on_player_respawned, function(event)
-log("on_event::on_player_respawned")
+-- log("on_event::on_player_respawned: " .. game.players[event.player_index].name)
     SeparateSpawnsPlayerRespawned(event)
 
     PlayerRespawnItems(event)
@@ -391,10 +393,15 @@ script.on_event(defines.events.on_tick, function(event)
 end)
 
 
+
 script.on_event(defines.events.on_sector_scanned, function (event)   
-	if global.ocfg.enable_regrowth then
-log("on_event::on_sector_scanned - enable_regrowth")    
-        RegrowthSectorScan(event)
+    if global.disableRegrowthWhileWaitingToRemoveAllChunks then
+        log("Ah hah !  Regrowth event while waiting to remove chunks - ignore!")
+    else
+	    if global.ocfg.enable_regrowth  then
+            log("on_event::on_sector_scanned - enable_regrowth")    
+            RegrowthSectorScan(event)
+        end
     end
 end)
 
@@ -805,26 +812,31 @@ script.on_event(defines.events.on_player_changed_position, function(event)
     local x_chunk = math.floor(player.position.x / CHUNK_SIZE)      -- 32
     local y_chunk = math.floor(player.position.y / CHUNK_SIZE)      -- 32
     -- prevent player from exploring, unless in a vehicle
-    if not player.vehicle then
-        local charted = function(x, y)
-           return player.force.is_chunk_charted(player.surface, {x, y}) and
-              (player.force.is_chunk_charted(player.surface, {x - 2, y - 2}) or not player.surface.is_chunk_generated({x - 2, y - 2})) and
-              (player.force.is_chunk_charted(player.surface, {x - 2, y + 2}) or not player.surface.is_chunk_generated({x - 2, y + 2})) and
-              (player.force.is_chunk_charted(player.surface, {x + 2, y - 2}) or not player.surface.is_chunk_generated({x + 2, y - 2})) and
-              (player.force.is_chunk_charted(player.surface, {x + 2, y + 2}) or not player.surface.is_chunk_generated({x + 2, y + 2}))
-        end
-        if not charted(math.floor(player.position.x / CHUNK_SIZE), math.floor(player.position.y / CHUNK_SIZE)) then -- 32  32
-            -- can't move here, chunk not charted
-            local prev_pos = global.players[event.player_index].previous_position
-            if charted(math.floor(player.position.x / CHUNK_SIZE), math.floor(prev_pos.y / CHUNK_SIZE)) then    -- 32 32
-                -- we can move here, though
-                prev_pos.x = player.position.x
-            elseif charted(math.floor(prev_pos.x / CHUNK_SIZE), math.floor(player.position.y / CHUNK_SIZE)) then    -- 32 32
-                -- or here
-                prev_pos.y = player.position.y
+    if global.spawning then
+        log("Player spawning - override the safeguard - allow spawning here")
+        global.spawning = false
+    else
+        if not player.vehicle then
+            local charted = function(x, y)
+               return player.force.is_chunk_charted(player.surface, {x, y}) and
+                  (player.force.is_chunk_charted(player.surface, {x - 2, y - 2}) or not player.surface.is_chunk_generated({x - 2, y - 2})) and
+                  (player.force.is_chunk_charted(player.surface, {x - 2, y + 2}) or not player.surface.is_chunk_generated({x - 2, y + 2})) and
+                  (player.force.is_chunk_charted(player.surface, {x + 2, y - 2}) or not player.surface.is_chunk_generated({x + 2, y - 2})) and
+                  (player.force.is_chunk_charted(player.surface, {x + 2, y + 2}) or not player.surface.is_chunk_generated({x + 2, y + 2}))
             end
-            -- teleport player to (possibly modified) prev_pos
-            player.teleport(prev_pos)
+            if not charted(math.floor(player.position.x / CHUNK_SIZE), math.floor(player.position.y / CHUNK_SIZE)) then -- 32  32
+                -- can't move here, chunk not charted
+                local prev_pos = global.players[event.player_index].previous_position
+                if charted(math.floor(player.position.x / CHUNK_SIZE), math.floor(prev_pos.y / CHUNK_SIZE)) then    -- 32 32
+                    -- we can move here, though
+                    prev_pos.x = player.position.x
+                elseif charted(math.floor(prev_pos.x / CHUNK_SIZE), math.floor(player.position.y / CHUNK_SIZE)) then    -- 32 32
+                    -- or here
+                    prev_pos.y = player.position.y
+                end
+                -- teleport player to (possibly modified) prev_pos
+                player.teleport(prev_pos)
+            end
         end
     end
     -- save new player position

@@ -13,13 +13,13 @@
 -- This stuff is shown in the welcome GUI and Info panel. Make sure it's valid.
 WELCOME_MSG_TITLE = "Welcome to Brave New Oarc"
 WELCOME_MSG = "I hope you enjoy this mash up of OARC and Brave New World" -- Printed to player on join as well.
-SERVER_MSG = "Rules: Work together - but apart,\n" ..
-        "this is OARC but with bots only, and only special items can be put into your inventory.\n" ..
+SERVER_MSG = "This is OARC but with bots only, and only special items can be put into your inventory.\n" ..
         "boxes in your base contain enough items for you to get started.\n" ..
-        "POWER is highly recommended at the start."
+        "I HIGHLY recommend you get power first. Note you can put wood in a chest and feed your power plant to get started.\n" ..
+        "I usually put all four electric drills on coal to get started.\n\n"
 
 SCENARIO_INFO_MSG = "Latest updates in this scenario version:\n"..
-"Item & energy sharing system! No attacks on your base while you are offline!\n"..
+"No attacks on your base while you are offline!\n"..
 "This scenario gives you and/or your friends your own starting area.\n"..
 "You can be on the main team or your own. All teams are friendly.\n"..
 "If you leave in the first 15 minutes, your base and character will be deleted!"
@@ -88,7 +88,7 @@ ENABLE_OFFLINE_PROTECTION = true
 -- This allows you to set the tech price multiplier for the game, but 
 -- have it only affect the main force. We just pad all non-main forces lab prod bonus.
 -- This has no effect unless the tech multiplier is more than 1!
-ENABLE_FORCE_LAB_PROD_BONUS = true
+ENABLE_FORCE_LAB_PROD_BONUS = false
 
 -- Lock various recipes and technologies behind a rocket launch.
 -- Each team/force must launch their own rocket to unlock this!
@@ -212,18 +212,18 @@ OARC_CFG = {
     {
         -- Safe area has no aliens
         -- This is the radius in tiles of safe area.
-        safe_radius = CHUNK_SIZE*5,		 -- 192, -- 168, 	-- CHUNK_SIZE*4,	-- vf previously *6  (6*32=192). (48*4=192)  shouldn't this just be 192
+        safe_radius = CHUNK_SIZE*6,		 -- vf previously *6  (6*32=192). (48*4=192)  shouldn't this just be 192
 
         -- Warning area has significantly reduced aliens
         -- This is the radius in tiles of warning area.
-        warn_radius = CHUNK_SIZE*5,	-- 288,  -- CHUNK_SIZE*6,	-- vf previously *12	(288 - previously was 384)
+        warn_radius = CHUNK_SIZE*10,	-- vf previously *12	(288 - previously was 384)
 
         -- 1 : X (spawners alive : spawners destroyed) in this area
         warn_reduction = 20,
 
         -- Danger area has slightly reduce aliens
         -- This is the radius in tiles of danger area.
-        danger_radius = CHUNK_SIZE*25,		-- 960, 	-- CHUNK_SIZE*25,		-- vf previously *32	(960 - previously was 1024)
+        danger_radius = CHUNK_SIZE*30,		-- vf previously *32	(960 - previously was 1024)
         -- 1 : X (spawners alive : spawners destroyed) in this area
         danger_reduction = 5,
     },
