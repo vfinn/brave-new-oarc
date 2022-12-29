@@ -13,3 +13,14 @@ This does not turn on any special features.
 Known issues:
 Reset player, done by moderator in the game will remove the players base, reset him to 0,0 spawn, but respawning to a new location is not done correctly. 
 Bots will explode if too far from a charge for too long - well that's a feature, upto the point the 40 of them do it.
+
+12/26/2022
+Fixed issue with moving player on reset and second player not being moved to new location on start
+Fixed issue where sometimes the base was not cleaned up when a player is reset of leaves
+
+Adding - closer/further biters - based on Starting Area Size
+Adding - a text message on ground to tell player to get power
+
+12/27/2022
+Modified the start state to be 1x multiplier for research. Most people will just play scenario from the mod, not start a server, use the technology_price_multiplier in map-settings.json if running from a server.
+I may not have upgraded the github before posting to factorio mod site, so this is updated, in both location.

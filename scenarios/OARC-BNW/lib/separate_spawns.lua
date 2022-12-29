@@ -260,20 +260,12 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
 
     end
 
-    -- Send the player to that position
-    SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], delayedSpawn.pos)
-    GivePlayerStarterItems(player)
-
     -- Render some welcoming text...
     DisplayWelcomeGroundTextAtSpawn(player, delayedSpawn.pos)	
 
 	-- Render Brave New World Items - vf
 	setupBNWForce(player.force, player.surface, delayedSpawn.pos.x, delayedSpawn.pos.y, game.active_mods["SeaBlock"])
-    if player.character then
-log("on_event::On Player created: destroy character")
-       player.character.destroy()
-       player.character = nil
-    end
+    GivePlayerStarterItems(player)
 
     -- Chart the area.
     ChartArea(player.force, delayedSpawn.pos, math.ceil(global.ocfg.spawn_config.gen_settings.land_area_tiles/CHUNK_SIZE), player.surface)
@@ -322,6 +314,13 @@ log("on_event::On Player created: destroy character")
                                     {x=delayedSpawn.pos.x+15, y=delayedSpawn.pos.y-25},
                                     global.ocfg.spawn_config.gen_settings.crashed_ship_resources,
                                     global.ocfg.spawn_config.gen_settings.crashed_ship_wreakage)
+    end
+    -- Send the player to that position
+    SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], delayedSpawn.pos)
+    if player.character then
+log("on_event::On Player created: destroy character")
+       player.character.destroy()
+       player.character = nil
     end
 
 end
@@ -1212,6 +1211,7 @@ function DelayedSpawnOnTick()
                 if (delayedSpawn.delayedTick < game.tick) then
                     -- TODO, add check here for if chunks around spawn are generated surface.is_chunk_generated(chunkPos)
                     if (game.players[delayedSpawn.playerName] ~= nil) then
+                        log("Delayed spawn for: " .. game.players[delayedSpawn.playerName].name)
                         SendPlayerToNewSpawnAndCreateIt(delayedSpawn)
                     end
                     table.remove(global.ocore.delayedSpawns, i)
@@ -1306,7 +1306,7 @@ function CreateForce(force_name)
             newForce.laboratory_productivity_bonus = (tech_mult-1)
         end
     end
-
+    log("Difficulty multiplier: ".. game.difficulty_settings.technology_price_multiplier)
     -- Loot distance buff
     newForce.character_loot_pickup_distance_bonus = 16
 

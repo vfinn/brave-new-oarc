@@ -1,3 +1,7 @@
 *.zip
 *.swp
+<<<<<<< HEAD
 .vs
+=======
+.vs
+>>>>>>> e4f9128c848439289e28b7eef65c56bcd710ebbb

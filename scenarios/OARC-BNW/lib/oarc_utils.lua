@@ -354,11 +354,24 @@ end
 -- Safer teleport
 function SafeTeleport(player, surface, target_pos)
     local safe_pos = surface.find_non_colliding_position("character", target_pos, 15, 1)
+    global.spawning = true
     --vf - need to create and destroy the character in order to have focus moved from 0,0 to new area - try restarting a player to see this
-	if player.character == nil then
-        log("SafeTeleport::Character created")
-        player.create_character()
+
+--game.get_player(event.player_index)
+--	if not player or not player.valid then return end
+    
+    if (player == nil) then
+        log("player was nil - assigning to: " .. game.players[player_index].name)
+        player = game.players[player_index]
     end
+    log("Teleporting : " .. player.name .. " to " .. target_pos.x .. "," .. target_pos.y)
+    log("SafeTeleport::Creating Character")
+    if (player.character ~= nil) then
+        log("destroying character before teleporting")
+        player.character.destroy()
+    end
+    log("creating character ")
+    player.create_character()
     if (not safe_pos) then
 log("NOT SafeTeleport: 	" .. player.name .. " location: " .. target.x .. ", " .. target.y);
         player.teleport(target_pos, surface)
@@ -366,6 +379,8 @@ log("NOT SafeTeleport: 	" .. player.name .. " location: " .. target.x .. ", " ..
 log("SafeTeleport: 	" .. player.name .. " location: " .. safe_pos.x .. ", " .. safe_pos.y);
         player.teleport(safe_pos, surface)
     end
+    log("Actual Player position: " .. game.players[player_index].position.x .. "," .. game.players[player_index].position.y)
+
     log("SafeTeleport::Character destroyed")
     player.character.destroy()
     player.character = nil
@@ -1327,6 +1342,7 @@ end
 function PlayerJoinedMessages(event)
     local player = game.players[event.player_index]
     player.print(global.ocfg.welcome_msg)
+    log("player: " .. player.name .. " joined")
     if (global.oarc_announcements) then
         player.print(global.oarc_announcements)
     end

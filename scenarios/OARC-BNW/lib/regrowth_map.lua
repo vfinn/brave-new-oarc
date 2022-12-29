@@ -308,10 +308,12 @@ function RegrowthForceRemovalOnTick()
     -- Catch force remove flag
     if (game.tick == global.rg.force_removal_flag+60) then
         SendBroadcastMsg("Map cleanup (forced) in 5 seconds... Unused and old map chunks will be deleted!")
+        global.disableRegrowthWhileWaitingToRemoveAllChunks=true
     end
 
     if (game.tick == global.rg.force_removal_flag+(60*5 + 60)) then		-- used to be 30 changed to 5
         OarcRegrowthRemoveAllChunks()
+        global.disableRegrowthWhileWaitingToRemoveAllChunks=false
         SendBroadcastMsg("Map cleanup done, sorry for your loss.")
     end
 end

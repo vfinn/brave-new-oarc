@@ -151,10 +151,10 @@ function CreateGameOptionsTab(tab_container, player)
         for _,player in pairs(game.connected_players) do
             table.insert(player_list, player.name)
         end
+        tab_container.add{name="restart_player", type="button", caption="Restart Player"}
+        tab_container.add{name="ban_player", type="button", caption="Ban Player"}
         tab_container.add{name = "ban_players_dropdown",
                         type = "drop-down",
                         items = player_list}
-        tab_container.add{name="ban_player", type="button", caption="Ban Player"}
-        tab_container.add{name="restart_player", type="button", caption="Restart Player"}
     end
 end
