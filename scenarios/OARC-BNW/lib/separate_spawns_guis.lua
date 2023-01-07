@@ -156,7 +156,7 @@ function DisplaySpawnOptions(player)
         soloSpawnFlow.add{name = "isolated_spawn_moat_option_checkbox",
                         type = "checkbox",
                         caption={"oarc-moat-option"},
-                        state=false}
+                        state=true}
     end
     -- if (global.ocfg.enable_vanilla_spawns and (#global.vanillaSpawns > 0)) then
     --     soloSpawnFlow.add{name = "isolated_spawn_vanilla_option_checkbox",
@@ -827,7 +827,7 @@ function DisplayBuddySpawnOptions(player)
         buddySpawnFlow.add{name = "buddy_spawn_moat_option_checkbox",
                         type = "checkbox",
                         caption={"oarc-moat-option"},
-                        state=false}
+                        state=true}
     end
 
     -- AddSpacerLine(buddySpawnFlow)
