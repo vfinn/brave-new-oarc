@@ -381,7 +381,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
         local xx = x + math.random(16, 32) * (math.random(1, 2) == 1 and 1 or -1)
         local yy = y + math.random(16, 32) * (math.random(1, 2) == 1 and 1 or -1)
         local tiles = {}
-        surface.create_entity{name = "crude-oil", amount = math.random(100000, 250000), position = {xx, yy}, force=force, raise_built = true}
+        surface.create_entity{name = "crude-oil", amount = math.random(900000, 2500000), position = {xx, yy}, force=force, raise_built = true}
         for xxx = xx - 2, xx + 2 do
             for yyy = yy - 2, yy + 2 do
                 local tile = surface.get_tile(xxx, yyy)
@@ -405,7 +405,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
                 tiles[#tiles + 1] = {name = name, position = {xxxx, yyyy}}
             end
         end
-        surface.create_entity{name = "crude-oil", amount = math.random(100000, 250000), position = {xxx, yyy}, force=force, raise_built = true}
+        surface.create_entity{name = "crude-oil", amount = math.random(900000, 2500000), position = {xxx, yyy}, force=force, raise_built = true}
         xxx = xx + math.random(-8, 8)
         yyy = yy + math.random(4, 8)
         for xxxx = xxx - 2, xxx + 2 do
@@ -418,7 +418,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
                 tiles[#tiles + 1] = {name = name, position = {xxxx, yyyy}}
             end
         end
-        surface.create_entity{name = "crude-oil", amount = math.random(100000, 250000), position = {xxx, yyy}, force=force, raise_built = true}
+        surface.create_entity{name = "crude-oil", amount = math.random(900000, 2500000), position = {xxx, yyy}, force=force, raise_built = true}
         surface.set_tiles(tiles)
     end
 	-- vf - We always need oil within reach on every map or you can't get outside main, so let's drop a few a small distance away randomly
@@ -428,7 +428,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
 		
         local yy = y + math.random(CHUNK_SIZE*4, CHUNK_SIZE*5) * (math.random(1, 2) == 1 and 1 or -1)
         local tiles = {}
-        surface.create_entity{name = "crude-oil", amount = math.random(500000, 900000), position = {xx, yy}, force=force, raise_built = true}
+        surface.create_entity{name = "crude-oil", amount = math.random(1500000, 1900000), position = {xx, yy}, force=force, raise_built = true}
 log("Random oil - " .. xx .. " : " .. yy);		
         for xxx = xx - 2, xx + 2 do
             for yyy = yy - 2, yy + 2 do
@@ -453,7 +453,7 @@ log("Random oil - " .. xx .. " : " .. yy);
                 tiles[#tiles + 1] = {name = name, position = {xxxx, yyyy}}
             end
         end
-        surface.create_entity{name = "crude-oil", amount = math.random(500000, 900000), position = {xxx, yyy}, force=force, raise_built = true}
+        surface.create_entity{name = "crude-oil", amount = math.random(1500000, 1900000), position = {xxx, yyy}, force=force, raise_built = true}
         xxx = xx + math.random(-16, 9)
         yyy = yy + math.random(4, 8)
 log("Random oil - " .. xxx .. " : " .. yyy);		
@@ -467,7 +467,7 @@ log("Random oil - " .. xxx .. " : " .. yyy);
                 tiles[#tiles + 1] = {name = name, position = {xxxx, yyyy}}
             end
         end
-        surface.create_entity{name = "crude-oil", amount = math.random(500000, 900000), position = {xxx, yyy}, force=force, raise_built = true}
+        surface.create_entity{name = "crude-oil", amount = math.random(1500000, 1900000), position = {xxx, yyy}, force=force, raise_built = true}
 log("Random oil - " .. xxx .. " : " .. yyy);		
         surface.set_tiles(tiles)
 	end
@@ -957,11 +957,11 @@ log("UniqueSpawnCleanupRemove: yes remove chunks")
         if (immediate) then
             log("IMMEDIATE Removing base: " .. spawnPos.x .. "," .. spawnPos.y)
 --            removeBNWForce(spawnPos.x, spawnPos.y)
-            RegrowthMarkAreaForRemoval(spawnPos, math.ceil(global.ocfg.spawn_config.gen_settings.land_area_tiles/CHUNK_SIZE +3))  -- vf previous divided by /CHUNK_SIZE - need bigger for roboport
+            RegrowthMarkAreaForRemoval(spawnPos, math.ceil(global.ocfg.spawn_config.gen_settings.land_area_tiles/CHUNK_SIZE +5))  -- vf previous divided by /CHUNK_SIZE - need bigger for roboport
             TriggerCleanup()
         else
             log("Removing permanent flags on base: " .. spawnPos.x .. "," .. spawnPos.y)
-            RegrowthMarkAreaNotPermanentOVERWRITE(spawnPos, math.ceil(global.ocfg.spawn_config.gen_settings.land_area_tiles/CHUNK_SIZE + 3)) -- previous divided by /CHUNK_SIZE
+            RegrowthMarkAreaNotPermanentOVERWRITE(spawnPos, math.ceil(global.ocfg.spawn_config.gen_settings.land_area_tiles/CHUNK_SIZE + 5)) -- previous divided by /CHUNK_SIZE
         end
 	else
 log("UniqueSpawnCleanupRemove: NO don't remove chunks. cleanup: " .. tostring(cleanup) .. ", global.ocfg.enable_abandoned_base_removal: " .. tostring(global.ocfg.enable_abandoned_base_removal) .. ", nearOtherSpawn: " .. tostring(nearOtherSpawn) .. ", global.ocfg.enable_regrowth: " .. tostring(global.ocfg.enable_regrowth))

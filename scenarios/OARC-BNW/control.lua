@@ -88,7 +88,8 @@ default_qb_slots = {
         [23] = "offshore-pump",
         [24] = "boiler",
         [25] = "steam-engine",
-        [26] = "burner-inserter"
+        [26] = "burner-inserter",
+        [27] = "lab"
 }
 commands.add_command("trigger-map-cleanup",
     "Force immediate removal of all expired chunks (unused chunk removal mod)",
@@ -186,6 +187,8 @@ script.on_init(function(event)
 
     OarcMapFeatureInitGlobalCounters()
     OarcAutoDeconOnInit()
+    
+    -- LuaEntityDiedEventFilter("robot-with-logistics-interface")
 
     -- Display starting point text as a display of dominance.
     RenderPermanentGroundText(game.surfaces[GAME_SURFACE_NAME], {x=-34,y=-23}, 12, "Brave New OARC", {0.9, 0.7, 0.3, 0.8})
@@ -525,6 +528,7 @@ end)
 -- Save player's stuff so they don't lose it if they can't get to the corpse fast enough.
 ----------------------------------------
 script.on_event(defines.events.on_character_corpse_expired, function(event)
+--    game.print("Character corpse expired")
     DropGravestoneChestFromCorpse(event.corpse)
 end)
 
@@ -570,6 +574,59 @@ script.on_event(defines.events.on_resource_depleted, function(event)
         OarcAutoDeconOnResourceDepleted(event)
     end
 end)
+
+-- Addition of functions to track bots dying vf
+-- Called when a worker (construction or logistic) robot expires through a lack of energy.
+-- https://lua-api.factorio.com/latest/events.html#on_worker_robot_expired
+function robotdied(event)
+    -- game.print("Event: Logistics Robot dies due to lack of energy: " .. event.name .. ", Robot Name:".. event.robot.name)
+    log("Event: Logistics Robot dies due to lack of energy: " .. event.name .. ", Robot Name:".. event.robot.name)
+end
+
+--- Tests if a string contains a given substring
+-- @param s the string to check for the substring
+-- @param ends the substring to test for
+-- @return true if the substring was found in the string
+function string.contains(s, ends)
+    return s and string.find(s, ends) ~= nil
+end
+
+function entitydamaged(event)
+    if (not string.contains(event.entity.name, "biter")) then
+        if (not string.contains(event.entity.name, "tree")) then
+            -- game.print("Event: Entity Damaged, Entity name: " .. event.entity.name .. ", Original Dmg: " .. event.original_damage_amount .. ", Final damage: " .. event.final_damage_amount .. ", final health: " ..  event.final_health)
+            log       ("Event: Entity Damaged, Entity name: " .. event.entity.name .. ", Original Dmg: " .. event.original_damage_amount .. ", Final damage: " .. event.final_damage_amount .. ", final health: " ..  event.final_health)
+        end
+    end
+end
+
+function somethingdied(eventname, name)
+    -- game.print("Event: " .. eventname .. ", Entity name: " .. name)
+    log("Event ran: " .. eventname .. ", Entity name: " .. name )
+end
+
+function combatrobotdied(event)
+    somethingdied("Combat Robot Expired",event.entity.name, event.robot.name)
+end
+
+function entitydied(event)
+    somethingdied("Entity Died",event.entity.name)
+end
+
+function entitydestroyed(event)
+    somethingdied("Entity Destroyed",event.registration_number)
+end
+
+function scriptdestroyed(event)
+    somethingdied("Script Raised Destroy",event.entity.name)
+end
+
+script.on_event(defines.events.on_worker_robot_expired, robotdied)
+script.on_event(defines.events.on_combat_robot_expired, combatrobotdied)
+script.on_event(defines.events.on_entity_died, entitydied)
+script.on_event(defines.events.on_entity_damaged, entitydamaged)
+script.on_event(defines.events.on_entity_destroyed, entitydestroyed)
+script.on_event(defines.events.script_raised_destroy, scriptdestroyed)
 
 -----------------------------------------------------------------------------------------------------------
 -- Start of Brave New World functions
@@ -842,3 +899,29 @@ script.on_event(defines.events.on_player_changed_position, function(event)
     -- save new player position
     global.players[event.player_index].previous_position = player.position
 end)
+
+function change_bots()
+local myConBot
+local myLogiBot
+	-- body
+myConBot = util.table.deepcopy(data.raw["construction-robot"]["construction-robot"])
+myConBot.name = "bnw-homeworld-construction-robot"
+myConBot.speed = 0.5
+myConBot.minable = {mining_time = 10, result = "bnw-homeworld-construction-robot"}
+myConBot.max_energy = "4MJ"
+myConBot.energy_per_tick = "0.0005kJ"
+myConBot.energy_per_move = "0.2kJ"
+myConBot.destructible = false
+data:extend({myConBot})
+
+myLogiBot = util.table.deepcopy(data.raw["logistic-robot"]["logistic-robot"])
+myLogiBot.name = "bnw-homeworld-logistic-robot"
+myLogiBot.minable = {mining_time = 10, result = "bnw-homeworld-logistic-robot"}
+myLogiBot.max_energy = "4MJ"
+myLogiBot.energy_per_tick = "0.0005kJ"
+myLogiBot.energy_per_move = "0.2kJ"
+myLogiBot.speed = 0.5
+myLogiBot.destructible = false
+data:extend({myLogiBot})
+end
+

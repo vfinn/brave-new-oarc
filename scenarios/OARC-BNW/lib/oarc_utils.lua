@@ -1318,8 +1318,8 @@ end
 
 function CreateHoldingPen(surface, chunkArea)
     local radiusTiles = global.ocfg.spawn_config.gen_settings.land_area_tiles-10
-    if (((chunkArea.left_top.x >= -(radiusTiles+2*CHUNK_SIZE)) and (chunkArea.left_top.x <= (radiusTiles+2*CHUNK_SIZE))) and
-        ((chunkArea.left_top.y >= -(radiusTiles+2*CHUNK_SIZE)) and (chunkArea.left_top.y <= (radiusTiles+2*CHUNK_SIZE)))) then
+    if (((chunkArea.left_top.x >= -(radiusTiles+4*CHUNK_SIZE)) and (chunkArea.left_top.x <= (radiusTiles+4*CHUNK_SIZE))) and
+        ((chunkArea.left_top.y >= -(radiusTiles+4*CHUNK_SIZE)) and (chunkArea.left_top.y <= (radiusTiles+4*CHUNK_SIZE)))) then
 
         -- Remove stuff
         RemoveAliensInArea(surface, chunkArea)
