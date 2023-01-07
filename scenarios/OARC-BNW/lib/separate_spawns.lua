@@ -957,11 +957,11 @@ log("UniqueSpawnCleanupRemove: yes remove chunks")
         if (immediate) then
             log("IMMEDIATE Removing base: " .. spawnPos.x .. "," .. spawnPos.y)
 --            removeBNWForce(spawnPos.x, spawnPos.y)
-            RegrowthMarkAreaForRemoval(spawnPos, math.ceil(global.ocfg.spawn_config.gen_settings.land_area_tiles/CHUNK_SIZE +5))  -- vf previous divided by /CHUNK_SIZE - need bigger for roboport
+            RegrowthMarkAreaForRemoval(spawnPos, math.ceil(global.ocfg.spawn_config.gen_settings.land_area_tiles/CHUNK_SIZE +3))  -- vf previous divided by /CHUNK_SIZE - need bigger for roboport
             TriggerCleanup()
         else
             log("Removing permanent flags on base: " .. spawnPos.x .. "," .. spawnPos.y)
-            RegrowthMarkAreaNotPermanentOVERWRITE(spawnPos, math.ceil(global.ocfg.spawn_config.gen_settings.land_area_tiles/CHUNK_SIZE + 5)) -- previous divided by /CHUNK_SIZE
+            RegrowthMarkAreaNotPermanentOVERWRITE(spawnPos, math.ceil(global.ocfg.spawn_config.gen_settings.land_area_tiles/CHUNK_SIZE + 3)) -- previous divided by /CHUNK_SIZE
         end
 	else
 log("UniqueSpawnCleanupRemove: NO don't remove chunks. cleanup: " .. tostring(cleanup) .. ", global.ocfg.enable_abandoned_base_removal: " .. tostring(global.ocfg.enable_abandoned_base_removal) .. ", nearOtherSpawn: " .. tostring(nearOtherSpawn) .. ", global.ocfg.enable_regrowth: " .. tostring(global.ocfg.enable_regrowth))
