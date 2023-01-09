@@ -36,3 +36,6 @@ Slowing them down to a crawl and letting them die to biters if misused is fine,
 but just exploding for some unknown cause is bull.
 
 1/07/2023 - Anti-grief turned on by default (config.lua)
+
+1/8/2023 - 4.1.4
+More work finding bots that explode, removed excessive logging

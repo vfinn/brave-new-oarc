@@ -343,6 +343,7 @@ function WorldEaterSingleStep()
                                                                                 force={global.ocore.abandoned_force},
                                                                                 name="radar"}
     for k,v in pairs(entities) do
+        log("destroying abandoned radars: " .. v.type)
         v.die(nil)
     end
 
@@ -350,6 +351,7 @@ function WorldEaterSingleStep()
     entities = game.surfaces[GAME_SURFACE_NAME].find_entities_filtered{area=next_chunk.area,
                                                                                 force={global.ocore.destroyed_force}}
     for k,v in pairs(entities) do
+        log("destroying _DESTROYED_ force: " .. v.type)
         v.die(nil)
     end
 
@@ -366,7 +368,11 @@ function WorldEaterSingleStep()
 
         if (total_count > 0) then
             for k,v in pairs(entities) do
-                if (v.last_user or (v.type == "character")) then
+                -- don't destroy the bots because they have no last-user
+                if (v.last_user or (v.type == "character") or string.contains(v.type, "robot")) then
+--                    if (string.contains(v.type, "robot")) then
+--                        log("GOT IT !  We would have deleted a : " .. v.type)
+--                    end
                     has_last_user_set = true
                     return -- This means we're done checking this chunk.
                 end
@@ -376,7 +382,8 @@ function WorldEaterSingleStep()
             if (not has_last_user_set) then
                 for k,v in pairs(entities) do
                     if (v and v.valid) then
-                        v.die(nil)
+                            log("destroying no last user: " .. v.type)
+                            v.die(nil)
                     end
                 end
                 -- SendBroadcastMsg(next_chunk.x .. "," .. next_chunk.y .. " WorldEaterSingleStep - ENTITIES FOUND")

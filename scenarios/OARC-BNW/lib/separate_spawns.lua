@@ -628,9 +628,9 @@ function DisplayWelcomeGroundTextAtSpawn(player, pos)
                         -- alignment=center,
                         scale_with_zoom=false,
                         only_in_alt_mode=false}
-    local rid2 = rendering.draw_text{text="Dude",
+    local rid2 = rendering.draw_text{text=player.name,
                         surface=game.surfaces[GAME_SURFACE_NAME],
-                        target={x=pos.x-14, y=pos.y+5},
+                        target={x=pos.x-21, y=pos.y+5},
                         color=tcolor,
                         scale=20,
                         font="compi",
@@ -902,12 +902,13 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
 
     -- If this player is staying in the game, lets make sure we don't delete them along with the map chunks being
     -- cleared.
-    log("RemoveOrResetPlayer:: create_character and teleport to 0,0")
-    if player.character == nil then
-        log("RemoveOrResetPlayer::Character created")
-        player.create_character()
-    end
+    log("RemoveOrResetPlayer:: teleport to 0,0")
+--    if player.character == nil then
+--        log("RemoveOrResetPlayer::Character created")
+--        player.create_character()
+--    end
     player.teleport({x=0,y=0}, GAME_SURFACE_NAME)
+    player.create_character()           -- make him visible at spawn area
     local player_old_force = player.force
     player.force = global.ocfg.main_force
 

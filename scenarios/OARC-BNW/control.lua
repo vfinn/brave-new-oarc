@@ -147,52 +147,7 @@ script.on_init(function(event)
     -- Display starting point text as a display of dominance.
     RenderPermanentGroundText(game.surfaces[GAME_SURFACE_NAME], {x=-34,y=-25}, 12, "Brave New OARC", {0.9, 0.7, 0.3, 0.8})
 end)
-----------------------------------------
-script.on_init(function(event)
 
-    -- FIRST
-    InitOarcConfig()
-
-    -- Regrowth (always init so we can enable during play.)
-    RegrowthInit()
-
-    -- Create new game surface
-    CreateGameSurface()
-
-    -- MUST be before other stuff, but after surface creation.
-    InitSpawnGlobalsAndForces()
-
-    -- Frontier Silo Area Generation
-    if (global.ocfg.frontier_rocket_silo and not global.ocfg.enable_magic_factories) then
-        SpawnSilosAndGenerateSiloAreas()
-    end
-
-    -- Everyone do the shuffle. Helps avoid always starting at the same location.
-    -- Needs to be done after the silo spawning.
-    if (global.ocfg.enable_vanilla_spawns) then
-        global.vanillaSpawns = FYShuffle(global.vanillaSpawns)
-        log("Vanilla spawns:")
-        log(serpent.block(global.vanillaSpawns))
-    end
-    
-    Compat.handle_factoriomaps()
-
-    if (global.ocfg.enable_coin_shop and global.ocfg.enable_chest_sharing) then
-        SharedChestInitItems()
-    end
-
-    if (global.ocfg.enable_coin_shop and global.ocfg.enable_magic_factories) then
-        MagicFactoriesInit()
-    end
-
-    OarcMapFeatureInitGlobalCounters()
-    OarcAutoDeconOnInit()
-    
-    -- LuaEntityDiedEventFilter("robot-with-logistics-interface")
-
-    -- Display starting point text as a display of dominance.
-    RenderPermanentGroundText(game.surfaces[GAME_SURFACE_NAME], {x=-34,y=-23}, 12, "Brave New OARC", {0.9, 0.7, 0.3, 0.8})
-end)
 
 ----------------------------------------
 script.on_load(function()
@@ -402,7 +357,7 @@ script.on_event(defines.events.on_sector_scanned, function (event)
         log("Ah hah !  Regrowth event while waiting to remove chunks - ignore!")
     else
 	    if global.ocfg.enable_regrowth  then
-            log("on_event::on_sector_scanned - enable_regrowth")    
+            -- log("on_event::on_sector_scanned - enable_regrowth")    
             RegrowthSectorScan(event)
         end
     end
@@ -583,20 +538,10 @@ function robotdied(event)
     log("Event: Logistics Robot dies due to lack of energy: " .. event.name .. ", Robot Name:".. event.robot.name)
 end
 
---- Tests if a string contains a given substring
--- @param s the string to check for the substring
--- @param ends the substring to test for
--- @return true if the substring was found in the string
-function string.contains(s, ends)
-    return s and string.find(s, ends) ~= nil
-end
-
 function entitydamaged(event)
-    if (not string.contains(event.entity.name, "biter")) then
-        if (not string.contains(event.entity.name, "tree")) then
-            -- game.print("Event: Entity Damaged, Entity name: " .. event.entity.name .. ", Original Dmg: " .. event.original_damage_amount .. ", Final damage: " .. event.final_damage_amount .. ", final health: " ..  event.final_health)
-            log       ("Event: Entity Damaged, Entity name: " .. event.entity.name .. ", Original Dmg: " .. event.original_damage_amount .. ", Final damage: " .. event.final_damage_amount .. ", final health: " ..  event.final_health)
-        end
+    if (string.contains(event.entity.name, "bnw")) then
+ --       game.print("Event: Entity Damaged, Entity name: " .. event.entity.name .. ", Original Dmg: " .. event.original_damage_amount .. ", Final damage: " .. event.final_damage_amount .. ", final health: " ..  event.final_health)
+        log       ("Event: Entity Damaged, Entity name: " .. event.entity.name .. ", Original Dmg: " .. event.original_damage_amount .. ", Final damage: " .. event.final_damage_amount .. ", final health: " ..  event.final_health)
     end
 end
 
@@ -729,6 +674,7 @@ function dropItems(player, name, count)
     if count > 0 then
         -- now we're forced to spill items
         entity = entity or global.forces[player.force.name].roboport
+        log("Spilling items for: ".. entity.name .. "for count: ".. count .. "player force: ".. player.force.name)
         entity.surface.spill_item_stack(entity.position, {name = name, count = count}, false, entity.force, false)
     end
 end
