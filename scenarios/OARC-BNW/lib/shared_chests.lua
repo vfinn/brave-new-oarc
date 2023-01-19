@@ -22,9 +22,8 @@ function SharedChestInitItems()
     global.oshared.chests_combinators = {}
     global.oshared.items = {}
 
-    global.oshared.items['red-wire'] = 10000
-    global.oshared.items['green-wire'] = 10000
-    global.oshared.items['raw-fish'] = 10000   
+    global.oshared.items['red-wire'] = 1000
+    global.oshared.items['green-wire'] = 1000
 
     global.oshared.energy_stored = SHARED_ENERGY_STARTING_VALUE
     global.oshared.energy_stored_history = {start=SHARED_ENERGY_STARTING_VALUE, after_input=SHARED_ENERGY_STARTING_VALUE, after_output=SHARED_ENERGY_STARTING_VALUE}
@@ -54,8 +53,8 @@ function SharedEnergySpawnInput(player, pos)
         {signal={type="virtual", name="signal-M"},
         count=1})
 
-    TemporaryHelperText("Connect to electric network to contribute shared energy.", {pos.x+1.5, pos.y-1}, TICKS_PER_MINUTE*2)
-    TemporaryHelperText("Use combinator to limit number of MW shared.", {pos.x+2.5, pos.y}, TICKS_PER_MINUTE*2)
+    TemporaryHelperText("Connect to electric network to contribute shared energy.", {pos.x+1.5, pos.y-1}, TICKS_PER_MINUTE*4)
+    TemporaryHelperText("Use combinator to limit number of MW shared.", {pos.x+2.5, pos.y}, TICKS_PER_MINUTE*4)
 
     table.insert(global.oshared.electricity_inputs, {eei=inputElec, combi=inputElecCombi})
 end

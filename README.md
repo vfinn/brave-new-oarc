@@ -8,18 +8,40 @@ Since Brave New World is ideally single player and OARC is the best multiplayer 
 
 I started with OARC 1.0.1 and BNW 4.11
 
-This does not turn on any special features.
+Brave New Oarc enables you to play Brave New World and OARC together, and best of all - with other players.  I've made alot of changes, 
 
-Known issues:
-Reset player, done by moderator in the game will remove the players base, reset him to 0,0 spawn, but respawning to a new location is not done correctly. 
-Bots will explode if too far from a charge for too long - well that's a feature, upto the point the 40 of them do it.
+1/16/2023 - 4.1.6
+No more special bots. The problem was that when you choose "fast bots" and you finally get to making bots, you're disappointed at how slow they are. They become a major negative
+towards fun game play.
 
-12/26/2022 4.1.2
-Fixed issue with moving player on reset and second player not being moved to new location on start
-Fixed issue where sometimes the base was not cleaned up when a player is reset of leaves
+We now have a end game scenario - previously if one person's main roboport died, every one died.  The changes: Biters HATE your main roboport and if they get near it, 
+they will aggressively attack it, but they are passive to all other roboports.
+If the main one dies, you immediately get thrown back to 0,0 location and are able to restart, rejoin a force. No one else is impacted.
 
-Adding - closer/further biters - based on Starting Area Size
-Adding - a text message on ground to tell player to get power
+Fixed RESTART player so the menu comes up once they go back to 0,0.
+
+Number of starting bots added to your mod settings - you choices: 10/5, 50/25, 100/50, 200/100 for construction/logistic bots
+The max bots in starter roboport are 350, so I think these are good options.  If you choose 10/5 I recommend also clicking on the resistance values to make them "nearly" indestructible.
+
+Verified - buddy spawn to kick all players associated with that base
+
+1/15/2023 - 4.1.5
+Welcome message disappears but player name remains
+Oil patch slight move to enable roboport to fit between it.
+Fixed reset player - but player has to be offline for it to work properly
+Previously if one player lost their starting roboport it ended the game. Now it will display that
+you lost but enables you to continue playing.  I may change this to immediately remove and clean up 
+player that died and not hastle other players with the lose message.
+Options settable by host:
+	added moat bridge option in gui MOD interface
+	added four different resistances in MOD interface for fire, spitter, explosion and physical damage to bots
+	added support for turning anti-griefing on/off. This disables delete in map view and sets a time limit on ghost items.
+	moved oil to make room for roboport between it
+	offer chest sharing and energy share
+	Number of silos
+
+1/8/2023 - 4.1.4
+More work finding bots that explode, removed excessive logging. Fixed exploding bots.
 
 1/7/2023 - 4.1.3
 12/27/2022
@@ -37,5 +59,10 @@ but just exploding for some unknown cause is bull.
 
 1/07/2023 - Anti-grief turned on by default (config.lua)
 
-1/8/2023 - 4.1.4
-More work finding bots that explode, removed excessive logging
+12/26/2022 4.1.2
+Fixed issue with moving player on reset and second player not being moved to new location on start
+Fixed issue where sometimes the base was not cleaned up when a player is reset of leaves
+
+Adding - closer/further biters - based on Starting Area Size
+Adding - a text message on ground to tell player to get power
+

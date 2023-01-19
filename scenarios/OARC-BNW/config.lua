@@ -16,7 +16,7 @@ WELCOME_MSG = "I hope you enjoy this mash up of OARC and Brave New World" -- Pri
 SERVER_MSG = "This is OARC but with bots only, and only special items can be put into your inventory.\n" ..
         "boxes in your base contain enough items for you to get started.\n" ..
         "I HIGHLY recommend you get power first. Note you can put wood in a chest and feed your power plant to get started.\n" ..
-        "I usually put all four electric drills on coal to get started.\n\n"
+        "I usually put all four electric drills on coal to get started.\n\nIf your starting roboport DIES, you will immediately be teleported back to the starting location, your base removed, and allowed to start over!\n"
 
 SCENARIO_INFO_MSG = "Latest updates in this scenario version:\n"..
 "No attacks on your base while you are offline!\n"..
@@ -231,7 +231,7 @@ OARC_CFG = {
     -- Location of water strip (horizontal)
     water = {
         x_offset = -4,
-        y_offset = -80,	-- previously 48
+        y_offset = -60,	-- previously 48
         length = 8
     },
 
@@ -322,9 +322,9 @@ OARC_CFG = {
         {
             num_patches = 2,
             amount = 900000,		-- vf previously 900000
-            x_offset_start = -3,
+            x_offset_start = -4,
             y_offset_start = 48,
-            x_offset_next = 6,
+            x_offset_next = 7,
             y_offset_next = 0
         }
     },

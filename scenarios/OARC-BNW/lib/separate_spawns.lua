@@ -264,6 +264,7 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
     DisplayWelcomeGroundTextAtSpawn(player, delayedSpawn.pos)	
 
 	-- Render Brave New World Items - vf
+    global.spawn[player.index] = delayedSpawn.pos  -- save the starting position, this is how we determine who died when a starting roboport is killed
 	setupBNWForce(player.force, player.surface, delayedSpawn.pos.x, delayedSpawn.pos.y, game.active_mods["SeaBlock"])
     GivePlayerStarterItems(player)
 
@@ -276,7 +277,7 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
 
     if (global.ocfg.enable_chest_sharing and not delayedSpawn.vanilla) then
         
-        local x_dist = global.ocfg.spawn_config.resource_rand_pos_settings.radius
+        local x_dist = global.ocfg.spawn_config.resource_rand_pos_settings.radius +10        -- moved slightly further out
 
         -- Shared electricity IO pair of scripted electric-energy-interfaces
         SharedEnergySpawnInput(player, {x=delayedSpawn.pos.x+x_dist, y=delayedSpawn.pos.y-11})
@@ -329,7 +330,6 @@ end
 function removeBNWForce(x, y)
     log("deleting roboport at " .. x .. ", " .. y)    
     game.surfaces[GAME_SURFACE_NAME].delete_chunk({x = x, y = y})
-log("deleting roboport at " .. x .. ", " .. y)    
 end
 
 function setupBNWForce(force, surface, x, y, seablock_enabled)
@@ -428,7 +428,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
 		
         local yy = y + math.random(CHUNK_SIZE*4, CHUNK_SIZE*5) * (math.random(1, 2) == 1 and 1 or -1)
         local tiles = {}
-        surface.create_entity{name = "crude-oil", amount = math.random(1500000, 1900000), position = {xx, yy}, force=force, raise_built = true}
+        surface.create_entity{name = "crude-oil", amount = math.random(2500000, 2900000), position = {xx, yy}, force=force, raise_built = true}
 log("Random oil - " .. xx .. " : " .. yy);		
         for xxx = xx - 2, xx + 2 do
             for yyy = yy - 2, yy + 2 do
@@ -453,7 +453,7 @@ log("Random oil - " .. xx .. " : " .. yy);
                 tiles[#tiles + 1] = {name = name, position = {xxxx, yyyy}}
             end
         end
-        surface.create_entity{name = "crude-oil", amount = math.random(1500000, 1900000), position = {xxx, yyy}, force=force, raise_built = true}
+        surface.create_entity{name = "crude-oil", amount = math.random(2500000, 2900000), position = {xxx, yyy}, force=force, raise_built = true}
         xxx = xx + math.random(-16, 9)
         yyy = yy + math.random(4, 8)
 log("Random oil - " .. xxx .. " : " .. yyy);		
@@ -467,7 +467,7 @@ log("Random oil - " .. xxx .. " : " .. yyy);
                 tiles[#tiles + 1] = {name = name, position = {xxxx, yyyy}}
             end
         end
-        surface.create_entity{name = "crude-oil", amount = math.random(1500000, 1900000), position = {xxx, yyy}, force=force, raise_built = true}
+        surface.create_entity{name = "crude-oil", amount = math.random(2500000, 2900000), position = {xxx, yyy}, force=force, raise_built = true}
 log("Random oil - " .. xxx .. " : " .. yyy);		
         surface.set_tiles(tiles)
 	end
@@ -501,20 +501,25 @@ log("Random oil - " .. xxx .. " : " .. yyy);
     end
     -- roboport
     local config = global.forces[force.name]
-    config.roboport = surface.create_entity{name = "roboport", position = {x, y}, force = force, raise_built = true}
+    config.roboport = surface.create_entity{name = "roboport-main", position = {x, y}, force = force, raise_built = true}
     config.roboport.minable = false
-    config.roboport.energy = 100000000
+    config.roboport.energy = 100000000    
     local roboport_inventory = config.roboport.get_inventory(defines.inventory.roboport_robot)
-    if settings.startup["bnw-homeworld-starting-robots"].value then
-       roboport_inventory.insert{name = "bnw-homeworld-construction-robot", count = 100}
-    else
-       roboport_inventory.insert{name = "construction-robot", count = 100}
+    -- start with 100/50 construction/logistic bots
+
+    -- {"10/5", "50/25", "100/50", "200/100", "500/250"}
+    local numLogisticBots
+    if (global.ocfg.starting_bot_count == "10/5") then
+        numLogisticBots=5
+    elseif (global.ocfg.starting_bot_count == "50/25") then
+        numLogisticBots=25
+    elseif (global.ocfg.starting_bot_count == "100/50") then
+        numLogisticBots=50
+    elseif (global.ocfg.starting_bot_count == "200/100") then
+        numLogisticBots=100
     end
-    if settings.startup["bnw-homeworld-starting-robots"].value then
-       roboport_inventory.insert{name = "bnw-homeworld-logistic-robot", count = 50}
-    else
-       roboport_inventory.insert{name = "logistic-robot", count = 50}
-    end
+    roboport_inventory.insert{name = "construction-robot", count = numLogisticBots*2}
+    roboport_inventory.insert{name = "logistic-robot", count = numLogisticBots}
 
     roboport_inventory = config.roboport.get_inventory(defines.inventory.roboport_material)
     roboport_inventory.insert{name = "repair-pack", count = 10}
@@ -643,7 +648,7 @@ function DisplayWelcomeGroundTextAtSpawn(player, pos)
                         only_in_alt_mode=false}
 
     table.insert(global.oarc_renders_fadeout, rid1)
-    table.insert(global.oarc_renders_fadeout, rid2)
+--    table.insert(global.oarc_renders_fadeout, rid2)
 end
 
 --[[
@@ -708,18 +713,22 @@ function SetupAndClearSpawnAreas(surface, chunkArea)
 
                 if (global.ocfg.spawn_config.gen_settings.tree_circle) then
                     CreateCropCircle(surface, spawn.pos, chunkArea, global.ocfg.spawn_config.gen_settings.land_area_tiles, fill_tile)
-                end
-                if (global.ocfg.spawn_config.gen_settings.tree_octagon) then
+                elseif (global.ocfg.spawn_config.gen_settings.tree_octagon) then
                     CreateCropOctagon(surface, spawn.pos, chunkArea, global.ocfg.spawn_config.gen_settings.land_area_tiles, fill_tile)
                 end
                 if (global.ocfg.spawn_config.gen_settings.moat_choice_enabled) then
                     if (spawn.moat) then
+                        -- allowed_values = {"yes", "no", "use config.lua setting"}
+                        local moat_bridge_enabled=global.ocfg.spawn_config.gen_settings.moat_bridging
+                        if (settings.startup["bno-moat-bridge"].value ~= "use config.lua setting") then
+                            moat_bridge_enabled = settings.startup["bno-moat-bridge"].value == "yes"
+                        end
                         CreateMoat(surface,
                             spawn.pos,
                             chunkArea,
                             global.ocfg.spawn_config.gen_settings.land_area_tiles,
                             "water",
-                            global.ocfg.spawn_config.gen_settings.moat_bridging)
+                            moat_bridge_enabled)
                     end
                 end
             end
@@ -903,12 +912,12 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
     -- If this player is staying in the game, lets make sure we don't delete them along with the map chunks being
     -- cleared.
     log("RemoveOrResetPlayer:: teleport to 0,0")
---    if player.character == nil then
---        log("RemoveOrResetPlayer::Character created")
---        player.create_character()
---    end
+    -- this causing crash
+    --if player.character == nil then
+    --    log("RemoveOrResetPlayer::Character created")
+    --    player.create_character()
+    --end
     player.teleport({x=0,y=0}, GAME_SURFACE_NAME)
-    player.create_character()           -- make him visible at spawn area
     local player_old_force = player.force
     player.force = global.ocfg.main_force
 
@@ -928,7 +937,11 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
 
     -- Remove the character completely
     if (remove_player) then
-        game.remove_offline_players({player})
+        game.remove_offline_players({player})        
+    end
+    -- this happens if player loses - reset them and show menu
+    if (remove_base and not remove_player) then
+        DisplaySpawnOptions(player)
     end
 end
 
@@ -1287,6 +1300,7 @@ function CreateForce(force_name)
         SetFriendlyBetweenAllForces()
         newForce.friendly_fire = global.ocfg.enable_friendly_fire
         if (global.ocfg.enable_anti_grief) then
+            log("Turning ON anti-grief settings")
             AntiGriefing(newForce)
         end
 

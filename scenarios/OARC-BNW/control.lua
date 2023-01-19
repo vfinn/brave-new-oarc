@@ -135,6 +135,10 @@ script.on_init(function(event)
 
     if (global.ocfg.enable_coin_shop and global.ocfg.enable_chest_sharing) then
         SharedChestInitItems()
+    elseif (global.ocfg.enable_chest_sharing) then
+    -- vf enable item and power sharing without coins
+        log("sharing chests and power !")
+        SharedChestInitItems()
     end
 
     if (global.ocfg.enable_coin_shop and global.ocfg.enable_magic_factories) then
@@ -306,13 +310,13 @@ script.on_event(defines.events.on_player_respawned, function(event)
 end)
 
 script.on_event(defines.events.on_player_left_game, function(event)
-log("on_event::on_player_left_game")
+log("on_event::on_player_left_game - " .. game.players[event.player_index].name)
     ServerWriteFile("player_events", game.players[event.player_index].name .. " left the game." .. "\n")
     local player = game.players[event.player_index]
 
     -- If players leave early, say goodbye.
     if (player and (player.online_time < (global.ocfg.minimum_online_time * TICKS_PER_MINUTE))) then
-        log("Player left early: " .. player.name)
+        log("Player left early - removing: " .. player.name)
         SendBroadcastMsg(player.name .. "'s base was marked for immediate clean up because they left within "..global.ocfg.minimum_online_time.." minutes of joining.")
         RemoveOrResetPlayer(player, true, true, true, true)
     end
@@ -535,43 +539,11 @@ end)
 -- https://lua-api.factorio.com/latest/events.html#on_worker_robot_expired
 function robotdied(event)
     -- game.print("Event: Logistics Robot dies due to lack of energy: " .. event.name .. ", Robot Name:".. event.robot.name)
-    log("Event: Logistics Robot dies due to lack of energy: " .. event.name .. ", Robot Name:".. event.robot.name)
-end
-
-function entitydamaged(event)
-    if (string.contains(event.entity.name, "bnw")) then
- --       game.print("Event: Entity Damaged, Entity name: " .. event.entity.name .. ", Original Dmg: " .. event.original_damage_amount .. ", Final damage: " .. event.final_damage_amount .. ", final health: " ..  event.final_health)
-        log       ("Event: Entity Damaged, Entity name: " .. event.entity.name .. ", Original Dmg: " .. event.original_damage_amount .. ", Final damage: " .. event.final_damage_amount .. ", final health: " ..  event.final_health)
-    end
-end
-
-function somethingdied(eventname, name)
-    -- game.print("Event: " .. eventname .. ", Entity name: " .. name)
-    log("Event ran: " .. eventname .. ", Entity name: " .. name )
-end
-
-function combatrobotdied(event)
-    somethingdied("Combat Robot Expired",event.entity.name, event.robot.name)
-end
-
-function entitydied(event)
-    somethingdied("Entity Died",event.entity.name)
-end
-
-function entitydestroyed(event)
-    somethingdied("Entity Destroyed",event.registration_number)
-end
-
-function scriptdestroyed(event)
-    somethingdied("Script Raised Destroy",event.entity.name)
+    log("Event: Logistics Robot died: " .. event.name .. ", Robot Name:".. event.robot.name)
 end
 
 script.on_event(defines.events.on_worker_robot_expired, robotdied)
-script.on_event(defines.events.on_combat_robot_expired, combatrobotdied)
-script.on_event(defines.events.on_entity_died, entitydied)
-script.on_event(defines.events.on_entity_damaged, entitydamaged)
-script.on_event(defines.events.on_entity_destroyed, entitydestroyed)
-script.on_event(defines.events.script_raised_destroy, scriptdestroyed)
+
 
 -----------------------------------------------------------------------------------------------------------
 -- Start of Brave New World functions
@@ -612,7 +584,7 @@ function inventoryChanged(event)
 
     -- player is only allowed to carry whitelisted items
     -- everything else goes into entity opened or entity beneath mouse cursor
-	log("Clearing inventory")
+	-- log("Clearing inventory")
     local inventory_main = player.get_inventory(defines.inventory.god_main)
     local items = {}
 	if (inventory_main ~= nil) then	-- vf
@@ -674,7 +646,7 @@ function dropItems(player, name, count)
     if count > 0 then
         -- now we're forced to spill items
         entity = entity or global.forces[player.force.name].roboport
-        log("Spilling items for: ".. entity.name .. "for count: ".. count .. "player force: ".. player.force.name)
+        -- log("Spilling items for: ".. entity.name .. "for count: ".. count .. "player force: ".. player.force.name)
         entity.surface.spill_item_stack(entity.position, {name = name, count = count}, false, entity.force, false)
     end
 end
@@ -769,7 +741,7 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function(event)
         for _, alert_type in pairs(surface) do
             for _, alert in pairs(alert_type) do
                 local entity = alert.target
-                if (entity.name == "bnw-homeworld-construction-robot") or (entity.name == "construction-robot") then
+                if (entity.name == "construction-robot") then
                     out_of_storage = true
                     local inventory = entity.get_inventory(defines.inventory.robot_cargo)
                     if inventory then
@@ -793,9 +765,27 @@ script.on_event(defines.events.on_entity_died, function(event)
     end
     local entity = event.entity
     -- check if roboport was destroyed
-    local config = global.forces[entity.force.name]
-    if config and entity == config.roboport then
-        game.set_game_state{game_finished = true, player_won = false, can_continue = false}
+    if entity.name=="roboport-main" then
+        log("Force DIED: " .. entity.force.name)
+        SendBroadcastMsg("Our buddy on force: '" .. entity.force.name ..  "'' Gone like a fart in the wind")        
+        for name,player in pairs(game.connected_players) do
+            log ("player: " .. player.name .. " at " ..GetGPStext(global.spawn[player.index]) .. " Died due to the starting roboport being destroyed.")
+            log ("and entity at " .. GetGPStext(entity.position))
+            if (GetGPStext(global.spawn[player.index]) == GetGPStext(entity.position)) then
+                SendMsg(player.name, "Sorry '" .. player.name .. "' you LOSE! Rejoin if you like")
+    		    log("Kicking Player: " .. player.name .. " force: " .. player.force.name .. " position: " .. GetGPStext(global.spawn[player.index]))
+                RemoveOrResetPlayer(player, false, true, true, true)
+            end
+
+--            if (player.force.name == entity.force.name) then
+--                
+--                SendMsg(player.name, "Sorry " .. player.name .. " you lose - rejoin if you like")
+--    		    log("Kicking Player: " .. player.name .. " force: " .. player.force.name)
+--                RemoveOrResetPlayer(player, false, true, true, true)
+--            end
+        end
+        SendBroadcastMsg("Our buddy on force: '" .. entity.force.name .. "' Died due to the starting roboport being destroyed.")        
+--        game.set_game_state{game_finished = false, player_won = false, can_continue = true, }
     end
 end)
 
@@ -846,14 +836,18 @@ script.on_event(defines.events.on_player_changed_position, function(event)
     global.players[event.player_index].previous_position = player.position
 end)
 
+script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
+    log("events.on_runtime_mod_setting_changed: setting " .. event.setting .. " for: " .. global.players[event.player_index].name .. "type: " .. event.setting_type)
+    -- log("Physical setting changed to: " .. settings.get_player_settings(event.player_index)["bno-bots-resistance-physical"])
+end)
+
 function change_bots()
 local myConBot
 local myLogiBot
 	-- body
 myConBot = util.table.deepcopy(data.raw["construction-robot"]["construction-robot"])
-myConBot.name = "bnw-homeworld-construction-robot"
 myConBot.speed = 0.5
-myConBot.minable = {mining_time = 10, result = "bnw-homeworld-construction-robot"}
+myConBot.minable = {mining_time = 10, result = "construction-robot"}
 myConBot.max_energy = "4MJ"
 myConBot.energy_per_tick = "0.0005kJ"
 myConBot.energy_per_move = "0.2kJ"
@@ -861,8 +855,7 @@ myConBot.destructible = false
 data:extend({myConBot})
 
 myLogiBot = util.table.deepcopy(data.raw["logistic-robot"]["logistic-robot"])
-myLogiBot.name = "bnw-homeworld-logistic-robot"
-myLogiBot.minable = {mining_time = 10, result = "bnw-homeworld-logistic-robot"}
+myLogiBot.minable = {mining_time = 10, result = "logistic-robot"}
 myLogiBot.max_energy = "4MJ"
 myLogiBot.energy_per_tick = "0.0005kJ"
 myLogiBot.energy_per_move = "0.2kJ"

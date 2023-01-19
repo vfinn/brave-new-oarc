@@ -239,16 +239,16 @@ function OarcRegrowthRemoveAllChunks()
             -- If it is FORCE removal, then remove it regardless of pollution.
             if (c_remove.force) then
                 game.surfaces[GAME_SURFACE_NAME].delete_chunk(c_pos)
-log("OarcRegrowthRemoveAllChunks: FORCE removal:" .. c_pos.x .. ", " .. c_pos.y)
+-- log("OarcRegrowthRemoveAllChunks: FORCE removal:" .. c_pos.x .. ", " .. c_pos.y)
 
             -- If it is a normal timeout removal, don't do it if there is pollution in the chunk.
             elseif (game.surfaces[GAME_SURFACE_NAME].get_pollution({c_pos.x*CHUNK_SIZE,c_pos.y*CHUNK_SIZE}) > 0) then   -- 32 32
-log("OarcRegrowthRemoveAllChunks: removal - set to game.tick: " .. game.tick)			
+-- log("OarcRegrowthRemoveAllChunks: removal - set to game.tick: " .. game.tick)			
                 global.rg.map[c_pos.x][c_pos.y] = game.tick
 
             -- Else delete the chunk
             else
-log("OarcRegrowthRemoveAllChunks: removal - delete chunk " .. c_pos.y .. ", " .. c_pos.y)			
+-- log("OarcRegrowthRemoveAllChunks: removal - delete chunk " .. c_pos.y .. ", " .. c_pos.y)			
                 game.surfaces[GAME_SURFACE_NAME].delete_chunk(c_pos)
             end
         end

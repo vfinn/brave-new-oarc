@@ -131,21 +131,12 @@ OARC_MODIFIED_ENEMY_SPAWNING = true
 ------------------------------------------------------------------------------------------------------------------------
 -- Items provided to the player the first time they join
 PLAYER_SPAWN_START_ITEMS = {
-    ["pistol"]=1,
-    ["firearm-magazine"]=200,
-    ["iron-plate"]=100,
-    ["burner-mining-drill"] = 4,
-    ["stone-furnace"] = 4,
-    ["coal"] = 50,
-    ["stone"] = 50,
-
     ["coin"] = 2500, -- Don't give coins unless you have shared chests enabled.
 }
 
 -- Items provided after EVERY respawn (disabled by default)
 PLAYER_RESPAWN_START_ITEMS = {
-    -- ["pistol"]=1,
-    -- ["firearm-magazine"]=100,
+    ["coin"] = 2500, -- Don't give coins unless you have shared chests enabled.
 }
 
 ------------------------------------------------------------------------------------------------------------------------

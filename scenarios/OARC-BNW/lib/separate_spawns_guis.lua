@@ -49,6 +49,8 @@ function DisplayWelcomeTextGui(player)
 
     -- Start with server message.
     AddLabel(wGui, "server_msg_lbl1", global.ocfg.server_rules, my_label_style)
+    
+     
     AddLabel(wGui, "contact_info_msg_lbl1", global.ocfg.server_contact, my_label_style)
     AddSpacer(wGui)
 
@@ -758,6 +760,7 @@ function SpawnCtrlGuiClick(event)
                 GivePlayerStarterItems(joiningPlayer)
                 table.insert(global.ocore.sharedSpawns[player.name].players, joiningPlayer.name)
                 joiningPlayer.force = game.players[player.name].force
+                global.spawn[joiningPlayer.index] = global.spawn[game.players[player.name].index]       -- vf update the global.spawn table, so when one dies, both die
 
                 -- Render some welcoming text...
                 DisplayWelcomeGroundTextAtSpawn(joiningPlayer, global.ocore.sharedSpawns[player.name].position)

@@ -30,7 +30,7 @@ function GameOptionsGuiClick(event)
         if (pIndex ~= 0) then
             local resetPlayer = event.element.parent.ban_players_dropdown.get_item(pIndex)
             if (game.players[resetPlayer]) then
-                RemoveOrResetPlayer(player, false, true, true, true)
+                RemoveOrResetPlayer(game.players[resetPlayer], false, true, true, true)
                 SeparateSpawnsPlayerCreated(resetPlayer, true)
                 log("Resetting " .. resetPlayer)
             end
@@ -132,10 +132,6 @@ function CreateGameOptionsTab(tab_container, player)
     if (global.ocfg.lock_goodies_rocket_launch) then
         game_info_str = game_info_str.."\n".."Some technologies and recipes are locked until you launch a rocket!"
     end
-
-
-
-    AddLabel(tab_container, "game_info_label", game_info_str, my_longer_label_style)
 
     if (global.ocfg.enable_abandoned_base_removal) then
         AddLabel(tab_container, "leave_warning_msg", "If you leave within " .. global.ocfg.minimum_online_time .. " minutes of joining, your base and character will be deleted.", my_longer_label_style)

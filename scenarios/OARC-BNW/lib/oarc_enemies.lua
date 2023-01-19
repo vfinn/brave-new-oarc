@@ -32,7 +32,7 @@ function OarcModifyEnemyGroup(group)
     if ((group.command.type == defines.command.attack) or 
         (group.command.type == defines.command.attack_area) or 
         (group.command.type == defines.command.build_base)) then
-        log("OarcModifyEnemyGroup MODIFYING command TYPE=" .. group.command.type)
+        -- log("OarcModifyEnemyGroup MODIFYING command TYPE=" .. group.command.type)
     else
         log("OarcModifyEnemyGroup ignoring command TYPE=" .. group.command.type)
         return
@@ -108,7 +108,7 @@ function OarcModifyEnemyGroup(group)
             if (global.enable_oe_debug) then
                 SendBroadcastMsg("ERROR?? target_player nil/invalid " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
             end
-            log("OarcModifyEnemyGroup ERROR?? target_player nil/invalid")
+            log("OarcModifyEnemyGroup ERROR?? target_player nil/invalid" .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
             for _,member in pairs(group.members) do
                 member.destroy()
             end
@@ -120,7 +120,8 @@ function OarcModifyEnemyGroup(group)
             if (global.enable_oe_debug) then
                 SendBroadcastMsg("Enemy group released (player): " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position) .. " " .. target_player.name)
             end
-            log("OarcModifyEnemyGroup RELEASING enemy group since player is ONLINE")
+            log("OarcModifyEnemyGroup RELEASING enemy group since player " .. target_player.name .. " is ONLINE, " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
+ --           target_player.print(target_player.name .. " incoming biter group:" .. GetGPStext(group.position))
             return
         end
 
@@ -134,7 +135,8 @@ function OarcModifyEnemyGroup(group)
                 if (global.enable_oe_debug) then
                     SendBroadcastMsg("Enemy group released (shared): " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position) .. " " .. target_player.name)
                 end
-                log("OarcModifyEnemyGroup RELEASING enemy group since someone in the group is ONLINE")
+                log("OarcModifyEnemyGroup RELEASING enemy group since someone in the group " .. target_player.name .. " is ONLINE, " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
+--                target_player.print(target_player.name .. " incoming biter group:" .. GetGPStext(group.position))
                 return
             end
         end
@@ -146,7 +148,8 @@ function OarcModifyEnemyGroup(group)
                 if (global.enable_oe_debug) then
                     SendBroadcastMsg("Enemy group released (buddy): " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position) .. " " .. target_player.name)
                 end
-                log("OarcModifyEnemyGroup RELEASING enemy group since someone in the BUDDY PAIR is ONLINE")
+                log("OarcModifyEnemyGroup RELEASING enemy group since someone in the BUDDY PAIR " .. target_player.name .. " is ONLINE, " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
+--                target_player.print(target_player.name .. " incoming biter group!:" .. GetGPStext(group.position))
                 return
             end
         end
@@ -154,10 +157,11 @@ function OarcModifyEnemyGroup(group)
         -- Otherwise, we delete the group.
         if (global.enable_oe_debug) then
             SendBroadcastMsg("Enemy group deleted: " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position) .. " " .. target_player.name)
+            log("Enemy group deleted: " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position) .. " " .. target_player.name)
         end
         for _,member in pairs(group.members) do
             member.destroy()
         end
-        log("OarcModifyEnemyGroup REMOVED enemy group since nobody was online?")
+        log("OarcModifyEnemyGroup REMOVED enemy group since " .. target_player.name .. " was not online?")
     end
 end
