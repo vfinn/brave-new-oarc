@@ -4,34 +4,6 @@ local myLogiBotItem
 local myLogiBot
 
 
---data.raw["item"]["construction-robot"].place_result="construction-robot"
-
---myConBotItem = util.table.deepcopy(data.raw["item"]["construction-robot"])
---myConBotItem = util.table.deepcopy(data.raw["item"]["construction-robot"])
---myConBotItem.place_result = "construction-robot"
---myConBotItem.max_energy = "1.5MJ"
---myConBotItem.speed_multiplier_when_out_of_energy = 0.2
---myConBotItem.energy_per_tick = "0kJ"
---myConBotItem.energy_per_move = "0kJ"
---myConBotItem.min_to_charge = 0.2
---myConBotItem.max_to_charge = 0.95
---myConBotItem.destructible = false
---data:extend({myConBotItem})
-
---data.raw["item"]["logistic-robot"].place_result = "logistic-robot"
-
---myLogiBotItem = util.table.deepcopy(data.raw["item"]["logistic-robot"])
---myLogiBotItem = util.table.deepcopy(data.raw["item"]["logistic-robot"])
---myLogiBotItem.place_result = "logistic-robot"
---myConBotItem.max_energy = "1.5MJ"
---myConBotItem.speed_multiplier_when_out_of_energy = 0.2
---myConBotItem.energy_per_tick = "0kJ"
---myConBotItem.energy_per_move = "0kJ"
---myConBotItem.min_to_charge = 0.2
---myConBotItem.max_to_charge = 0.95
---myConBotItem.destructible = false
---data:extend({myLogiBotItem})
-
 local speedBotsDbl=settings.startup["bno-starting-bots_speed"].value / 216
 log("Bot speed: " .. speedBotsDbl .. " k/hr")
 -- energy usage: {"normal", "increase storage", "increase range", "increase movement", "increase storage, range & movement"}
@@ -53,16 +25,16 @@ myConBot = util.table.deepcopy(data.raw["construction-robot"]["construction-robo
 myConBot.speed = speedBotsDbl
 myConBot.minable = {mining_time = 10, result = "construction-robot"}
 myConBot.max_energy		 = energyBotsStorage
-myConBot.energy_per_tick = energyBotsRange
-myConBot.energy_per_move = energyBotsMovement
+myConBot.energy_per_tick = energyBotsMovement
+myConBot.energy_per_move = energyBotsRange
 data:extend({myConBot})
 
 myLogiBot = util.table.deepcopy(data.raw["logistic-robot"]["logistic-robot"])
 myLogiBot.speed = speedBotsDbl
 myLogiBot.minable = {mining_time = 10, result = "logistic-robot"}
 myLogiBot.max_energy		= energyBotsStorage
-myLogiBot.energy_per_tick	= energyBotsRange
-myLogiBot.energy_per_move	= energyBotsMovement
+myLogiBot.energy_per_tick	= energyBotsMovement
+myLogiBot.energy_per_move	= energyBotsRange
 data:extend({myLogiBot})
 
 mySpecialRoboport = util.table.deepcopy(data.raw["roboport"]["roboport"])
