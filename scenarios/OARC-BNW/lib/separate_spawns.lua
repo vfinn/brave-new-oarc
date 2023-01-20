@@ -332,6 +332,38 @@ function removeBNWForce(x, y)
     game.surfaces[GAME_SURFACE_NAME].delete_chunk({x = x, y = y})
 end
 
+--[[FUNCTION DEFINITION]]
+--Capture your blueprint with a roboport in it - easier to debug if captured ABSOLUTE on and X,Y at 0,0
+local function build_blueprint_from_string(bp_string, surface, position, force)
+    local bp_entity = surface.create_entity{name='item-on-ground',position=position,stack='blueprint'}
+    local offset= {x=0, y=0}
+    bp_entity.stack.import_stack(bp_string)
+    local bp_entities = bp_entity.stack.get_blueprint_entities()
+    bp_entity.destroy()
+    for _,entity in pairs(util.table.deepcopy(bp_entities)) do
+        if entity.name == "roboport" then 
+            offset= entity.position
+            break;
+        end
+    end
+
+    for _,entity in pairs(util.table.deepcopy(bp_entities)) do
+        if entity.name == "roboport" then 
+--            log("Roboport - NOT BUILDING at " .. entity.position.x .. ", " .. entity.position.y)
+        else
+--            log("building: '" .. entity.name .. "' at " .. entity.position.x - offset.x + position.x .. " , " .. entity.position.y -offset.y + position.y)
+            entity.position = {entity.position.x - offset.x + position.x, entity.position.y -offset.y + position.y}
+            entity.force = force
+            entity.raise_built = true
+            newEntity = surface.create_entity(entity)
+            if entity.name == "accumulator" then 
+                newEntity.energy = 5000000 
+--                log("modified accumulator to have " .. entity.energy)
+            end
+        end
+    end
+end
+
 function setupBNWForce(force, surface, x, y, seablock_enabled)
 log("setupBNWForce: x=" .. x .. ", y=" .. y)
     if not global.forces then
@@ -339,7 +371,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     end
 
 --    if global.forces[force.name] then
-        -- force already exist
+        -- force already existss
 --log("force already exists, exiting")		
 --        return
 --    end
@@ -490,16 +522,9 @@ log("Random oil - " .. xxx .. " : " .. yyy);
     end
     surface.set_tiles(tiles)
 
-    -- place walls
-    for xx = x - 3, x + 2 do
-        surface.create_entity{name = "stone-wall", position = {xx, y - 3}, force = force, raise_built = true}
-        surface.create_entity{name = "stone-wall", position = {xx, y + 5}, force = force, raise_built = true}
-    end
-    for yy = y - 3, y + 5 do
-        surface.create_entity{name = "stone-wall", position = {x - 3, yy}, force = force, raise_built = true}
-        surface.create_entity{name = "stone-wall", position = {x + 2, yy}, force = force, raise_built = true}
-    end
-    -- roboport
+    -- make sure a roboport is captured at center - make sure there is a Roboport!
+    local blueprint = "0eNq1m++OmzoQxd+Fz0llG/8jr3K1qkiWu0UikBJy29Uq735Jtm1SrU88eyQ+rFaJ4MdgnxkP5uSt2Han5jC2/VRs3op2N/THYvPPW3FsX/q6u3w3vR6aYlO0U7MvVkVf7y+fjkNXj+tD3TddcV4Vbf/c/Cw2+vy0Kpp+aqe2ecdcP7x+7U/7bTPOB9wA09A36x91183Qw3CcTxn6y+VmzNpobb+4VfE6nxF89cWdz6sPLCNmmSyrFLPKLMuKWSrLcmKWzrK8lKVilhXErCrLimKWz7IqMStkWVqJYXmxarHylcvDxNJXeblqsfZVPo+0WPwqL1gtVr/KZ5KWyl9VecnqIIblc0lHMUwg2koMy2eTUWJYXrRGi2GC2m/EsLxoTSmG5dPJWDEsL1rjxLB8OhlxBsS8aI04A2I+nYw4A6JAtOIMiPl0KsUZEPMZUDLdT9AAZhiYArAy2dhlmikYmhXT7toDSHNyms/TvJxW5mm3LBjr53rMLU6Qc0uAbnhpj1O7W+++NcdpPTbfT/P/ZsytLlf0qvh1/Nd/224+6b0H/92cf7zGOGyHaSbvhtOl/3fqEtuvw2/6ujwTTONpd7l24pSn1A3dJeF+Fua6q/eH7C0AdVolnbP7RQ2NtdVyWl4B1shpeR1YcR7eFy9Is0TxgjDHwNCMeqZ4lQAWGJgBsEhVQgtotzSod7vT/tTV0zCCh8E/rOSDoBKTVHxM0nKSf0wyVC0FY+Vu2r/UmMMwTqCc/galMTfRt/2xGSWlE2jBOaruoPvz0nGfG+DH4x7kJPOYFOWkjD4rqnKBsfJM24Xqg9cMDGjCU22XA7CSgaExs0St8UnSne5P2+NUX89+XGr83Hv0TfvybTucrm2Hj6m+wHui+KSDDEQ6pUlReLt32fTxdl3ydisiv5JBBiojgO4ClRFAd4HKiABgVEZ4ALPUWo5Cc0R+xSTJE2t5mhSIdEqTIrWWo7GqRIvw/SbgFbUqntux2b0fZFN7xUoIVp8Fa2HbUH0WbD7fj8jAJdWdgBmLliinSSVFR3QnaZInqmeaFKjuBI1VZMonglUMDFS8SjHlE71LobarIoAZphZH8PxYlcwOE6RZZocJ0hxTSSHNCzdS/qqlaEYD2maaJ3isX5osGM1upMAqD64WAl8fIxcZi/mYxWI2i8VcLhazXSxmx+wxwpe9nojzr3YAxhkochSQ42IxV0vFrNVSMWu9WMxmsZjLxWK2THuIliGtHbNrjnGe2TbHOKq/wziqwYPOD6rDQ/NqmBYvakRjejw4bndv5bOPo/pPaGlUKe/9qwyKeQ2CR4x5D4JHjHkREg2iBcLGhmmRMNhhWkVY2SCtVITJDtM0YWfDNEMY7TCtJCxtmGYJsx2mOcIhh2mesMhhWiBsbZgWCccdplWESw7SrCJscpimCZ8cphnCKIdpJeGUwzRLWOUwzRFeOUzzhFkO0wJhcMO0SHjvMK0iLG6Q5hThvsM0TZjcMM0Q/jtMKwmbG6ZZwoGHaVSPdKU9rd5/aLC5+13CqvivGY/X80ycxVyZ4N38p8P5/D/rckbJ"
+    build_blueprint_from_string(blueprint,surface,{x=x, y=y},force)
     local config = global.forces[force.name]
     config.roboport = surface.create_entity{name = "roboport-main", position = {x, y}, force = force, raise_built = true}
     config.roboport.minable = false
@@ -523,14 +548,18 @@ log("Random oil - " .. xxx .. " : " .. yyy);
 
     roboport_inventory = config.roboport.get_inventory(defines.inventory.roboport_material)
     roboport_inventory.insert{name = "repair-pack", count = 10}
-    -- electric pole
-    local electric_pole = surface.create_entity{name = "medium-electric-pole", position = {x + 1, y + 2}, force = force, raise_built = true}
-    -- radar
-    surface.create_entity{name = "radar", position = {x - 1, y + 3}, force = force, raise_built = true}
+    
+    
+--    -- electric pole
+--    local electric_pole = surface.create_entity{name = "medium-electric-pole", position = {x + 1, y + 2}, force = force, raise_built = true}
+--    -- radar
+--    surface.create_entity{name = "radar", position = {x - 1, y + 3}, force = force, raise_built = true}
     -- storage chest
-    local seablock_chest = surface.create_entity{name = "logistic-chest-storage", position = {x + 1, y + 3}, force = force, raise_built = true}
+    surface.create_entity{name = "logistic-chest-storage", position = {x - 1, y + 3}, force = force, raise_built = true}
+    surface.create_entity{name = "logistic-chest-storage", position = {x - 2, y + 3}, force = force, raise_built = true}
+    local seablock_chest = surface.create_entity{name = "logistic-chest-storage", position = {x + 0, y + 3}, force = force, raise_built = true}
     -- storage chest, contains the items the force starts with
-    local chest = surface.create_entity{name = "logistic-chest-storage", position = {x + 1, y + 4}, force = force, raise_built = true}
+    local chest = surface.create_entity{name = "logistic-chest-storage", position = {x + 1, y + 3}, force = force, raise_built = true}
     local chest_inventory = chest.get_inventory(defines.inventory.chest)
     chest_inventory.insert{name = "transport-belt", count = 400}
     chest_inventory.insert{name = "underground-belt", count = 20}
@@ -547,9 +576,9 @@ log("Random oil - " .. xxx .. " : " .. yyy);
     chest_inventory.insert{name = "steam-engine", count = 2}
     chest_inventory.insert{name = "assembling-machine-1", count = 4}
     chest_inventory.insert{name = "roboport", count = 4}
-    chest_inventory.insert{name = "logistic-chest-storage", count = 2}
+    --chest_inventory.insert{name = "logistic-chest-storage", count = 2}
     chest_inventory.insert{name = "logistic-chest-passive-provider", count = 4}
-    chest_inventory.insert{name = "logistic-chest-requester", count = 4}
+    chest_inventory.insert{name = "logistic-chest-requester", count = 3}
     chest_inventory.insert{name = "logistic-chest-buffer", count = 4}
     chest_inventory.insert{name = "logistic-chest-active-provider", count = 4}
     chest_inventory.insert{name = "lab", count = 2}
@@ -574,43 +603,41 @@ log("Random oil - " .. xxx .. " : " .. yyy);
         chest_inventory.insert{name = "electric-mining-drill", count = 4}
     end
     -- solar panels and accumulators (left side)
-    surface.create_entity{name = "solar-panel", position = {x - 11, y - 2}, force = force, raise_built = true}
-    surface.create_entity{name = "solar-panel", position = {x - 11, y + 1}, force = force, raise_built = true}
-    surface.create_entity{name = "solar-panel", position = {x - 11, y + 4}, force = force, raise_built = true}
-    surface.create_entity{name = "solar-panel", position = {x - 8, y + 4}, force = force, raise_built = true}
-    surface.create_entity{name = "solar-panel", position = {x - 5, y - 2}, force = force, raise_built = true}
-    surface.create_entity{name = "solar-panel", position = {x - 5, y + 4}, force = force, raise_built = true}
-    surface.create_entity{name = "medium-electric-pole", position = {x - 7, y}, force = force, raise_built = true}
-    surface.create_entity{name = "small-lamp", position = {x - 6, y}, force = force, raise_built = true}
-    local accumulator = surface.create_entity{name = "accumulator", position = {x - 8, y - 2}, force = force, raise_built = true}
-    accumulator.energy = 5000000
-    accumulator = surface.create_entity{name = "accumulator", position = {x - 8, y}, force = force, raise_built = true}
-    accumulator.energy = 5000000
-    accumulator = surface.create_entity{name = "accumulator", position = {x - 8, y + 2}, force = force, raise_built = true}
-    accumulator.energy = 5000000
-    accumulator = surface.create_entity{name = "accumulator", position = {x - 6, y + 2}, force = force, raise_built = true}
-    accumulator.energy = 5000000
-    accumulator = surface.create_entity{name = "accumulator", position = {x - 4, y + 2}, force = force, raise_built = true}
-    accumulator.energy = 5000000
-    -- solar panels and accumulators (right side)
-    surface.create_entity{name = "solar-panel", position = {x + 4, y - 2}, force = force, raise_built = true}
-    surface.create_entity{name = "solar-panel", position = {x + 4, y + 4}, force = force, raise_built = true}
-    surface.create_entity{name = "solar-panel", position = {x + 7, y + 4}, force = force, raise_built = true}
-    surface.create_entity{name = "solar-panel", position = {x + 10, y - 2}, force = force, raise_built = true}
-    surface.create_entity{name = "solar-panel", position = {x + 10, y + 1}, force = force, raise_built = true}
-    surface.create_entity{name = "solar-panel", position = {x + 10, y + 4}, force = force, raise_built = true}
-    surface.create_entity{name = "medium-electric-pole", position = {x + 6, y}, force = force, raise_built = true}
-    surface.create_entity{name = "small-lamp", position = {x + 5, y}, force = force, raise_built = true}
-    accumulator = surface.create_entity{name = "accumulator", position = {x + 4, y + 2}, force = force, raise_built = true}
-    accumulator.energy = 5000000
-    accumulator = surface.create_entity{name = "accumulator", position = {x + 6, y + 2}, force = force, raise_built = true}
-    accumulator.energy = 5000000
-    accumulator = surface.create_entity{name = "accumulator", position = {x + 8, y - 2}, force = force, raise_built = true}
-    accumulator.energy = 5000000
-    accumulator = surface.create_entity{name = "accumulator", position = {x + 8, y}, force = force, raise_built = true}
-    accumulator.energy = 5000000
-    accumulator = surface.create_entity{name = "accumulator", position = {x + 8, y + 2}, force = force, raise_built = true}
-    accumulator.energy = 5000000
+--    surface.create_entity{name = "solar-panel", position = {x - 11, y - 2}, force = force, raise_built = true}
+--    surface.create_entity{name = "solar-panel", position = {x - 11, y + 1}, force = force, raise_built = true}
+--    surface.create_entity{name = "solar-panel", position = {x - 11, y + 4}, force = force, raise_built = true}
+--    surface.create_entity{name = "solar-panel", position = {x - 8, y + 4}, force = force, raise_built = true}
+--    surface.create_entity{name = "solar-panel", position = {x - 5, y - 2}, force = force, raise_built = true}
+--    surface.create_entity{name = "solar-panel", position = {x - 5, y + 4}, force = force, raise_built = true}
+--    surface.create_entity{name = "medium-electric-pole", position = {x - 7, y}, force = force, raise_built = true}
+--    surface.create_entity{name = "small-lamp", position = {x - 6, y}, force = force, raise_built = true}
+--    local accumulator = surface.create_entity{name = "accumulator", position = {x - 8, y - 2}, force = force, raise_built = true}
+--    accumulator.energy = 5000000
+--    accumulator = surface.create_entity{name = "accumulator", position = {x - 8, y}, force = force, raise_built = true}
+--    accumulator.energy = 0eNq12c2O2jAQAOB38Tms4n+HV6lQFcBiI4UEOUlbhHj3BmgX1HoyY0sc9sBq/WVwZibO7IVt28mfQtONbH1hza7vBrb+dmFDc+jq9va78XzybM2a0R9Zwbr6ePs09G0dVqe68y27Fqzp9v4XW/Nrga6sd7vpOLX12IeXleK6KZjvxmZs/COA+4fz9246bn2Y6eilC3bqh3lN392uNzsrrirzoQt2Zmut1Ye+3kL6xxJ0S2KWpFslZqmnNfadX/2s2zjl3Bcl4pQmh+UsFpYhh2WwsCyZshjlyJTCqIpMaYzi5ZcV6n0dsIiALeecHJJAQxJkS6KWJFsctejpXqJWQr6jZcjJCW8rNDBLDsyihcgdHcNTrKJjHO2oZU57tgDGow+LKKb+UlFI0CGxCEk6VC5CKqcvQ/v0TPrQb/tTH0ag3fxxXFQxOaUDhWTJG2Xd4kY5OmQWoYoOLSaTLHPqBdgnmXOcMSWAifR6qaLQS3eftsNY3xcvlks1H+E63xw+t/0Ubgc36TYxWaUXUDzEl0Z/nNvyqq2PJ6x+KmDfDNkqUSsj8eNf0FHvwVfe/38PZPQeZFRCNESVUwlQ8qr0Zm94FEpv9gCU3uwBiJ70zi1Cz6RvusGH0QfkeHrf7YLtm+B3j79RMdcQXZXoPouh7Q/NMDa71e7TD+NqPk+F+uCxq3AgV1yWq1G3ek+8unxPvJoT75tMu29aEF2R6MqsfZDoPqgsV6CuflO85k3x0h8+brFjaZf8FAOgKvn4FodMmfzQAqCsE5cEJiI5EyQQyxkhgVjGM0dGIZ2eU3HIZLwBg1/PZrwBg5jLOcdAWJU+vDPA27Qt0yduoMXTR26gJdIHZaAl0+d3oKXSJ1ygpdMnb6Bl0qdloGXTp2Wg5dIHXA9rUzym+euXfxsU7IcPw32ZcLclwho9//D5Nfo3Gke7BA==
+--    accumulator = surface.create_entity{name = "accumulator", position = {x - 8, y + 2}, force = force, raise_built = true}
+--    accumulator.energy = 5000000
+--    accumulator = surface.create_entity{name = "accumulator", position = {x - 6, y + 2}, force = force, raise_built = true}
+--    accumulator.energy = 5000000
+--    accumulator = surface.create_entity{name = "accumulator", position = {x - 4, y + 2}, force = force, raise_built = true}
+--    accumulator.energy = 5000000
+--    -- solar panels and accumulators (right side)
+--    surface.create_entity{name = "solar-panel", position = {x + 4, y - 2}, force = force, raise_built = true}
+--    surface.create_entity{name = "solar-panel", position = {x + 4, y + 4}, force = force, raise_built = true}
+--    surface.create_entity{name = "solar-panel", position = {x + 7, y + 4}, force = force, raise_built = true}
+--    surface.create_entity{name = "solar-panel", position = {x + 10, y - 2}, force = force, raise_built = true}
+--    surface.create_entity{name = "solar-panel", position = {x + 10, y + 1}, force = force, raise_built = true}
+--    surface.create_entity{name = "solar-panel", position = {x + 10, y + 4}, force = force, raise_built = true}
+--    surface.create_entity{name = "medium-electric-pole", position = {x + 6, y}, force = force, raise_built = true}
+--    surface.create_entity{name = "small-lamp", position = {x + 5, y}, force = force, raise_built = true}
+--    accumulator = surface.create_entity{name = "accumulator", position = {x + 4, y + 2}, force = force, raise_built = true}
+--    accumulator.energy = 5000000
+--    accumulator = surface.create_entity{name = "accumulator", position = {x + 6, y + 2}, force = force, raise_built = true}
+--    accumulator.energy = 5000000
+--    accumulator = surface.create_entity{name = "accumulator", position = {x + 8, y - 2}, force = force, raise_built = true}
+--    accumulator.energy = 5000000
+--    accumulator = surface.create_entity{name = "accumulator", position = {x + 8, y}, force = force, raise_built = true}
+--    accumulator.energy = 5000000
 end
 
 

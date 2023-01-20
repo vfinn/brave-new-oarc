@@ -1,12 +1,5 @@
 data:extend({
     {
-        type = "bool-setting",
-        name = "fast-robots",     
-        setting_type = "startup",
-        default_value = true,
-        order="bnw-00"
-    },
-    {
         type = "int-setting",
         name = "bno-number-of-silos",     
         setting_type = "startup",
@@ -21,6 +14,23 @@ data:extend({
         setting_type = "startup",
         allowed_values = {"10/5", "50/25", "100/50", "200/100"},
         default_value = "100/50",
+        order="bnw-02"
+    },
+    {
+        type = "int-setting",
+        name = "bno-starting-bots_speed",     
+        setting_type = "startup",
+        minimum_value = 10,
+        maximum_value = 400,
+        default_value = 13,
+        order="bnw-02"
+    },
+    {
+        type = "string-setting",
+        name = "bno-bots_energy",     
+        setting_type = "startup",
+        allowed_values = {"normal", "increase storage", "increase range", "increase movement", "increase all"},
+        default_value = "normal",
         order="bnw-02"
     },
     {

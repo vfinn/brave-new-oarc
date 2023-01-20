@@ -10,7 +10,10 @@ I started with OARC 1.0.1 and BNW 4.11
 
 Brave New Oarc enables you to play Brave New World and OARC together, and best of all - with other players.  I've made alot of changes, 
 
-1/16/2023 - 4.1.6
+1/19/2023 - 4.1.6
+Modified starting area, upgraded starting power from 50Mj to 90Mj and power from 720kW to 1.4MW, Fully charged. Also placed a blue chest with requests for robots.
+The bots will go into chests if you move the roboports.
+
 No more special bots. The problem was that when you choose "fast bots" and you finally get to making bots, you're disappointed at how slow they are. They become a major negative
 towards fun game play.
 
@@ -20,8 +23,22 @@ If the main one dies, you immediately get thrown back to 0,0 location and are ab
 
 Fixed RESTART player so the menu comes up once they go back to 0,0.
 
-Number of starting bots added to your mod settings - you choices: 10/5, 50/25, 100/50, 200/100 for construction/logistic bots
-The max bots in starter roboport are 350, so I think these are good options.  If you choose 10/5 I recommend also clicking on the resistance values to make them "nearly" indestructible.
+Many settings added to the "Mod settings" screen:
+	- number of Silo's' - 1..12
+	- Bots energy use, normal, increase energy storage, increase range, increase movement, increase all
+		Bots consume energy, Fast bots consume more energy. Energy is VERY important in this scenario.
+		Increase storage, increases their max storage from 1.5MJ to 3MJ
+		Increase range, decreases their consumption per tick
+		Increase movement, decreases their consumption while moving
+	- Number of starting bots added to your mod settings - you choices: 10/5, 50/25, 100/50, 200/100 for construction/logistic bots
+	  The max bots in starter roboport are 350, so I think these are good options.  If you choose 10/5 I recommend also clicking on the resistance values to make them "nearly" indestructible.
+	- Bot speed in km/h.  10-400.  Note that the default game starts at 12.9 km/h. So choose 13 if you want to go close to default. Increases in research will speed them up further.
+	- Bridge moat - if you have a moat, do you want biters to access your players?
+	- anti-grief. This basically turns off the ability for someone to delete anything in your base via map view.
+	- TTL for ghost images - default is 30 minutes, options, 10, 30, 60, 120, 240, 360 or use config.lua to define
+	- Item and Energy Sharing - chests and accumulators that enable you to share items and power with EVERYONE.
+	- Base shape - Circle or Octagon
+	- Resitances to make you bots near indestructible !
 
 Verified - buddy spawn to kick all players associated with that base
 
