@@ -370,9 +370,6 @@ function WorldEaterSingleStep()
             for k,v in pairs(entities) do
                 -- don't destroy the bots because they have no last-user
                 if (v.last_user or (v.type == "character") or string.contains(v.type, "robot")) then
---                    if (string.contains(v.type, "robot")) then
---                        log("GOT IT !  We would have deleted a : " .. v.type)
---                    end
                     has_last_user_set = true
                     return -- This means we're done checking this chunk.
                 end

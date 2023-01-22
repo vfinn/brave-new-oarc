@@ -10,7 +10,12 @@ I started with OARC 1.0.1 and BNW 4.11
 
 Brave New Oarc enables you to play Brave New World and OARC together, and best of all - with other players.  I've made alot of changes, 
 
-x/xx/2023 - 4.1.7
+1/21/2023 - 4.1.8
+Bug fix. This only impacted game play if you wanted to see the contents of the yellow logistic storage chests at center, or if you deleted them. There is actually an invisible chest over the normal chest there. This is the only fix for 4.1.8
+
+1/19/2023 - 4.1.7
+Well I broke the bots. Their power consumption was way too high because I reversed their energy use per tick and their energy use per move. Hell the bots were coming out of the roboport to recharge. 
+Glad none had heart attacks. FIXED !
 
 1/19/2023 - 4.1.6
 Modified starting area, upgraded starting power from 50Mj to 90Mj and power from 720kW to 1.4MW, Fully charged. Also placed a blue chest with requests for robots.
