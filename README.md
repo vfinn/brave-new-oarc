@@ -10,8 +10,19 @@ I started with OARC 1.0.1 and BNW 4.11
 
 Brave New Oarc enables you to play Brave New World and OARC together, and best of all - with other players.  I've made alot of changes, 
 x/xx/2023 - 4.1.9
-Modifying graphics - so the main roboport looks different.
+Modifying graphics - so the main roboport looks different and is larger.
 Expanded main roboport to have 16 charge slots.
+Logistics network and construction radius doubled.
+Icon fixed, removing confusion over duplicate Roboport icons.
+Previously selecting the "other" roboport icon that looked the same placed a roboport, 
+but if you used this icon for logistics it didn't limit roboports, because it 
+was actually roboport-main.  Main area changed again. This is now visible as an icon if 
+for example you selected it from the group of entities in the game for the toolbar. 
+But you can not place it or copy it.
+Main Roboport has 16 robots charging at no extra cost other than the spike that occurs when 16 bots charge.
+Image:  https://imgur.com/svxypzR
+If I make this bigger roboport researchable, it will retain the larger logistics and use area, but may increase in energy consumption. Everything will be settable via the 
+mod settings. This mod is all about energy.
 
 1/21/2023 - 4.1.8
 Bug fix. This only impacted game play if you wanted to see the contents of the yellow logistic storage chests at center, or if you deleted them. There is actually an invisible chest over the normal chest there. This is the only fix for 4.1.8
