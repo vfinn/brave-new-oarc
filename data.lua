@@ -1,3 +1,9 @@
+-- entities
+require("prototypes.entity.roboport-main")
+
+-- items
+require("prototypes.item")
+
 local myConBotItem
 local myConBot
 local myLogiBotItem
@@ -37,13 +43,14 @@ myLogiBot.energy_per_tick	= energyBotsMovement
 myLogiBot.energy_per_move	= energyBotsRange
 data:extend({myLogiBot})
 
-mySpecialRoboport = util.table.deepcopy(data.raw["roboport"]["roboport"])
-mySpecialRoboport.name = "roboport-main"
-mySpecialRoboport.is_military_target=true
-data:extend({mySpecialRoboport})
+--mySpecialRoboport = util.table.deepcopy(data.raw["roboport"]["roboport"])
+--mySpecialRoboport.name = "roboport-main"
+--mySpecialRoboport.is_military_target=true
+--data:extend({mySpecialRoboport})
 
 myLogiRoboportItem = util.table.deepcopy(data.raw["item"]["roboport"])
 myLogiRoboportItem.name="roboport-main"
-myLogiRoboportItem.place_result = "roboport"
+myLogiRoboportItem.place_result = "roboport-main"
+myLogiRoboportItem.icon = "__brave-new-oarc__/graphics/icons/roboport-main.png"
 data:extend({myLogiRoboportItem})
 

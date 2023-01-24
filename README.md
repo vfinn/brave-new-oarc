@@ -9,6 +9,9 @@ Since Brave New World is ideally single player and OARC is the best multiplayer 
 I started with OARC 1.0.1 and BNW 4.11
 
 Brave New Oarc enables you to play Brave New World and OARC together, and best of all - with other players.  I've made alot of changes, 
+x/xx/2023 - 4.1.9
+Modifying graphics - so the main roboport looks different.
+Expanded main roboport to have 16 charge slots.
 
 1/21/2023 - 4.1.8
 Bug fix. This only impacted game play if you wanted to see the contents of the yellow logistic storage chests at center, or if you deleted them. There is actually an invisible chest over the normal chest there. This is the only fix for 4.1.8
