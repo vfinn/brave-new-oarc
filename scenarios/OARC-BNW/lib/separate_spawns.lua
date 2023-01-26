@@ -349,17 +349,18 @@ local function build_blueprint_from_string(bp_string, surface, position, force)
     end
 
     for _,entity in pairs(util.table.deepcopy(bp_entities)) do
-        if entity.name == "roboport" then 
---            log("Roboport - NOT BUILDING at " .. entity.position.x .. ", " .. entity.position.y)
+        -- common mistake is to leave the 4 yellow chests in the blueprint, this causes serious problems, if they are there - ignore them
+        if ((entity.name == "roboport") or (entity.name == "logistic-chest-storage")) then 
+--            log(entity.name .. " - NOT BUILDING at " .. entity.position.x .. ", " .. entity.position.y)
         else
---            log("building: '" .. entity.name .. "' at " .. entity.position.x - offset.x + position.x .. " , " .. entity.position.y -offset.y + position.y)
+--          log("building: '" .. entity.name .. "' at " .. entity.position.x - offset.x + position.x .. " , " .. entity.position.y -offset.y + position.y)
             entity.position = {entity.position.x - offset.x + position.x, entity.position.y -offset.y + position.y}
             entity.force = force
             entity.raise_built = true
             newEntity = surface.create_entity(entity)
             if entity.name == "accumulator" then 
                 newEntity.energy = 5000000 
---                log("modified accumulator to have " .. entity.energy)
+--              log("modified accumulator to have " .. entity.energy)
             end
         end
     end
@@ -526,8 +527,15 @@ log("Random oil - " .. xxx .. " : " .. yyy);
     -- Blueprint rules:
     --      make sure a roboport is captured at center !
     --      make sure there are NO yellow chests in this blueprint
-    local blueprint = "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"
+    local blueprint=""
+--    if global.ocfg.starting_base == "small roboport" then
+        -- 1.4 MW, 100 MJ storage
+--        blueprint = "0eNqdmtFu2zgQRf9Fz3YhUiSH9K8UQSC72lSALLmSvNsg8L9XirN1gHI0c/sQBAmsY2p0OKR5/VYcu2tzGdt+Lg5vRXsa+qk4fH0rpvalr7v1f/PrpSkORTs352JX9PV5/WsaunrcX+q+6Yrbrmj7b83P4mBuT7ui6ed2bps75v2P1+f+ej424/KCB2Ae+mb/X911C/QyTMslQ7++3YLZJ/vF74rX4lDRF3+77f7gWCWnEjiVklMKHKfkGIHjdZwYBU5QcpLAISUnCJyo5JDASUqOEzimVIK8BFIaHSWjjVLpKCltlE5HyWmjlDpKUhul1SRZbZRak6S1UXpNktdGKTZJYhul2SSZbZVmk2S2VZpNYq9Wmk2S2VZpNklmW6XZJJltlWYHyWyrNDtIZlul2UEy2yrNDpLZVml2kMyulGYHyezKZLcxW8t1YkjwPoQDVSgoMiCnvLfHFoIbkteSvEQKWpKVSA+7x/pbPW72fo4RlaMh8b4eZnfDSzvN7Wl/+t5M835sflyX3824uRSs2F3x8drnf9puueC+a/5/O/0nfxyOw7xQT8N13bH7ch3Xx8sfMq67+Hm8ntb3zVzylNvBfppd50W+fVefL5vDZwx02tlF0tN2VkkK0jN3lZYUJJJDuxkH8iiIq3dAu5mzDInAJuQMA4ooqGRACe1m3L35h9716XQ9X7t6HsbsR5kPTpZitBS3RbFait2iPJxeZ/hlGOdsO7wjqizCKQdCm0V5mNz2UzMKbY971j5oB7NZW9JSNmsb0c7DepfQzsORQgk2DG52BoOCmCcW0N2PqxgQuvtha/SpO1+P01y/X81Pcresv33Tvnw/Dtf3pTek3NoYPDjtXXZwAZz2eQqBczZPieBky1OSrtxkuXK7XLkJNp3ximDTGa/IwmusZ0iw6hzIoSDHgDy8xnJDCuAaG7IUAidbnhLByZanJC2l3KBE7d5jHTRPMeDEz1MsOPHzlApcZfMUB6+yjHnRw6ssRwpoy+BAhIKY+Rkj3HuYTwoxoS2DO4UvUVBgQAbuPcy9JYueVrCkCj2tYEmOOx9YqjbWL83WqTxbe49Dfx+ss9DwF9AkQQk9aGELGf9ieCQNL6HnFNzwTFnCjYxFGbiTsSiLdiA2LKtQUuBI8K4lcSSPktg6BXCRT3kMgas8g4lordkKoQfvbIW0aenv2N6XHMmAT40nWTC650kVGN7zJAfG9zzJgwE+TwpghM+TCAzxeVIEY3yelMAcnyVpc9MoOq4NTqPouDY5jaLj2ug0io6rs1PRcW14SqLj2vSURMe18SmJjmvzUxId1waoJDquTVBJdLwyYKbPkywY6vOkCkz1eZIDY32e5MFcnycFMNjnSQQm+zwJ3avwpARm+3fS0+7+tcTDp28x7op/m3F6v8ZG4yhZCn75MXS7/QKW+w3c"
+--    else
+        -- 1.1 MW, 120 MJ storage - large roboport
+        blueprint = "0eNqdmttu2zAMQP9Fz0lhUjc7vzIUhZN6mQHHznzZVhT599lJ2xSbaJJ9KNoU8QktHUq0mFezb6bq3NftaHavpj507WB2317NUB/bsln+N76cK7Mz9VidzMa05Wl5NXRN2W/PZVs15rIxdftc/TE7uGzYK8vDYTpNTTl2/acr8fK4MVU71mNd3QK4vnh5aqfTvupn9P2jx66ttr/Lppmh526YL+na5eNmzNbBg9+YF7Oz8cFflnD+4aCQkzEcK+PYguE4ISdnOF7IiQwnCDmB4UQhxzOcXMhxDKcQcizDgUwIQg4kNNpyRoNQacspDUKnkXMahFIjJzUIrUbOahBqjZzWIPQaOa9BKDZyYoPQbOTMRqHZyJmNQrORXauFZiNnNgrNBs5sFJoNnNkoNBs4s1FoNnBmo9Bs4MxGodnAmY1Cs4Ez2wrNBs5sq65CCgKEWlBOgGyyJFsrRKiQnJQUOJKXkixHClJSxpHudvflc9mvbiIU4y520x3rYawP28OPahi3ffVzmn9X/epOsGA35u29T9/rZr7gVuu+l8//8/tu340z9dBNS4XusyWu95r54+1L1T7202H53MQlj6mb+ZRcp1m+bVOezqvhEwa6TDhHyM22AymJm22HQhJwc+6k+XVfzSiS0y5CFMhrQdTMBeUitPyRBMXk013qqerGwSQl14aTEeEUwnCWhCbD8ZmUEtYoIKW4NYrU54+HBYfEY+Ld52WdOHf9mFwKbxCbRNxFrtuh6pllj5olL90lPupN8p6CcIxxTT8vlRhWrcmllFVrpAbDmjVBW/ZQ+R1ACyLmPGjLHmcJkFWuOC5JcdpwCAODV6446XCCcsVJUz7V8dN+GMvrlfSC4+aapK3q4499N13LkZCn6oWQy7CYUdiYxBbKrEvec8yUWZemgDLr0hTUJgvheLRaEGFnVGvuCZBXZl1IUtRlhyPCicqsS4eTK7MuTSmU+3ySkmfqfZ6YqhzUuytFQuXumr4zq8zzNMUp8zxN8co8T1OCNj2pAY5aEJEPubqAps7cC+2hgiMeMYpMG1IgQKA9nSBDQu3pBEmy2tMJkuSok4V51PryWK0dnlOzWPgvQAMHDV+ARg4avwD1HDTXnkuQs1NozyUoEmSZ9mCCRoH2ZIJGqUsWsjmmrlkCRVIXLQVF8loSOU7iB823TaxIY6R1C4ZVTK4da3KECi2JGiHQrvc+o0igbNTTJFS26mmSVTbraZJTtutpklc27GlSULbsaVJUNu1pUq5s29OkQtm3J0nSPqllHZc2Si3ruLhTyjoubZUi67i0V4qs49JmKbKOS7ulyDoubZci67i0X4qs49KGKbKOSzumyDoubZki67i0Zwqs49Yqu/g0ySnb+DTJK/v4NCkoG/k0KSo7+TQpV7byaZK2VrmRHje3ryHuPn3fcWN+Vf1wvQZzcLHAGPz8A/Fy+QvyGhwj"
+--    end
+
         
     build_blueprint_from_string(blueprint,surface,{x=x, y=y},force)
     local config = global.forces[force.name]
@@ -575,7 +583,7 @@ log("Random oil - " .. xxx .. " : " .. yyy);
     chest_inventory.insert{name = "boiler", count = 1}
     chest_inventory.insert{name = "steam-engine", count = 2}
     chest_inventory.insert{name = "assembling-machine-1", count = 4}
-    chest_inventory.insert{name = "roboport", count = 4}
+    -- chest_inventory.insert{name = "roboport", count = 4}
     --chest_inventory.insert{name = "logistic-chest-storage", count = 2}
     chest_inventory.insert{name = "logistic-chest-passive-provider", count = 4}
     chest_inventory.insert{name = "logistic-chest-requester", count = 3}

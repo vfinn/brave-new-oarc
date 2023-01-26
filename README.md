@@ -21,8 +21,9 @@ for example you selected it from the group of entities in the game for the toolb
 But you can not place it or copy it.
 Main Roboport has 16 robots charging at no extra cost other than the spike that occurs when 16 bots charge.
 Image:  https://imgur.com/svxypzR
-If I make this bigger roboport researchable, it will retain the larger logistics and use area, but may increase in energy consumption. Everything will be settable via the 
-mod settings. This mod is all about energy.
+
+I've decided that not locking Spidertron until a missile is launched is going to add to more fun. You NEED a spidertron to setup remote bases, disconnected from your main base. 
+You may need a spidertron if you don't want to kreep roboports to the silo. You can bring construction bots, deploy and setup a train line without a logistics line using Spidertron.
 
 1/21/2023 - 4.1.8
 Bug fix. This only impacted game play if you wanted to see the contents of the yellow logistic storage chests at center, or if you deleted them. There is actually an invisible chest over the normal chest there. This is the only fix for 4.1.8

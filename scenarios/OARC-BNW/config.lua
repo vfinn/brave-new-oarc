@@ -33,6 +33,7 @@ DISCORD_INV = "https://discord.gg/RjxsUfkJzj"
 ------------------------------------------------------------------------------------------------------------------------
 BRAVE_NEW_OARC_MASHUP = true
 
+ENABLE_LARGE_ROBOPORT = true
 -- This allows 2 players to spawn next to each other in the wilderness, each with their own starting point. It adds more
 -- GUI selection options.
 ENABLE_BUDDY_SPAWN = true
@@ -94,7 +95,7 @@ ENABLE_FORCE_LAB_PROD_BONUS = false
 -- Each team/force must launch their own rocket to unlock this!
 LOCK_GOODIES_UNTIL_ROCKET_LAUNCH = true
 LOCKED_TECHNOLOGIES = {
-    {t="atomic-bomb"},{t="power-armor-mk2"},{t="artillery"},{t="spidertron"}
+    {t="atomic-bomb"},{t="artillery"}
 }
 LOCKED_RECIPES = {
     {r="productivity-module-3"},{r="speed-module-3"},{r="roboport-main"}
