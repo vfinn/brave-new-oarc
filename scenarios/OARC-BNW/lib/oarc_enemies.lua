@@ -81,7 +81,9 @@ function OarcModifyEnemyGroup(group)
                     member.destroy()
                 end
             else
-                log("OarcModifyEnemyGroup find_nearest_enemy did not find anything!")
+                if (global.enable_oe_debug) then
+                    log("OarcModifyEnemyGroup find_nearest_enemy did not find anything!")
+                end
             end
             return
         end

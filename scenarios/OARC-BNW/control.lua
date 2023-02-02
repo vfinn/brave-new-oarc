@@ -620,7 +620,9 @@ end
 function dropItems(entity, player, name, count)
 --    local entity = player.opened or player.selected
     local inserted = 0
-    log("dropItems- player: ".. player.name .. ", name: " .. name .. " count: " .. count)
+    if (global.enable_oe_debug) then
+        log("dropItems- player: ".. player.name .. ", name: " .. name .. " count: " .. count)
+    end
     if entity and entity.insert then
         -- in case picking up items from a limited chest, unset limit, insert, then set limit again
         for _, inventory_id in pairs(defines.inventory) do
@@ -655,7 +657,9 @@ function dropItems(entity, player, name, count)
         if entity then
             if entity.valid then                    
                 if (entity.name ~= "entity-ghost") then
-                    log("dropItems: Spilling items for: ".. entity.name .. ", type: " .. entity.type .. ", at " .. GetGPStext(entity.position) .. ", entity force: ".. entity.force.name)
+                    if (global.enable_oe_debug) then
+                        log("dropItems: Spilling items for: ".. entity.name .. ", type: " .. entity.type .. ", at " .. GetGPStext(entity.position) .. ", entity force: ".. entity.force.name)
+                    end
                     entity.surface.spill_item_stack(entity.position, {name = name, count = count}, false, entity.force, false)
                 end
             end
