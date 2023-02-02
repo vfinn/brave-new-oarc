@@ -107,8 +107,8 @@ function OarcModifyEnemyGroup(group)
         if ((target_player == nil) or (not target_player.valid)) then
             if (global.enable_oe_debug) then
                 SendBroadcastMsg("ERROR?? target_player nil/invalid " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
+                log("OarcModifyEnemyGroup ERROR?? target_player nil/invalid" .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
             end
-            log("OarcModifyEnemyGroup ERROR?? target_player nil/invalid" .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
             for _,member in pairs(group.members) do
                 member.destroy()
             end
@@ -119,8 +119,8 @@ function OarcModifyEnemyGroup(group)
         if (target_player.connected) then
             if (global.enable_oe_debug) then
                 SendBroadcastMsg("Enemy group released (player): " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position) .. " " .. target_player.name)
+                log("OarcModifyEnemyGroup RELEASING enemy group since player " .. target_player.name .. " is ONLINE, " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
             end
-            log("OarcModifyEnemyGroup RELEASING enemy group since player " .. target_player.name .. " is ONLINE, " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
  --           target_player.print(target_player.name .. " incoming biter group:" .. GetGPStext(group.position))
             return
         end
@@ -134,8 +134,8 @@ function OarcModifyEnemyGroup(group)
             if (GetOnlinePlayersAtSharedSpawn(sharedSpawnOwnerName) > 0) then
                 if (global.enable_oe_debug) then
                     SendBroadcastMsg("Enemy group released (shared): " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position) .. " " .. target_player.name)
+                    log("OarcModifyEnemyGroup RELEASING enemy group since someone in the group " .. target_player.name .. " is ONLINE, " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
                 end
-                log("OarcModifyEnemyGroup RELEASING enemy group since someone in the group " .. target_player.name .. " is ONLINE, " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
 --                target_player.print(target_player.name .. " incoming biter group:" .. GetGPStext(group.position))
                 return
             end
@@ -147,8 +147,8 @@ function OarcModifyEnemyGroup(group)
             if (game.players[buddyName].connected or (GetOnlinePlayersAtSharedSpawn(buddyName) > 0)) then
                 if (global.enable_oe_debug) then
                     SendBroadcastMsg("Enemy group released (buddy): " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position) .. " " .. target_player.name)
+                    log("OarcModifyEnemyGroup RELEASING enemy group since someone in the BUDDY PAIR " .. target_player.name .. " is ONLINE, " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
                 end
-                log("OarcModifyEnemyGroup RELEASING enemy group since someone in the BUDDY PAIR " .. target_player.name .. " is ONLINE, " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
 --                target_player.print(target_player.name .. " incoming biter group!:" .. GetGPStext(group.position))
                 return
             end

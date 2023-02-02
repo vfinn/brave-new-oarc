@@ -11,7 +11,7 @@ local myLogiBot
 
 
 local speedBotsDbl=settings.startup["bno-starting-bots_speed"].value / 216
-log("Bot speed: " .. speedBotsDbl .. " k/hr")
+log("Bot speed: " .. speedBotsDbl .. " which is " .. speedBotsDbl*216 .. " km/hr")
 -- energy usage: {"normal", "increase storage", "increase range", "increase movement", "increase storage, range & movement"}
 local energyBotStr=settings.startup["bno-bots_energy"].value
 local energyBotsStorage  = "1.5MJ"

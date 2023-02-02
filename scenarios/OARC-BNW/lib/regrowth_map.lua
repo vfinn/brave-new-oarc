@@ -228,6 +228,22 @@ function RegrowthSingleStepArray()
     end
 end
 
+
+-- This will keep tanks/spidertrons from being deleted while out exploring in chunks that are marked for deletion
+-- Check if a chunk has any non enemy/neutral entities in it. (Ideally this should only return true if there is some
+-- player owned/created entity in it.)
+---@param chunk_pos MapPosition   
+function CheckChunkHasStuff(chunk_pos)
+    local chunk_area = GetAreaFromChunkPos(chunk_pos)
+    local entities = game.surfaces[GAME_SURFACE_NAME].find_entities_filtered{area=chunk_area,
+                                                                            force={"enemy", "neutral"},
+                                                                            invert=true}
+    if (#entities > 0) then
+        return true
+    end
+
+    return false
+end
 -- Remove all chunks at same time to reduce impact to FPS/UPS
 function OarcRegrowthRemoveAllChunks()
     for key,c_remove in pairs(global.rg.removal_list) do
@@ -246,6 +262,9 @@ function OarcRegrowthRemoveAllChunks()
 -- log("OarcRegrowthRemoveAllChunks: removal - set to game.tick: " .. game.tick)			
                 global.rg.map[c_pos.x][c_pos.y] = game.tick
 
+                -- Entity check? Not sure how costly this is...
+            elseif (CheckChunkHasStuff(c_pos)) then
+                global.rg.map[c_pos.x][c_pos.y] = game.tick            
             -- Else delete the chunk
             else
 -- log("OarcRegrowthRemoveAllChunks: removal - delete chunk " .. c_pos.y .. ", " .. c_pos.y)			

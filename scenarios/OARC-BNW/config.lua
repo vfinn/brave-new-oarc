@@ -98,7 +98,7 @@ LOCKED_TECHNOLOGIES = {
     {t="atomic-bomb"},{t="artillery"}
 }
 LOCKED_RECIPES = {
-    {r="productivity-module-3"},{r="speed-module-3"},{r="roboport-main"}
+    {r="productivity-module-3"},{r="speed-module-3"}
 }
 
 -- Give cheaty items on start.

@@ -1,4 +1,4 @@
-// vf lots of 32's replaced with , also 31's with CHUNK_SIZE-1 and 16 with /2
+-- vf lots of 32's replaced with , also 31's with CHUNK_SIZE-1 and 16 with /2
 local function RemoveTileGhosts()
     local surface = game.player.surface
     for c in surface.get_chunks() do

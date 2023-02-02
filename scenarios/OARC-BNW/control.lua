@@ -358,6 +358,7 @@ end)
 
 script.on_event(defines.events.on_sector_scanned, function (event)   
     if global.disableRegrowthWhileWaitingToRemoveAllChunks then
+        -- this regrowth can cause a player's space that just quit, and marked for deletion, to not be deleted
         log("Ah hah !  Regrowth event while waiting to remove chunks - ignore!")
     else
 	    if global.ocfg.enable_regrowth  then
@@ -602,7 +603,7 @@ function inventoryChanged(event)
 				end
 			end
 		end
-	end	-- vf
+	end
     global.players[event.player_index].inventory_items = items
 
     local entity = player.selected or player.opened
@@ -610,15 +611,16 @@ function inventoryChanged(event)
         local allowed = itemCountAllowed(name, item.count, player)
         local to_remove = item.count - allowed
         if to_remove > 0 then
-            dropItems(player, name, to_remove)
+            dropItems(entity, player, name, to_remove)
             player.remove_item{name = name, count = to_remove}
         end
     end
 end
 
-function dropItems(player, name, count)
-    local entity = player.opened or player.selected
+function dropItems(entity, player, name, count)
+--    local entity = player.opened or player.selected
     local inserted = 0
+    log("dropItems- player: ".. player.name .. ", name: " .. name .. " count: " .. count)
     if entity and entity.insert then
         -- in case picking up items from a limited chest, unset limit, insert, then set limit again
         for _, inventory_id in pairs(defines.inventory) do
@@ -646,8 +648,18 @@ function dropItems(player, name, count)
     if count > 0 then
         -- now we're forced to spill items
         entity = entity or global.forces[player.force.name].roboport
-        -- log("Spilling items for: ".. entity.name .. "for count: ".. count .. "player force: ".. player.force.name)
-        entity.surface.spill_item_stack(entity.position, {name = name, count = count}, false, entity.force, false)
+        -- if we're in a vehicle and you ran over stone - don't dump - cause it can cause a crash
+--        if (player.driving and player.vehicle.name=="tank" and name == "stone") then
+--            log("don't spill stone while in a tank")
+--        else
+        if entity then
+            if entity.valid then                    
+                if (entity.name ~= "entity-ghost") then
+                    log("dropItems: Spilling items for: ".. entity.name .. ", type: " .. entity.type .. ", at " .. GetGPStext(entity.position) .. ", entity force: ".. entity.force.name)
+                    entity.surface.spill_item_stack(entity.position, {name = name, count = count}, false, entity.force, false)
+                end
+            end
+        end
     end
 end
 
@@ -725,7 +737,8 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function(event)
         local allowed = itemCountAllowed(cursor.name, cursor.count, player)
         local to_remove = cursor.count - allowed
         if to_remove > 0 then
-            dropItems(player, cursor.name, to_remove)
+            local entity = player.opened or player.selected
+            dropItems(entity, player, cursor.name, to_remove)
             if allowed > 0 then
                 cursor.count = allowed
             else
@@ -863,4 +876,3 @@ myLogiBot.speed = 0.5
 myLogiBot.destructible = false
 data:extend({myLogiBot})
 end
-
