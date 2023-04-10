@@ -1,4 +1,23 @@
 ---------------------------------------------------------------------------------------------------
+4/10/2023 - 4.2.01
+Fixed collision box of Main Mega Roboport - so you can place items directly next to it
+Removed excessive logging, which should improve performance
+Changed spacing of in base oil deposits so that one storage tank will fit between two dericks with no space
+Moat water is 8 tiles, increased to 12. The spitter range is 15, at an angle this may keep spitters from attacking items(pumps),
+in the base. This normally occurs when there is a moat bridge.
+
+I noticed power on the Mega Roboport - can drop to zero very rapidly when alot of bots are charging. Quadrupling:
+input flow limit, buffer capacity & energy_usage. The MegaRoboport is fully charged at the start of the game, a normal roboport
+Since your bots will fly to your team mates base to charge - if your power goes to zero, I added a boiler and steam engine, as an option
+pickable at start of the map, by the map host. This will power bots all night and is removeable. BUT if you remove the water pump - you can not place it 
+again - it is a waterless waterpump.
+
+Increased bot storage from 8 slots to 10 in the Mega Roboport.
+Leaving player name in their base after the Welcome disappears.
+Made it configurable by the game host to enable the player to choose whether there is a moat bridge, or to make them play via the choice of the host.
+I add three dots of oil at a random location outside of main base. It is spawned with a random amount of richness. I have increased the minimum richness.
+Slightly risky here - I tested but didn't take the time for a full test - I added auto removal of miners after they deplete the resource.
+---------------------------------------------------------------------------------------------------
 2/1/2023 - 4.2.00
 Bug fixes - some also pushed back into Oarc and BNW.
 Deletion of Vehicles spider/tank/jeep outside of pollution zone fixed
@@ -6,7 +25,10 @@ Crash in dropItems fixed
 Crash on launch of rocket - fixed
 Less logging - save on lag
 Regrowth works - leave it ON in the default config.lua file, no other regrowth mods needed
-
+Added option for 250/500 of logistic/construction bots at the start of a map
+Moved Speed Module 3 and Production Module 3 into locked entities, awaiting a missile launch. 
+I was told it was confusing to see that a L3 module was available, but was not selectable, one user thought this was a bug. 
+Now it will unlock and you'll have to research to obtain these modules.
 ---------------------------------------------------------------------------------------------------
 1/26/2023 4.1.9
 Modifying graphics - so the main roboport looks different and is larger.

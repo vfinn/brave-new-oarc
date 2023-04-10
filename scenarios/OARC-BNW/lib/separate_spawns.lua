@@ -415,7 +415,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
         local xx = x + math.random(16, 32) * (math.random(1, 2) == 1 and 1 or -1)
         local yy = y + math.random(16, 32) * (math.random(1, 2) == 1 and 1 or -1)
         local tiles = {}
-        surface.create_entity{name = "crude-oil", amount = math.random(900000, 2500000), position = {xx, yy}, force=force, raise_built = true}
+        surface.create_entity{name = "crude-oil", amount = math.random(1800000, 2500000), position = {xx, yy}, force=force, raise_built = true}
         for xxx = xx - 2, xx + 2 do
             for yyy = yy - 2, yy + 2 do
                 local tile = surface.get_tile(xxx, yyy)
@@ -439,7 +439,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
                 tiles[#tiles + 1] = {name = name, position = {xxxx, yyyy}}
             end
         end
-        surface.create_entity{name = "crude-oil", amount = math.random(900000, 2500000), position = {xxx, yyy}, force=force, raise_built = true}
+        surface.create_entity{name = "crude-oil", amount = math.random(1800000, 2500000), position = {xxx, yyy}, force=force, raise_built = true}
         xxx = xx + math.random(-8, 8)
         yyy = yy + math.random(4, 8)
         for xxxx = xxx - 2, xxx + 2 do
@@ -452,7 +452,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
                 tiles[#tiles + 1] = {name = name, position = {xxxx, yyyy}}
             end
         end
-        surface.create_entity{name = "crude-oil", amount = math.random(900000, 2500000), position = {xxx, yyy}, force=force, raise_built = true}
+        surface.create_entity{name = "crude-oil", amount = math.random(1800000, 2500000), position = {xxx, yyy}, force=force, raise_built = true}
         surface.set_tiles(tiles)
     end
 	-- vf - We always need oil within reach on every map or you can't get outside main, so let's drop a few a small distance away randomly
@@ -533,7 +533,13 @@ log("Random oil - " .. xxx .. " : " .. yyy);
 --        blueprint = "0eNqdmtFu2zgQRf9Fz3YhUiSH9K8UQSC72lSALLmSvNsg8L9XirN1gHI0c/sQBAmsY2p0OKR5/VYcu2tzGdt+Lg5vRXsa+qk4fH0rpvalr7v1f/PrpSkORTs352JX9PV5/WsaunrcX+q+6Yrbrmj7b83P4mBuT7ui6ed2bps75v2P1+f+ej424/KCB2Ae+mb/X911C/QyTMslQ7++3YLZJ/vF74rX4lDRF3+77f7gWCWnEjiVklMKHKfkGIHjdZwYBU5QcpLAISUnCJyo5JDASUqOEzimVIK8BFIaHSWjjVLpKCltlE5HyWmjlDpKUhul1SRZbZRak6S1UXpNktdGKTZJYhul2SSZbZVmk2S2VZpNYq9Wmk2S2VZpNklmW6XZJJltlWYHyWyrNDtIZlul2UEy2yrNDpLZVml2kMyulGYHyezKZLcxW8t1YkjwPoQDVSgoMiCnvLfHFoIbkteSvEQKWpKVSA+7x/pbPW72fo4RlaMh8b4eZnfDSzvN7Wl/+t5M835sflyX3824uRSs2F3x8drnf9puueC+a/5/O/0nfxyOw7xQT8N13bH7ch3Xx8sfMq67+Hm8ntb3zVzylNvBfppd50W+fVefL5vDZwx02tlF0tN2VkkK0jN3lZYUJJJDuxkH8iiIq3dAu5mzDInAJuQMA4ooqGRACe1m3L35h9716XQ9X7t6HsbsR5kPTpZitBS3RbFait2iPJxeZ/hlGOdsO7wjqizCKQdCm0V5mNz2UzMKbY971j5oB7NZW9JSNmsb0c7DepfQzsORQgk2DG52BoOCmCcW0N2PqxgQuvtha/SpO1+P01y/X81Pcresv33Tvnw/Dtf3pTek3NoYPDjtXXZwAZz2eQqBczZPieBky1OSrtxkuXK7XLkJNp3ximDTGa/IwmusZ0iw6hzIoSDHgDy8xnJDCuAaG7IUAidbnhLByZanJC2l3KBE7d5jHTRPMeDEz1MsOPHzlApcZfMUB6+yjHnRw6ssRwpoy+BAhIKY+Rkj3HuYTwoxoS2DO4UvUVBgQAbuPcy9JYueVrCkCj2tYEmOOx9YqjbWL83WqTxbe49Dfx+ss9DwF9AkQQk9aGELGf9ieCQNL6HnFNzwTFnCjYxFGbiTsSiLdiA2LKtQUuBI8K4lcSSPktg6BXCRT3kMgas8g4lordkKoQfvbIW0aenv2N6XHMmAT40nWTC650kVGN7zJAfG9zzJgwE+TwpghM+TCAzxeVIEY3yelMAcnyVpc9MoOq4NTqPouDY5jaLj2ug0io6rs1PRcW14SqLj2vSURMe18SmJjmvzUxId1waoJDquTVBJdLwyYKbPkywY6vOkCkz1eZIDY32e5MFcnycFMNjnSQQm+zwJ3avwpARm+3fS0+7+tcTDp28x7op/m3F6v8ZG4yhZCn75MXS7/QKW+w3c"
 --    else
         -- 1.1 MW, 120 MJ storage - large roboport
-        blueprint = "0eNqdmttu2zAMQP9Fz0lhUjc7vzIUhZN6mQHHznzZVhT599lJ2xSbaJJ9KNoU8QktHUq0mFezb6bq3NftaHavpj507WB2317NUB/bsln+N76cK7Mz9VidzMa05Wl5NXRN2W/PZVs15rIxdftc/TE7uGzYK8vDYTpNTTl2/acr8fK4MVU71mNd3QK4vnh5aqfTvupn9P2jx66ttr/Lppmh526YL+na5eNmzNbBg9+YF7Oz8cFflnD+4aCQkzEcK+PYguE4ISdnOF7IiQwnCDmB4UQhxzOcXMhxDKcQcizDgUwIQg4kNNpyRoNQacspDUKnkXMahFIjJzUIrUbOahBqjZzWIPQaOa9BKDZyYoPQbOTMRqHZyJmNQrORXauFZiNnNgrNBs5sFJoNnNkoNBs4s1FoNnBmo9Bs4MxGodnAmY1Cs4Ez2wrNBs5sq65CCgKEWlBOgGyyJFsrRKiQnJQUOJKXkixHClJSxpHudvflc9mvbiIU4y520x3rYawP28OPahi3ffVzmn9X/epOsGA35u29T9/rZr7gVuu+l8//8/tu340z9dBNS4XusyWu95r54+1L1T7202H53MQlj6mb+ZRcp1m+bVOezqvhEwa6TDhHyM22AymJm22HQhJwc+6k+XVfzSiS0y5CFMhrQdTMBeUitPyRBMXk013qqerGwSQl14aTEeEUwnCWhCbD8ZmUEtYoIKW4NYrU54+HBYfEY+Ld52WdOHf9mFwKbxCbRNxFrtuh6pllj5olL90lPupN8p6CcIxxTT8vlRhWrcmllFVrpAbDmjVBW/ZQ+R1ACyLmPGjLHmcJkFWuOC5JcdpwCAODV6446XCCcsVJUz7V8dN+GMvrlfSC4+aapK3q4499N13LkZCn6oWQy7CYUdiYxBbKrEvec8yUWZemgDLr0hTUJgvheLRaEGFnVGvuCZBXZl1IUtRlhyPCicqsS4eTK7MuTSmU+3ySkmfqfZ6YqhzUuytFQuXumr4zq8zzNMUp8zxN8co8T1OCNj2pAY5aEJEPubqAps7cC+2hgiMeMYpMG1IgQKA9nSBDQu3pBEmy2tMJkuSok4V51PryWK0dnlOzWPgvQAMHDV+ARg4avwD1HDTXnkuQs1NozyUoEmSZ9mCCRoH2ZIJGqUsWsjmmrlkCRVIXLQVF8loSOU7iB823TaxIY6R1C4ZVTK4da3KECi2JGiHQrvc+o0igbNTTJFS26mmSVTbraZJTtutpklc27GlSULbsaVJUNu1pUq5s29OkQtm3J0nSPqllHZc2Si3ruLhTyjoubZUi67i0V4qs49JmKbKOS7ulyDoubZci67i0X4qs49KGKbKOSzumyDoubZki67i0Zwqs49Yqu/g0ySnb+DTJK/v4NCkoG/k0KSo7+TQpV7byaZK2VrmRHje3ryHuPn3fcWN+Vf1wvQZzcLHAGPz8A/Fy+QvyGhwj"
+        if (settings.startup["bno-main-area-design-boiler-n-steam-engines"].value == "solar only") then
+--          solar only
+            blueprint = "0eNqdmttu2zAMQP9Fz0lhUjc7vzIUhZN6mQHHznzZVhT599lJ2xSbaJJ9KNoU8QktHUq0mFezb6bq3NftaHavpj507WB2317NUB/bsln+N76cK7Mz9VidzMa05Wl5NXRN2W/PZVs15rIxdftc/TE7uGzYK8vDYTpNTTl2/acr8fK4MVU71mNd3QK4vnh5aqfTvupn9P2jx66ttr/Lppmh526YL+na5eNmzNbBg9+YF7Oz8cFflnD+4aCQkzEcK+PYguE4ISdnOF7IiQwnCDmB4UQhxzOcXMhxDKcQcizDgUwIQg4kNNpyRoNQacspDUKnkXMahFIjJzUIrUbOahBqjZzWIPQaOa9BKDZyYoPQbOTMRqHZyJmNQrORXauFZiNnNgrNBs5sFJoNnNkoNBs4s1FoNnBmo9Bs4MxGodnAmY1Cs4Ez2wrNBs5sq65CCgKEWlBOgGyyJFsrRKiQnJQUOJKXkixHClJSxpHudvflc9mvbiIU4y520x3rYawP28OPahi3ffVzmn9X/epOsGA35u29T9/rZr7gVuu+l8//8/tu340z9dBNS4XusyWu95r54+1L1T7202H53MQlj6mb+ZRcp1m+bVOezqvhEwa6TDhHyM22AymJm22HQhJwc+6k+XVfzSiS0y5CFMhrQdTMBeUitPyRBMXk013qqerGwSQl14aTEeEUwnCWhCbD8ZmUEtYoIKW4NYrU54+HBYfEY+Ld52WdOHf9mFwKbxCbRNxFrtuh6pllj5olL90lPupN8p6CcIxxTT8vlRhWrcmllFVrpAbDmjVBW/ZQ+R1ACyLmPGjLHmcJkFWuOC5JcdpwCAODV6446XCCcsVJUz7V8dN+GMvrlfSC4+aapK3q4499N13LkZCn6oWQy7CYUdiYxBbKrEvec8yUWZemgDLr0hTUJgvheLRaEGFnVGvuCZBXZl1IUtRlhyPCicqsS4eTK7MuTSmU+3ySkmfqfZ6YqhzUuytFQuXumr4zq8zzNMUp8zxN8co8T1OCNj2pAY5aEJEPubqAps7cC+2hgiMeMYpMG1IgQKA9nSBDQu3pBEmy2tMJkuSok4V51PryWK0dnlOzWPgvQAMHDV+ARg4avwD1HDTXnkuQs1NozyUoEmSZ9mCCRoH2ZIJGqUsWsjmmrlkCRVIXLQVF8loSOU7iB823TaxIY6R1C4ZVTK4da3KECi2JGiHQrvc+o0igbNTTJFS26mmSVTbraZJTtutpklc27GlSULbsaVJUNu1pUq5s29OkQtm3J0nSPqllHZc2Si3ruLhTyjoubZUi67i0V4qs49JmKbKOS7ulyDoubZci67i0X4qs49KGKbKOSzumyDoubZki67i0Zwqs49Yqu/g0ySnb+DTJK/v4NCkoG/k0KSo7+TQpV7byaZK2VrmRHje3ryHuPn3fcWN+Vf1wvQZzcLHAGPz8A/Fy+QvyGhwj"
+        else
+--      adding the boiler to existing solar - water pump over land - not water
+            blueprint = "0eNqdmt2OozgQRt+F6zDCv5i8yqo1IrQ7jUQgS2BnW628+0AyEzK7/uyqvmqlBQdjn7ILuz6zQzf789j2U7b/zNpm6C/Z/q/P7NIe+7pb/zd9nH22z9rJn7Jd1ten9ddl6OoxP9e977LrLmv7V/9vthfXXfLOumnm09zV0zA+3SmvL7vM91M7tf7egNuPj+/9fDr4cUFvj56G3uc/6q5boOfhstwy9OvjFkxu9Dezyz6yffXNXNfW/AcjiRgZxygiRsUxmogp4hhDxIg4xtIw2sUxJRFTxTGOiLFxTEXElHGMKIichH+C6LE2CQ5RZJ0QWRBN1gmTBVFlnVBZEF3WCZcFUWaVkFkQbVYJmwVRZ5XQWRB9VgmfJdFnlZpPiT6rhM+S6LNK+CyJPquEz5Los0r4LIk+q4TPkuizTPgsiT7LhM+S6LNM+CyJPsuEz4ros0x4qLh5hhAAJLmgAoBUMOmK5CywSZpIeizNkGSoJJsiWSpJpUib2WP9Wo+xxQcyNqu74dheprbJm3d/mfLR/z0vf/0YW0Nu2F3269rvb2233HDPZn8nyP/nj8NhmBZqM8xrDm6KtV2/s+LH5WtePo1zsz43cMtL6GWeQuu0yJd39ekcbT4wUBfEMVKp0daCSkqNtpZUUmrMNTW+HlMQJGnmHARBhgtCI2e5k5ACoJILkgDkgh+CoU+nO0cHKRWVIiIUUxAp6+MwRVApZYxC9fnxgSE0+BjcfF7nifMwTsGp8A4JIzaR2/7ix9S0B8baUFeJR3II38kS+1jFrDEllRK1hmqwjFpDNVjGrLHcrAfFtxVcEBhzy057DAApLgi4YzVzxrFBimHOOGGKZc44YcrTZDwfLlN9uxNPOHbJSXrfHt8Pw3xLR6wL5QvW0bBKIWwZxFbMqAu+c1kwoy5MEcyoC1MkN1iA46XigoDjpeYGSwlAhguyAGSZUeeClJIZdWGKY0ZdmFIx1/kgxRXsdR4MlRPs1RWRJHN1Db+ZYsZ5mKKZcR6mGGachymWG56og0suCESVc9zwRJvrFRfkwPZ6wd2dkOBbpRLc3QlIktzdCUhS3N0JSNJoZ2Hp/7E++tgeNxrFynwBWqSglg/dPgUQtPwCtEpBHXdfAo5Oxd2XQCRRFNyNCYwS3J0JjGKnLPAcjJ2zOETiJi1SIBI3a8H9RE7Qxa8mhTHkL80qinHMvsY9VHFJqIeoB6FbX0tEEsyzeEySzON4TNrsHt7eLu/D6PPzHNw23Zqlbru+r+3om/sFNojWzFN63MhN93N79lGGQgzLLD3ArSmZZQOY5JiVA5hUMYsHIIl6TvqoH8AkwawgwCTJrCHAJMWsIsAkzawjwCTDrCTAJMusJcCkkllNgEmOWU+ASRWzogCSqGenKuk49fRUJR2nHp+qpONKMSsLMEkzawswyTCrCzDJMusLMKlkVhhgkmPWGGBSxawygCRdMOsMMIm7VY5Jm+OHoe18ZGNrhf2ZY8gg8dl1X59y3x/b3kfXKyJZk8mSSd5i4TCPvR/zyJnTlnRZUtKl7VcO9Lc80dIP9Juh7pLH+D+G4XW7aPlYvL6sha+3Ctn9UynuLvtnedC905zQZSVLa42zzl2vPwGpqvS4"
+        end
 --    end
 
         
@@ -541,7 +547,7 @@ log("Random oil - " .. xxx .. " : " .. yyy);
     local config = global.forces[force.name]
     config.roboport = surface.create_entity{name = "roboport-main", position = {x, y}, force = force, raise_built = true}
     config.roboport.minable = false
-    config.roboport.energy = 100000000    
+    config.roboport.energy = 400000000    
     local roboport_inventory = config.roboport.get_inventory(defines.inventory.roboport_robot)
     -- start with 100/50 construction/logistic bots
 
@@ -555,6 +561,8 @@ log("Random oil - " .. xxx .. " : " .. yyy);
         numLogisticBots=50
     elseif (global.ocfg.starting_bot_count == "200/100") then
         numLogisticBots=100
+    elseif (global.ocfg.starting_bot_count == "500/250") then
+        numLogisticBots=250
     end
     roboport_inventory.insert{name = "construction-robot", count = numLogisticBots*2}
     roboport_inventory.insert{name = "logistic-robot", count = numLogisticBots}
@@ -586,7 +594,11 @@ log("Random oil - " .. xxx .. " : " .. yyy);
     -- chest_inventory.insert{name = "roboport", count = 4}
     --chest_inventory.insert{name = "logistic-chest-storage", count = 2}
     chest_inventory.insert{name = "logistic-chest-passive-provider", count = 4}
-    chest_inventory.insert{name = "logistic-chest-requester", count = 3}
+    if (settings.startup["bno-main-area-design-boiler-n-steam-engines"].value == "solar only") then
+        chest_inventory.insert{name = "logistic-chest-requester", count = 3}
+    else
+        chest_inventory.insert{name = "logistic-chest-requester", count = 2}
+    end
     chest_inventory.insert{name = "logistic-chest-buffer", count = 4}
     chest_inventory.insert{name = "logistic-chest-active-provider", count = 4}
     chest_inventory.insert{name = "lab", count = 2}
@@ -638,7 +650,7 @@ function DisplayWelcomeGroundTextAtSpawn(player, pos)
                         color=tcolor,
                         scale=20,
                         font="compi",
-                        time_to_live=ttl,
+                        -- time_to_live=ttl,
                         -- players={player},
                         draw_on_ground=true,
                         orientation=0,
@@ -715,20 +727,20 @@ function SetupAndClearSpawnAreas(surface, chunkArea)
                 elseif (global.ocfg.spawn_config.gen_settings.tree_octagon) then
                     CreateCropOctagon(surface, spawn.pos, chunkArea, global.ocfg.spawn_config.gen_settings.land_area_tiles, fill_tile)
                 end
-                if (global.ocfg.spawn_config.gen_settings.moat_choice_enabled) then
-                    if (spawn.moat) then
-                        -- allowed_values = {"yes", "no", "use config.lua setting"}
-                        local moat_bridge_enabled=global.ocfg.spawn_config.gen_settings.moat_bridging
-                        if (settings.startup["bno-moat-bridge"].value ~= "use config.lua setting") then
-                            moat_bridge_enabled = settings.startup["bno-moat-bridge"].value == "yes"
-                        end
-                        CreateMoat(surface,
-                            spawn.pos,
-                            chunkArea,
-                            global.ocfg.spawn_config.gen_settings.land_area_tiles,
-                            "water",
-                            moat_bridge_enabled)
+
+                if (spawn.moat) then
+                    -- allowed_values = {"yes", "no", "use config.lua setting"}
+                    local moat_bridge_enabled=global.ocfg.spawn_config.gen_settings.moat_bridging
+                    if (settings.startup["bno-moat-bridge"].value ~= "use config.lua setting") then
+                        moat_bridge_enabled = settings.startup["bno-moat-bridge"].value == "yes"
                     end
+
+                    CreateMoat(surface,
+                        spawn.pos,
+                        chunkArea,
+                        global.ocfg.spawn_config.gen_settings.land_area_tiles,
+                        "water",
+                        moat_bridge_enabled)
                 end
             end
         end

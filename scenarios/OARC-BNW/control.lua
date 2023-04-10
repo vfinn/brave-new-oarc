@@ -650,12 +650,9 @@ function dropItems(entity, player, name, count)
     if count > 0 then
         -- now we're forced to spill items
         entity = entity or global.forces[player.force.name].roboport
-        -- if we're in a vehicle and you ran over stone - don't dump - cause it can cause a crash
---        if (player.driving and player.vehicle.name=="tank" and name == "stone") then
---            log("don't spill stone while in a tank")
---        else
         if entity then
-            if entity.valid then                    
+            if entity.valid then  
+                -- This was causing crashes in dropItems if a ghost entity forced a drop, a thank running over stone, or dropping a ghost on stone could do this                  
                 if (entity.name ~= "entity-ghost") then
                     if (global.enable_oe_debug) then
                         log("dropItems: Spilling items for: ".. entity.name .. ", type: " .. entity.type .. ", at " .. GetGPStext(entity.position) .. ", entity force: ".. entity.force.name)

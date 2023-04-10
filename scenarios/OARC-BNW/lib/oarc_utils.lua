@@ -677,8 +677,8 @@ end
 
 -- Get area given chunk
 function GetAreaFromChunkPos(chunk_pos)
-    log("chunk_position, top left = " .. chunk_pos.x*CHUNK_SIZE .. ", " .. chunk_pos.y*CHUNK_SIZE)
-    log("chunk_position, bot right= " .. chunk_pos.x*CHUNK_SIZE+(CHUNK_SIZE-1) .. ", " .. chunk_pos.y*CHUNK_SIZE+(CHUNK_SIZE-1))
+--    log("chunk_position, top left = " .. chunk_pos.x*CHUNK_SIZE .. ", " .. chunk_pos.y*CHUNK_SIZE)
+--    log("chunk_position, bot right= " .. chunk_pos.x*CHUNK_SIZE+(CHUNK_SIZE-1) .. ", " .. chunk_pos.y*CHUNK_SIZE+(CHUNK_SIZE-1))
     return {left_top={x=chunk_pos.x*CHUNK_SIZE, y=chunk_pos.y*CHUNK_SIZE},
             right_bottom={x=chunk_pos.x*CHUNK_SIZE+(CHUNK_SIZE-1), y=chunk_pos.y*CHUNK_SIZE+(CHUNK_SIZE-1)}}
 end

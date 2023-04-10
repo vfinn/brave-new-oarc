@@ -159,11 +159,11 @@ function OarcModifyEnemyGroup(group)
         -- Otherwise, we delete the group.
         if (global.enable_oe_debug) then
             SendBroadcastMsg("Enemy group deleted: " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position) .. " " .. target_player.name)
-            log("Enemy group deleted: " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position) .. " " .. target_player.name)
+            log("Enemy group deleted: " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position) .. " " .. target_player.name .. " player not online")
         end
         for _,member in pairs(group.members) do
             member.destroy()
         end
-        log("OarcModifyEnemyGroup REMOVED enemy group since " .. target_player.name .. " was not online?")
+--        log("OarcModifyEnemyGroup REMOVED enemy group since " .. target_player.name .. " was not online?")
     end
 end

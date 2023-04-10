@@ -12,7 +12,7 @@ data:extend({
         type = "string-setting",
         name = "bno-num-starting-bots",     
         setting_type = "startup",
-        allowed_values = {"10/5", "50/25", "100/50", "200/100"},
+        allowed_values = {"10/5", "50/25", "100/50", "200/100", "250/500"},
         default_value = "100/50",
         order="bnw-02"
     },
@@ -39,7 +39,7 @@ data:extend({
         setting_type = "startup",
         allowed_values = {"yes", "no", "use config.lua setting"},
         default_value = "use config.lua setting",
-        order="bnw-03"
+        order="bnw-03a"
     },
     {
         type = "string-setting",
@@ -74,6 +74,14 @@ data:extend({
         order="bnw-09"
     },    
     {
+       type = "string-setting",
+        name = "bno-main-area-design-boiler-n-steam-engines",     
+        setting_type = "startup",
+        allowed_values = {"solar only", "solar plus boiler and steam engines"},
+        default_value = "solar only",
+        order="bnw-10"
+    },
+    {
         type = "bool-setting",
         name = "bno-bots-resistance-acid",     
         setting_type = "startup",
@@ -100,15 +108,5 @@ data:extend({
         setting_type = "startup",
         default_value = false,
         order="bnw-93"
-    },
---  {
---       type = "bool-setting",
---        name = "bno-test",     
---
---
---        setting_type = "runtime-global",
---        default_value = false,
---        order="bnw-99"
---    }
-
+    }
 })

@@ -26,12 +26,12 @@ roboportmain.logistics_radius = roboportmain.logistics_radius * 2
 roboportmain.construction_radius = roboportmain.construction_radius * 2
 
 -- quadruple charging capacities
--- roboportmain.energy_source.input_flow_limit = tostring(util.parse_energy(roboportmain.energy_source.input_flow_limit)*60*4) .. "W"
--- roboportmain.energy_source.buffer_capacity = tostring(util.parse_energy(roboportmain.energy_source.buffer_capacity)*4) .. "J"
--- roboportmain.energy_usage = tostring(util.parse_energy(roboportmain.energy_usage)*60*4) .. "W"
--- roboportmain.charging_energy = "1MW"
+roboportmain.energy_source.input_flow_limit = tostring(util.parse_energy(roboportmain.energy_source.input_flow_limit)*60*4) .. "W"
+roboportmain.energy_source.buffer_capacity = tostring(util.parse_energy(roboportmain.energy_source.buffer_capacity)*4) .. "J"
+roboportmain.energy_usage = tostring(util.parse_energy(roboportmain.energy_usage)*60*4) .. "W"
+roboportmain.charging_energy = "1MW"
 
-roboportmain.robot_slots_count = 8
+roboportmain.robot_slots_count = 10
 roboportmain.material_slots_count = 8
 roboportmain.charging_offsets = {
 	{-1.5, 1.5}, {-0.5, 1.5}, { 0.5, 1.5}, { 1.5, 1.5},
@@ -45,8 +45,8 @@ roboportmain.charging_offsets = {
 roboportmain.base.layers[1].filename =						"__brave-new-oarc__/graphics/entity/roboport-main/roboport-main-base.png"
 roboportmain.base.layers[1].hr_version.filename =			"__brave-new-oarc__/graphics/entity/roboport-main/hr-roboport-main-base.png"
 log ("Using large roboport with 16 charging ports")
-roboportmain.collision_box = {{-3.65, -1.9}, {2.65, 3.65}}
-roboportmain.selection_box = {{-3.65, -1.9}, {2.65, 3.65}}
+roboportmain.collision_box = {{-2.85, -1.9}, {2.75, 3.65}}
+roboportmain.selection_box = {{-2.85, -1.9}, {2.75, 3.65}}
 roboportmain.base.layers[1].shift = util.by_pixel(-8, 40)		
 roboportmain.base.layers[1].hr_version.shift = util.by_pixel(-8, 40)		-- this is main base
 roboportmain.base.layers[1].hr_version.scale = .9

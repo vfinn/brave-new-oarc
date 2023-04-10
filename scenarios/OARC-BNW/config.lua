@@ -14,9 +14,8 @@
 WELCOME_MSG_TITLE = "Welcome to Brave New Oarc"
 WELCOME_MSG = "I hope you enjoy this mash up of OARC and Brave New World" -- Printed to player on join as well.
 SERVER_MSG = "This is OARC but with bots only, and only special items can be put into your inventory.\n" ..
-        "boxes in your base contain enough items for you to get started.\n" ..
-        "I HIGHLY recommend you get power first. Note you can put wood in a chest and feed your power plant to get started.\n" ..
-        "I usually put all four electric drills on coal to get started.\n\nIf your starting roboport DIES, you will immediately be teleported back to the starting location, your base removed, and allowed to start over!\n"
+        "boxes in your base contain enough items for you to get started.\n\n" ..
+        "If your starting roboport DIES, you will immediately be teleported back to the starting location, your base removed, and allowed to start over!\n"
 
 SCENARIO_INFO_MSG = "Latest updates in this scenario version:\n"..
 "No attacks on your base while you are offline!\n"..
@@ -24,7 +23,7 @@ SCENARIO_INFO_MSG = "Latest updates in this scenario version:\n"..
 "You can be on the main team or your own. All teams are friendly.\n"..
 "If you leave in the first 15 minutes, your base and character will be deleted!"
 
-CONTACT_MSG = "Contact: SteamID:JustGoFly | Vinnie@JustGoFly.com | Discord:JustGoFly#8949"
+CONTACT_MSG = "Contact: SteamID:JustGoFly | Discord:JustGoFly#8949"
 DISCORD_INV = "https://discord.gg/RjxsUfkJzj"
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -56,7 +55,7 @@ ENABLE_LONGREACH = false
 ENABLE_AUTOFILL = false
 
 -- Enable auto decon of miners (My miner decon is very simplistic, if you are using a similar mod disable this!)
-ENABLE_MINER_AUTODECON = false
+ENABLE_MINER_AUTODECON = true
 
 -- Enable Playerlist
 ENABLE_PLAYER_LIST = true
@@ -95,7 +94,7 @@ ENABLE_FORCE_LAB_PROD_BONUS = false
 -- Each team/force must launch their own rocket to unlock this!
 LOCK_GOODIES_UNTIL_ROCKET_LAUNCH = true
 LOCKED_TECHNOLOGIES = {
-    {t="atomic-bomb"},{t="artillery"}
+    {t="atomic-bomb"},{t="artillery"},{t="productivity-module-3"},{t="speed-module-3"}
 }
 LOCKED_RECIPES = {
     {r="productivity-module-3"},{r="speed-module-3"}
@@ -185,7 +184,7 @@ OARC_CFG = {
         moat_bridging = true, 
 
         -- If you change the spawn area size, you might have to adjust this as well
-        moat_size_modifier = 1,
+        moat_size_modifier = 1.5,     -- 1 is 8 spaces, spitters range is 15, this would need to be DOUBLED to keep spitters from hitting pumps jgf
 
         -- Start resource shape. true = circle, false = square.
         resources_circle_shape = false,
@@ -325,7 +324,7 @@ OARC_CFG = {
             amount = 900000,		-- vf previously 900000
             x_offset_start = -4,
             y_offset_start = 48,
-            x_offset_next = 7,
+            x_offset_next = 6,
             y_offset_next = 0
         }
     },

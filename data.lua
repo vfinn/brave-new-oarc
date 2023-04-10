@@ -26,7 +26,7 @@ elseif (energyBotStr == "increase all")   then
 	energyBotsMovement	= "0.025kJ"
 end
 
-log ("Energy settings: Storage(" .. energyBotsStorage .. "), Range(" .. energyBotsRange .. ", Movement(" .. energyBotsMovement .. ")" )
+log ("Energy settings: Storage(" .. energyBotsStorage .. "), Range(" .. energyBotsRange .. "), Movement(" .. energyBotsMovement .. ")" )
 myConBot = util.table.deepcopy(data.raw["construction-robot"]["construction-robot"])
 myConBot.speed = speedBotsDbl
 myConBot.minable = {mining_time = 10, result = "construction-robot"}
