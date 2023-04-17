@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+x/xx/2023 - 4.2.02
+bug introdcuded into 4.2.01 - I locked the recipe and technology for productivity-module-3 behind a rocket launch. Well you
+can't research a` silo without proctivity-module-3's !  Fixed
+---------------------------------------------------------------------------------------------------
 4/10/2023 - 4.2.01
 Fixed collision box of Main Mega Roboport - so you can place items directly next to it
 Removed excessive logging, which should improve performance

@@ -94,7 +94,7 @@ ENABLE_FORCE_LAB_PROD_BONUS = false
 -- Each team/force must launch their own rocket to unlock this!
 LOCK_GOODIES_UNTIL_ROCKET_LAUNCH = true
 LOCKED_TECHNOLOGIES = {
-    {t="atomic-bomb"},{t="artillery"},{t="productivity-module-3"},{t="speed-module-3"}
+    {t="atomic-bomb"},{t="artillery"},{t="speed-module-3"}
 }
 LOCKED_RECIPES = {
     {r="productivity-module-3"},{r="speed-module-3"}
