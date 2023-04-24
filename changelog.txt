@@ -1,7 +1,13 @@
 ---------------------------------------------------------------------------------------------------
-x/xx/2023 - 4.2.02
-bug introdcuded into 4.2.01 - I locked the recipe and technology for productivity-module-3 behind a rocket launch. Well you
-can't research a` silo without proctivity-module-3's !  Fixed
+4/24/2023 - 4.2.02
+-bug introduced into 4.2.01 - I locked the recipe and technology for productivity-module-3 behind a rocket launch. Well you
+ couldn't research a silo without proctivity-module-3's !  Fixed
+-added ability for each player to restart themselves at any time - no warning that they are going to lose their base - yet, be careful
+ I'll put a limit to the number of restarts. Note the 15 minute timer starts from the time you initially start, so 15 minutes of restarts and you may be stuck with the last base
+ I will try to warn you with the number of restarts you have left - for now there is no limit
+-moved the pump for easy start where you get a free boiler and two pumps, and chest to not run out of power too early. 
+ The pump was close to walls and could mistakenly be removed by removing the walls.
+-admins can remove offline players
 ---------------------------------------------------------------------------------------------------
 4/10/2023 - 4.2.01
 Fixed collision box of Main Mega Roboport - so you can place items directly next to it
