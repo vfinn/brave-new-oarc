@@ -936,7 +936,7 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
 
     -- If this player is staying in the game, lets make sure we don't delete them along with the map chunks being
     -- cleared.
-    log("RemoveOrResetPlayer:: teleport to 0,0")
+    log("RemoveOrResetPlayer:: " .. player.name .. "teleport to 0,0")
     -- this causing crash
     --if player.character == nil then
     --    log("RemoveOrResetPlayer::Character created")
@@ -964,7 +964,8 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
     if (remove_player) then
         game.remove_offline_players({player})        
     end
-    -- this happens if player loses - reset them and show menu
+
+    -- this happens if player loses or they choose to reset themselves - reset them and show menu
     if (remove_base and not remove_player) then
         DisplaySpawnOptions(player)
     end

@@ -91,6 +91,8 @@ function InitOarcConfig()
     global.ocfg.enable_friendly_fire = ENABLE_FRIENDLY_FIRE
 
     global.ocfg.enable_server_write_files = ENABLE_SERVER_WRITE_FILES
+    global.ocfg.warn_biter_attack = setGlobalSetting("bno-biter-swarm-attack", true, false)
+    global.ocfg.warn_biter_setting = {}
 
 
     -----------------------
@@ -116,6 +118,7 @@ function InitOarcConfig()
 end
 
 -- Set a value either based on MOD settings or config.lua
+-- only use isBool true if field returns "yes" and needs conversion to boolean
 function setGlobalSetting(settings_startup_name, default_val, isBool)
     isBool = isBool or false    -- set default to false
     local tmpVal = default_val

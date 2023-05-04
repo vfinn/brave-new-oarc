@@ -27,7 +27,6 @@ function OarcModifyEnemyGroup(group)
         log("OarcModifyEnemyGroup ignoring INVALID group/command")
         return
     end
-
     -- Make sure the attack is of a TYPE that we care about.
     if ((group.command.type == defines.command.attack) or 
         (group.command.type == defines.command.attack_area) or 
@@ -47,7 +46,6 @@ function OarcModifyEnemyGroup(group)
     -- defines.command.build_base --> destination --> closest enemy (expansion chunk distance?)
     else
         local destination = group.command.destination
-
         local distance = CHUNK_SIZE*3
         if (group.command.type == defines.command.build_base) then
             distance = CHUNK_SIZE*(game.map_settings.enemy_expansion.max_expansion_distance)
@@ -123,7 +121,7 @@ function OarcModifyEnemyGroup(group)
                 SendBroadcastMsg("Enemy group released (player): " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position) .. " " .. target_player.name)
                 log("OarcModifyEnemyGroup RELEASING enemy group since player " .. target_player.name .. " is ONLINE, " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
             end
- --           target_player.print(target_player.name .. " incoming biter group:" .. GetGPStext(group.position))
+            configureSwarmPing(target_player, group)
             return
         end
 
@@ -152,6 +150,7 @@ function OarcModifyEnemyGroup(group)
                     log("OarcModifyEnemyGroup RELEASING enemy group since someone in the BUDDY PAIR " .. target_player.name .. " is ONLINE, " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
                 end
 --                target_player.print(target_player.name .. " incoming biter group!:" .. GetGPStext(group.position))
+                configureSwarmPing(target_player, group)
                 return
             end
         end
@@ -161,9 +160,67 @@ function OarcModifyEnemyGroup(group)
             SendBroadcastMsg("Enemy group deleted: " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position) .. " " .. target_player.name)
             log("Enemy group deleted: " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position) .. " " .. target_player.name .. " player not online")
         end
+        if (global.enable_attack_offline) then
+            return
+        end
         for _,member in pairs(group.members) do
             member.destroy()
         end
 --        log("OarcModifyEnemyGroup REMOVED enemy group since " .. target_player.name .. " was not online?")
     end
 end
+
+-- adds the swarm/group that is ready to act, to tracking stack (global.swarmGroup), one entry per swarm
+-- we later validate every swarm to determine if we should ping, or just remove the swarm from the stack
+-- global variables
+--	global.swarmGroup	{target_player, group, startPosition}		
+--          One stack for all players. When the group finishes gathering, we add them to this stack.
+--			One entry per swarm
+-- 	global.trackSwarm	{type, state}		
+--          Track the state of an active swarm for each player. One entry per player.
+
+-- events
+--	on_unit_group_finished_gathering		- swarm completed grouping and are acting
+--	on_tick									- EVERY TICK this is called - where we track the swarm until they go to a moving state, 
+--											when the gps tag is created
+--	on_player_clicked_gps_tag				- previously sent GPS tag is clicked on
+function configureSwarmPing(target_player, group)
+        -- Is the target player online? Then the attack can go through.
+        if (global.ocfg.warn_biter_setting == nil) then
+            global.ocfg.warn_biter_setting = {}
+            global.ocfg.warn_biter_setting[target_player.index] = global.ocfg.warn_biter_attack; -- init individual setting to default
+        end
+        if (global.ocfg.warn_biter_setting[target_player.index]) then
+            local groupWithStartPosition = {}
+            groupWithStartPosition.target_player = target_player
+            groupWithStartPosition.startPosition=group.position
+            groupWithStartPosition.group = group
+            if ((global.enable_oe_debug) and
+                ((group.command.type == defines.command.attack) or 
+                 (group.command.type == defines.command.attack_area) or
+                 (group.command.type == defines.command.build_base))) then
+                log("spawning swarm " .. GetGPStext(group.position) .. " for " .. target_player.name)
+            end
+            if ((group.command.type == defines.command.attack) or 
+                (group.command.type == defines.command.attack_area)) then
+                table.insert(global.swarmGroup, groupWithStartPosition) -- later in on_player_clicked_gps_tag when the gps is clicked - we want to track the group                
+            else
+                if (global.enable_oe_debug) then
+                    if (group.command.type == defines.command.build_base) then
+                        log("The bastards are building a base " .. GetGPStext(group.position) .. target_player.name)
+                        log(target_player.name .. "- bastards are building a base : " .. GetGPStext(group.position))
+                    else
+                        if (group.command.type == defines.command.go_to_location) then
+                            log(target_player.name .. " WTF - got this command - go_to_location " .. GetGPStext(group.position) .. " " .. target_player.name)
+                        elseif (group.command.type == defines.command.wander) then
+                            log(target_player.name .. " WTF - got this command - wander " .. GetGPStext(group.position) .. " " .. target_player.name)
+                        elseif (group.command.type == defines.command.stop) then
+                            log(target_player.name .. " WTF - got this command - stop " .. GetGPStext(group.position) .. " " .. target_player.name)
+                        elseif (group.command.type == defines.command.flee) then
+                            log(target_player.name .. " WTF - got this command - flee " .. GetGPStext(group.position) .. " " .. target_player.name)
+                        end
+                    end
+                end
+            end
+        end
+    end

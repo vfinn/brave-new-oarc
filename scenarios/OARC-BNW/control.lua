@@ -150,6 +150,7 @@ script.on_init(function(event)
 
     -- Display starting point text as a display of dominance.
     RenderPermanentGroundText(game.surfaces[GAME_SURFACE_NAME], {x=-34,y=-25}, 12, "Brave New OARC", {0.9, 0.7, 0.3, 0.8})
+    BNOSwarmGroupInit()
 end)
 
 
@@ -219,6 +220,7 @@ script.on_event(defines.events.on_gui_click, function(event)
     end
 
     GameOptionsGuiClick(event)
+
 end)
 
 script.on_event(defines.events.on_gui_checked_state_changed, function (event)
@@ -273,7 +275,7 @@ log("Player teleported to 0:0");
     global.players[event.player_index] = {
         crafted = {},
         inventory_items = {},
-        previous_position = player.position
+        previous_position = player.position,
     }
 
     -- disable light
@@ -352,6 +354,11 @@ script.on_event(defines.events.on_tick, function(event)
     if global.ocfg.enable_miner_decon then
         OarcAutoDeconOnTick()
     end
+
+    if global.ocfg.warn_biter_attack then
+        BNOCleanGPSStackOnTick()
+    end
+
 end)
 
 
@@ -484,6 +491,67 @@ script.on_event(defines.events.on_unit_group_finished_gathering, function(event)
 end)
 
 ----------------------------------------
+-- On player clicked on gps tag
+-- Save player's stuff so they don't lose it if they can't get to the corpse fast enough.
+----------------------------------------
+
+script.on_event(defines.events.on_player_clicked_gps_tag, function(event)
+    local biter, swarmGroup
+    if (#global.swarmGroup > 0) then
+        for k,swarm in pairs(global.swarmGroup ) do
+            if ((swarm.startPosition.x == event.position.x) and  (swarm.startPosition.y == event.position.y)) then
+                swarmGroup = swarm.group
+                break
+            end
+        end
+    end
+    if (swarmGroup ~= nil and swarmGroup.valid) then
+        for _,member in pairs(swarmGroup.members) do
+            if (member.active) then
+                biter=member
+                break
+            end
+        end
+        if (biter ~=nil) then
+            if (biter.valid) then   -- follow the biter swarm with text and camera
+                game.players[event.player_index].zoom_to_world(event.position,  0.5, biter) -- follow a live biter
+                local rid1=rendering.draw_text{text=string.format("Swarm coming to kill you, %s.", game.players[event.player_index].name),
+                        surface=game.surfaces[GAME_SURFACE_NAME],
+                        target=biter,
+                        color={1,0.1,0.1,1},
+                        scale=3,
+                        font="compi",
+                        time_to_live=TICKS_PER_SECOND*9,
+                        draw_on_ground=false}
+                local rid2=rendering.draw_text{text="Press ESC to exit this view.",
+                        surface=game.surfaces[GAME_SURFACE_NAME],
+                        target=biter,
+                        target_offset={0,2},
+                        color={1,0.1,0.1,1},
+                        scale=2,
+                        font="compi",
+                        time_to_live=TICKS_PER_SECOND*12,
+                        draw_on_ground=false}
+                        table.insert(global.oarc_renders_fadeout, rid1)            
+                        table.insert(global.oarc_renders_fadeout, rid2)            
+            else    -- show where they were when they formed
+                game.players[event.player_index].zoom_to_world(event.position)                
+--                local rid1=rendering.draw_text{text=string.format("Swarm dead, they formed here, %s.", game.players[event.player_index].name),                        surface=game.surfaces[GAME_SURFACE_NAME],                        target={event.position.x, event.position.y},                        color={1,0.1,0.1,0.7},                        scale=3,                        font="compi",                        time_to_live=TICKS_PER_SECOND*9,                        draw_on_ground=false}
+--                local rid2=rendering.draw_text{text="Press ESC to exit this view.",                        surface=game.surfaces[GAME_SURFACE_NAME],                        target=biter,{event.position.x, event.position.y+2},                        color={1,0.1,0.1,0.7},                        scale=2,                        font="compi",                        time_to_live=TICKS_PER_SECOND*12,                        draw_on_ground=false}
+--                table.insert(global.oarc_renders_fadeout, rid1)            
+--                table.insert(global.oarc_renders_fadeout, rid2)            
+            end
+        end
+    else    -- show where they were when they formed
+        game.players[event.player_index].zoom_to_world(event.position)
+--        local rid1=rendering.draw_text{text=string.format("Swarm dead, they formed here, %s.", game.players[event.player_index].name),                    surface=game.surfaces[GAME_SURFACE_NAME],                    target=event.position,                    color={1,0.1,0.1,0.7},                    scale=3,                    font="compi",                    time_to_live=TICKS_PER_SECOND*9,                    draw_on_ground=false}
+--        local rid2=rendering.draw_text{text=string.format("Press ESC to exit this view.", game.players[event.player_index].name),                    surface=game.surfaces[GAME_SURFACE_NAME],                    target={event.position.x, event.position.y+2},                    color={1,0.1,0.1,0.7},                    scale=2,                    font="compi",                    time_to_live=TICKS_PER_SECOND*12,                    draw_on_ground=false}
+--         table.insert(global.oarc_renders_fadeout, rid1)            
+--         table.insert(global.oarc_renders_fadeout, rid2)            
+    end
+end)
+
+----------------------------------------
 -- On Corpse Timed Out
 -- Save player's stuff so they don't lose it if they can't get to the corpse fast enough.
 ----------------------------------------
@@ -539,7 +607,6 @@ end)
 -- Called when a worker (construction or logistic) robot expires through a lack of energy.
 -- https://lua-api.factorio.com/latest/events.html#on_worker_robot_expired
 function robotdied(event)
-    -- game.print("Event: Logistics Robot dies due to lack of energy: " .. event.name .. ", Robot Name:".. event.robot.name)
     log("Event: Logistics Robot died: " .. event.name .. ", Robot Name:".. event.robot.name)
 end
 
@@ -657,7 +724,12 @@ function dropItems(entity, player, name, count)
                     if (global.enable_oe_debug) then
                         log("dropItems: Spilling items for: ".. entity.name .. ", type: " .. entity.type .. ", at " .. GetGPStext(entity.position) .. ", entity force: ".. entity.force.name)
                     end
-                    entity.surface.spill_item_stack(entity.position, {name = name, count = count}, false, entity.force, false)
+                    if (entity.surface == nil) then
+                        game.prints[player.name]("Send this log to JustGoFly - it shows something that WOULD have crashed, and provides good info to debug what caused it")
+                        log("dropItems: would have crashed accessing entity.surface - on entity name: " .. entity.name .. " for item: " .. name .. " count: " .. count .. " for player: " .. player.name)
+                    else
+                        entity.surface.spill_item_stack(entity.position, {name = name, count = count}, false, entity.force, false)
+                    end
                 end
             end
         end
@@ -850,30 +922,30 @@ script.on_event(defines.events.on_player_changed_position, function(event)
     global.players[event.player_index].previous_position = player.position
 end)
 
-script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
-    log("events.on_runtime_mod_setting_changed: setting " .. event.setting .. " for: " .. global.players[event.player_index].name .. "type: " .. event.setting_type)
+--script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
+--    log("events.on_runtime_mod_setting_changed: setting " .. event.setting .. " for: " .. game.players[event.player_index].name .. "type: " .. event.setting_type)
     -- log("Physical setting changed to: " .. settings.get_player_settings(event.player_index)["bno-bots-resistance-physical"])
-end)
+--end)
 
 function change_bots()
 local myConBot
 local myLogiBot
 	-- body
-myConBot = util.table.deepcopy(data.raw["construction-robot"]["construction-robot"])
-myConBot.speed = 0.5
-myConBot.minable = {mining_time = 10, result = "construction-robot"}
-myConBot.max_energy = "4MJ"
-myConBot.energy_per_tick = "0.0005kJ"
-myConBot.energy_per_move = "0.2kJ"
-myConBot.destructible = false
-data:extend({myConBot})
+    myConBot = util.table.deepcopy(data.raw["construction-robot"]["construction-robot"])
+    myConBot.speed = 0.5
+    myConBot.minable = {mining_time = 10, result = "construction-robot"}
+    myConBot.max_energy = "4MJ"
+    myConBot.energy_per_tick = "0.0005kJ"
+    myConBot.energy_per_move = "0.2kJ"
+    myConBot.destructible = false
+    data:extend({myConBot})
 
-myLogiBot = util.table.deepcopy(data.raw["logistic-robot"]["logistic-robot"])
-myLogiBot.minable = {mining_time = 10, result = "logistic-robot"}
-myLogiBot.max_energy = "4MJ"
-myLogiBot.energy_per_tick = "0.0005kJ"
-myLogiBot.energy_per_move = "0.2kJ"
-myLogiBot.speed = 0.5
-myLogiBot.destructible = false
-data:extend({myLogiBot})
+    myLogiBot = util.table.deepcopy(data.raw["logistic-robot"]["logistic-robot"])
+    myLogiBot.minable = {mining_time = 10, result = "logistic-robot"}
+    myLogiBot.max_energy = "4MJ"
+    myLogiBot.energy_per_tick = "0.0005kJ"
+    myLogiBot.energy_per_move = "0.2kJ"
+    myLogiBot.speed = 0.5
+    myLogiBot.destructible = false
+    data:extend({myLogiBot})
 end

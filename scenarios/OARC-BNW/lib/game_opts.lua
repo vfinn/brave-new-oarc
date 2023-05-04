@@ -1,6 +1,7 @@
 -- game_opts.lua
 -- Jan 2018
 -- Display current game options, maybe have some admin controls here
+-- April 2023 - vf made reset playe chooseable for each player, for themselves, and added individual player options: warn of swarm attack
 
 -- Main Configuration File
 require("config")
@@ -36,6 +37,17 @@ function GameOptionsGuiClick(event)
             end
         end
     end
+    if (name == "warn_biter_attack_option_checkbox") then
+        if (global.ocfg.warn_biter_setting[event.player_index] == nil) then
+            global.ocfg.warn_biter_setting[event.player_index] = true
+        else
+            global.ocfg.warn_biter_setting[event.player_index] = not global.ocfg.warn_biter_setting[event.player_index]
+        end
+        local onOff = " OFF"
+        if global.ocfg.warn_biter_setting[event.player_index] then onOff = " ON" end
+        player.print(player.name .. " changed the 'warn of biter attacking' option to " .. onOff)
+    end
+
 end
 
 -- Used by AddOarcGuiTab
@@ -156,5 +168,14 @@ function CreateGameOptionsTab(tab_container, player)
         table.insert(player_list, player.name)
         tab_container.add{name = "ban_players_dropdown",type = "drop-down",items = player_list, selected_index = 1}
 --        tab_container.selected_index(1)
+    end
+    -- Ending Spacer
+    if (player.index) then
+        AddSpacerLine(tab_container)
+        AddLabel(tab_container, "individual_user_settings2", "Individual User Settings:", my_label_header_style)
+        tab_container.add{name = "warn_biter_attack_option_checkbox",
+                        type = "checkbox",
+                        caption={"warn-biter-attack-option"},
+                        state=(global.ocfg.warn_biter_setting[player.index])}
     end
 end

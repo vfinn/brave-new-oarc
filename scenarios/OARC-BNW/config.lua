@@ -94,10 +94,10 @@ ENABLE_FORCE_LAB_PROD_BONUS = false
 -- Each team/force must launch their own rocket to unlock this!
 LOCK_GOODIES_UNTIL_ROCKET_LAUNCH = true
 LOCKED_TECHNOLOGIES = {
-    {t="atomic-bomb"},{t="artillery"},{t="speed-module-3"}
+    {t="atomic-bomb"},{t="artillery"}
 }
 LOCKED_RECIPES = {
-    {r="speed-module-3"},{r="roboport-main"}
+    {r="speed-module-3"}
 }
 
 -- Give cheaty items on start.
@@ -212,11 +212,11 @@ OARC_CFG = {
     {
         -- Safe area has no aliens
         -- This is the radius in tiles of safe area.
-        safe_radius = CHUNK_SIZE*6,		 -- vf previously *6  (6*32=192). (48*4=192)  shouldn't this just be 192
+        safe_radius = CHUNK_SIZE*6,		 -- vf previously *6  (6*32=192). 
 
         -- Warning area has significantly reduced aliens
         -- This is the radius in tiles of warning area.
-        warn_radius = CHUNK_SIZE*10,	-- vf previously *12	(288 - previously was 384)
+        warn_radius = CHUNK_SIZE*10,	-- vf previously *12	ved just prior to 
 
         -- 1 : X (spawners alive : spawners destroyed) in this area
         warn_reduction = 20,

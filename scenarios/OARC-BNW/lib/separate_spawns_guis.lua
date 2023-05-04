@@ -1173,9 +1173,9 @@ function BuddySpawnRequestMenuClick(event)
         -- Create that spawn in the global vars
         local buddySpawn = {x=0,y=0}
         if (requesterOptions.moatChoice) then
-            buddySpawn = {x=newSpawn.x+(global.ocfg.spawn_config.gen_settings.land_area_tiles*2)+10, y=newSpawn.y}
+            buddySpawn = {x=newSpawn.x+(global.ocfg.spawn_config.gen_settings.land_area_tiles*3)+10, y=newSpawn.y}
         else
-            buddySpawn = {x=newSpawn.x+(global.ocfg.spawn_config.gen_settings.land_area_tiles*2), y=newSpawn.y}
+            buddySpawn = {x=newSpawn.x+(global.ocfg.spawn_config.gen_settings.land_area_tiles*3), y=newSpawn.y}
         end
         ChangePlayerSpawn(player, newSpawn)
         ChangePlayerSpawn(game.players[requesterName], buddySpawn)

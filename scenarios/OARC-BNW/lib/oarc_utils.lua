@@ -119,6 +119,102 @@ function FadeoutRenderOnTick()
     end
 end
 
+function BNOSwarmGroupInit()
+	if (not global.swarmGroup) then
+		global.swarmGroup = {}
+	end    
+end
+
+-- Called on_tick to determine if the swarm has just started moving, and to send the ping.
+-- also to remove the swarm from the stack if they don't move towards your main and when they die at your main.
+function BNOCleanGPSStackOnTick()    
+    if (global.swarmGroup == nil) then
+        global.swarmGroup = {}
+    end
+    if (#global.swarmGroup > 0) then
+        for k,swarm in pairs(global.swarmGroup) do
+            if (not swarm) or (not swarm.group.valid) then
+                if (swarm and global.enable_oe_debug) then
+                    log("swarm complete - removed from stack " .. GetGPStext(swarm.startPosition) .." number of entries in stack " .. #global.swarmGroup-1)
+                end
+                table.remove(global.swarmGroup,k)
+                global.trackSwarm[k]={type=-1, state=-1}
+            else
+                global.trackSwarm= global.trackSwarm or {}
+                if (global.swarmGroup[k].group.command==nil) then
+                    log("swarm " .. k .. " global.swarmGroup[k].group.command==nil. Type: " .. global.swarmGroup[k].group.type .. " group.command was nil. State: " .. global.swarmGroup[k].group.state)
+                    return
+                end
+                if (global.swarmGroup[k]~=nil) then
+                    if ((global.trackSwarm[k] ==nil) or 
+                       ((global.swarmGroup[k].group.command.type ~=nil) and global.trackSwarm[k].type ~= global.swarmGroup[k].group.command.type) or
+                       ((global.swarmGroup[k].group.state ~=nil) and global.trackSwarm[k].state ~= global.swarmGroup[k].group.state)) then
+                        if (global.enable_oe_debug) then
+                            -- log  ("TICK - swarm " .. k ..":  group.command.type = " .. commandType(global.swarmGroup[k].group.command.type) .. ", state: " .. groupState(global.swarmGroup[k].group.state))
+                            game.print("TICK - swarm " .. k ..": group.command.type = " .. commandType(global.swarmGroup[k].group.command.type) .. ", state: " .. groupState(global.swarmGroup[k].group.state))
+                        else
+                            if (global.swarmGroup[k].group.command.type ==nil) then
+                                log("swarm " .. k .. " global.swarmGroup[k].group.command.type==nil")
+                            end
+                            if (global.swarmGroup[k].group.state==nil) then
+                                log("swarm " .. k .. " global.swarmGroup[k].group.state==nil")
+                            end
+                        end
+                        -- only do this once, for each group, and wait for them to start moving since every group will start with group_state.pathfinding.
+                        -- the groups that never attack will immediately be removed from the stack
+                        -- the groups that attack will eventually go to group_state.attacking_target
+                        -- once they complete their attack the above tab
+                        if (global.swarmGroup[k].group.state == defines.group_state.moving) then
+                            global.swarmGroup[k].target_player.print(global.swarmGroup[k].target_player.name .. ": " .. k .. "  Wave of biters incoming :" .. GetGPStext(global.swarmGroup[k].startPosition))
+                        end
+                    end
+                    global.trackSwarm[k]={type = global.swarmGroup[k].group.command.type, state = global.swarmGroup[k].group.state}
+                end
+            end
+        end
+    end
+end
+
+function commandType(type)
+    if      (type==defines.command.attack) then       
+        return " attack"
+    elseif  (type==defines.command.go_to_location) then
+        return " go to location"
+    elseif  (type==defines.command.compound) then
+        return " compound"
+    elseif  (type==defines.command.group) then
+        return " group"
+    elseif  (type==defines.command.attack_area) then
+        return " attack area"
+    elseif  (type==defines.command.wander) then
+        return "wandering"
+    elseif  (type==defines.command.flee) then
+        return "flee"
+    elseif  (type==defines.command.stop) then
+        return "stop"
+    elseif  (type==defines.command.build_base) then
+        return "build base"
+    end
+end
+
+function groupState(state)
+    if      (state==defines.group_state.gathering) then       
+        return " gathering"
+    elseif  (state==defines.group_state.moving) then
+        return " moving"
+    elseif  (state==defines.group_state.attacking_distraction) then
+        return " attacking distraction"
+    elseif  (state==defines.group_state.attacking_target) then
+        return " attacking target"
+    elseif  (state==defines.group_state.finished) then
+        return " finished"
+    elseif  (state==defines.group_state.pathfinding) then
+        return " path finding"
+    elseif  (state==defines.group_state.wandering_in_group) then
+        return " wandering in group"
+    end
+end
+
 -- Broadcast messages to all connected players
 function SendBroadcastMsg(msg)
     for name,player in pairs(game.connected_players) do
@@ -1343,6 +1439,8 @@ function PlayerJoinedMessages(event)
     local player = game.players[event.player_index]
     player.print(global.ocfg.welcome_msg)
     log("player: " .. player.name .. " joined")
+    global.ocfg.warn_biter_setting[event.player_index] = global.ocfg.warn_biter_attack; -- init individual setting
+
     if (global.oarc_announcements) then
         player.print(global.oarc_announcements)
     end

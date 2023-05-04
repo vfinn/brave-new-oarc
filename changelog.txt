@@ -1,3 +1,25 @@
+5/02/2023 - 4.2.04
+Moved Buddy spawn 2.5 chunksize further apart. previously they were 5 chunksize, so now 7.5.
+The buddy spawn was overlapping logistics areas, which is ok if you want the other player to control
+your bots in that area. But it should be further apart.
+
+Bug Fixes:
+Fixed on first launch the game would crash.
+Fixed where the swam notification could crash due to some state the swarm is in that is not fully identified in the group entity.
+Fixed where a drop occurs on some unknown surface - this one has me stumped, but it won't break now. You'll see a notification
+to only the player that the bug was initiated from to tell me to look at logs. I should probably broadcast it, but I'll be 
+monitoring all logs.
+---------------------------------------------------------------------------------------------------
+4/30/2023 - 4.2.03
+Added an option to enable a swarm to be tagged via a ping/gps statement for each player. Clicking the ping
+follows the biter swarm approaching the base. Clicking that ping after the swarm is dead will show where they 
+grouped for the attack - which is useful to know where they came from.
+Turning on/off this option default is settable by the host, but currently it is settable by each player
+within the game via the top left settings and is a per-player setting.
+Each player will only see their pings, showing incoming swarms, and only active swarms that are moving towards your base.
+I haven't tested this in buddy mode, but buddies should see swarms intended for your/their bases.
+
+Hopefully - finally fixed the Silo not being able to be researched bug.
 ---------------------------------------------------------------------------------------------------
 4/24/2023 - 4.2.02
 -bug introduced into 4.2.01 - I locked the recipe and technology for productivity-module-3 behind a rocket launch. Well you

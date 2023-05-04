@@ -83,6 +83,13 @@ data:extend({
     },
     {
         type = "bool-setting",
+        name = "bno-biter-swarm-attack",     
+        setting_type = "startup",
+        default_value = true,
+        order="bnw-85"
+    },
+    {
+        type = "bool-setting",
         name = "bno-bots-resistance-acid",     
         setting_type = "startup",
         default_value = false,
