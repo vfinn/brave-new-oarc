@@ -155,13 +155,15 @@ function CreateGameOptionsTab(tab_container, player)
 
     -- ADMIN CONTROLS
     if (player.admin) then
+        local si=1
         player_list = {}
-        for _,player in pairs(game.players) do  -- game.connected_players   <-- previously only connected players
-            table.insert(player_list, player.name)
+        for k,p in pairs(game.players) do  -- game.connected_players   <-- previously only connected players
+            table.insert(player_list, p.name)
+            if p.name == player.name then si = k end
         end
         tab_container.add{name="restart_player", type="button", caption="Restart Player"}
         tab_container.add{name="ban_player", type="button", caption="Ban Player"}
-        tab_container.add{name = "ban_players_dropdown",type = "drop-down",items = player_list}
+        tab_container.add{name = "ban_players_dropdown",type = "drop-down",items = player_list, selected_index = si}
     else
         tab_container.add{name="restart_player", type="button", caption="Restart Player"}
         player_list = {}

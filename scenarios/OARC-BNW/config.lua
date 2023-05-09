@@ -151,13 +151,13 @@ CHECK_SPAWN_UNGENERATED_CHUNKS_RADIUS = 20  -- 10 vf
 
 -- Near Distance in chunks
 -- When a player selects "near" spawn, they will be in or as close to this range as possible.
-NEAR_MIN_DIST = 50
-NEAR_MAX_DIST = 100
+NEAR_MIN_DIST = 150     -- 50
+NEAR_MAX_DIST = 200     -- 100
 
 -- Far Distance in chunks
 -- When a player selects "far" spawn, they will be at least this distance away.
-FAR_MIN_DIST = 200
-FAR_MAX_DIST = 300
+FAR_MIN_DIST = 200        -- 200
+FAR_MAX_DIST = 250        -- 300
 
 
 
@@ -184,7 +184,7 @@ OARC_CFG = {
         moat_bridging = true, 
 
         -- If you change the spawn area size, you might have to adjust this as well
-        moat_size_modifier = 1.5,     -- 1 is 8 spaces, spitters range is 15, this would need to be DOUBLED to keep spitters from hitting pumps jgf
+        moat_size_modifier = 1.5,     -- 1 is 8 spaces, spitters range is 15, this would need to be 2 to keep spitters from hitting pumps jgf
 
         -- Start resource shape. true = circle, false = square.
         resources_circle_shape = false,
@@ -230,8 +230,8 @@ OARC_CFG = {
 
     -- Location of water strip (horizontal)
     water = {
-        x_offset = -4,
-        y_offset = -60,	-- previously 48
+        x_offset = -31, -- previously 4
+        y_offset = -72,	-- previously 60
         length = 8
     },
 
@@ -368,7 +368,7 @@ MIN_ONLINE_TIME_IN_MINUTES = 15
 -- Number of silos found in the wild.
 -- These will spawn in a circle at given distance from the center of the map
 -- If you set this number too high, you'll have a lot of delay at the start of the game.
-SILO_NUM_SPAWNS = 5
+SILO_NUM_SPAWNS = 6
 
 -- How many chunks away from the center of the map should the silo be spawned
 SILO_CHUNK_DISTANCE = 200

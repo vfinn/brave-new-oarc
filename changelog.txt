@@ -1,3 +1,15 @@
+
+5/09/2023 - 4.2.06
+Added a setting for the world size, Small, Normal, Large. Small is half of normal, Large is double of Normal.
+Increased the max number of silos to 24.
+Modified the drop down for restart for admins to prompt with their name for when they quickly want to respawn.
+Moved the water slot for no moat spawns to top left - on the edge of the tree line.
+Removed duplicate swarm pings.
+Performance enhancement to not check swarms every tick, perform once per second only when there are swarms incoming
+---------------------------------------------------------------------------------------------------
+5/04/2023 - 4.2.05
+Bug Fix
+---------------------------------------------------------------------------------------------------
 5/02/2023 - 4.2.04
 Moved Buddy spawn 2.5 chunksize further apart. previously they were 5 chunksize, so now 7.5.
 The buddy spawn was overlapping logistics areas, which is ok if you want the other player to control

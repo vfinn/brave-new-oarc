@@ -53,10 +53,6 @@ function InitOarcConfig()
     global.ocfg.scale_resources_around_spawns = SCALE_RESOURCES_AROUND_SPAWNS
 
     global.ocfg.modified_enemy_spawning = OARC_MODIFIED_ENEMY_SPAWNING
-    global.ocfg.near_dist_start = NEAR_MIN_DIST
-    global.ocfg.near_dist_end = NEAR_MAX_DIST
-    global.ocfg.far_dist_start = FAR_MIN_DIST
-    global.ocfg.far_dist_end = FAR_MAX_DIST
     global.ocfg.vanilla_spawn_count = VANILLA_SPAWN_COUNT
     global.ocfg.vanilla_spawn_spacing = VANILLA_SPAWN_SPACING
 
@@ -71,7 +67,26 @@ function InitOarcConfig()
     --global.ocfg.frontier_silo_count = SILO_NUM_SPAWNS    
     global.ocfg.frontier_silo_count = setGlobalSetting("bno-number-of-silos", SILO_NUM_SPAWNS)
     log("Silo count: " .. global.ocfg.frontier_silo_count)
-    global.ocfg.frontier_silo_distance = SILO_CHUNK_DISTANCE
+    global.ocfg.map_size = setGlobalSetting("bno-map-size", "normal") 
+    global.ocfg.near_dist_start = NEAR_MIN_DIST
+    global.ocfg.near_dist_end = NEAR_MAX_DIST
+    global.ocfg.far_dist_start = FAR_MIN_DIST
+    global.ocfg.far_dist_end = FAR_MAX_DIST
+    global.ocfg.frontier_silo_distance =  SILO_CHUNK_DISTANCE
+    if (global.ocfg.map_size == "small") then
+        global.ocfg.frontier_silo_distance =  SILO_CHUNK_DISTANCE / 2
+        global.ocfg.near_dist_start = NEAR_MIN_DIST / 2
+        global.ocfg.near_dist_end = NEAR_MAX_DIST / 2
+        global.ocfg.far_dist_start = FAR_MIN_DIST / 2
+        global.ocfg.far_dist_end = FAR_MAX_DIST / 2
+    elseif (global.ocfg.map_size == "large") then
+        global.ocfg.frontier_silo_distance =  SILO_CHUNK_DISTANCE * 2
+        global.ocfg.near_dist_start = NEAR_MIN_DIST * 2
+        global.ocfg.near_dist_end = NEAR_MAX_DIST * 2
+        global.ocfg.far_dist_start = FAR_MIN_DIST * 2
+        global.ocfg.far_dist_end = FAR_MAX_DIST * 2
+    end
+
     global.ocfg.frontier_fixed_pos = SILO_FIXED_POSITION
     global.ocfg.frontier_pos_table = SILO_POSITIONS
     global.ocfg.frontier_silo_vision = ENABLE_SILO_VISION

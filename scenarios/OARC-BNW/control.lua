@@ -356,9 +356,12 @@ script.on_event(defines.events.on_tick, function(event)
     end
 
     if global.ocfg.warn_biter_attack then
-        BNOCleanGPSStackOnTick()
+        global.swarmCheckTick = global.swarmCheckTick or game.tick
+        if (game.tick >= global.swarmCheckTick) then
+            BNOCleanGPSStack()
+            global.swarmCheckTick = game.tick + TICKS_PER_SECOND    -- check again in 1 second
+        end
     end
-
 end)
 
 

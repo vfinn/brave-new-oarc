@@ -3,11 +3,19 @@ data:extend({
         type = "int-setting",
         name = "bno-number-of-silos",     
         setting_type = "startup",
-        minimum_value=1,
-        maximum_value=12,
+        minimum_value=6,
+        maximum_value=24,
         default_value = 6,
         order="bnw-01"
     },    
+    {
+        type = "string-setting",
+        name = "bno-map-size",     
+        setting_type = "startup",
+        allowed_values = {"small", "normal", "large"},
+        default_value = "normal",
+        order="bnw-015"
+    },
     {
         type = "string-setting",
         name = "bno-num-starting-bots",     

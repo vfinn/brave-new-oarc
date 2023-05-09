@@ -176,8 +176,6 @@ end
 --	global.swarmGroup	{target_player, group, startPosition}		
 --          One stack for all players. When the group finishes gathering, we add them to this stack.
 --			One entry per swarm
--- 	global.trackSwarm	{type, state}		
---          Track the state of an active swarm for each player. One entry per player.
 
 -- events
 --	on_unit_group_finished_gathering		- swarm completed grouping and are acting
@@ -203,6 +201,7 @@ function configureSwarmPing(target_player, group)
             end
             if ((group.command.type == defines.command.attack) or 
                 (group.command.type == defines.command.attack_area)) then
+                groupWithStartPosition.gpsSent=false    -- start of swarm tracking
                 table.insert(global.swarmGroup, groupWithStartPosition) -- later in on_player_clicked_gps_tag when the gps is clicked - we want to track the group                
             else
                 if (global.enable_oe_debug) then
