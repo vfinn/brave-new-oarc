@@ -1,4 +1,11 @@
 
+6/24/2023 - 4.2.07
+bug fixes due to large maps running into issues with spawning players into unsafe areas - fixed.
+bug fix - occasionally spawning a player would cause them to crash the game - fixed.
+added the number of biters in attack swarm
+fixed transport drones exploding
+
+---------------------------------------------------------------------------------------------------
 5/09/2023 - 4.2.06
 Added a setting for the world size, Small, Normal, Large. Small is half of normal, Large is double of Normal.
 Increased the max number of silos to 24.

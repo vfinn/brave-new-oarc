@@ -275,14 +275,13 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
         player.gui.screen.wait_for_spawn_dialog.destroy()
     end
 
-    if (global.ocfg.enable_chest_sharing and not delayedSpawn.vanilla) then
-        
-        local x_dist = global.ocfg.spawn_config.resource_rand_pos_settings.radius +10        -- moved slightly further out
-
+    local x_dist = global.ocfg.spawn_config.resource_rand_pos_settings.radius +10        -- moved slightly further out
+    if (global.ocfg.enable_energy_sharing) then
         -- Shared electricity IO pair of scripted electric-energy-interfaces
         SharedEnergySpawnInput(player, {x=delayedSpawn.pos.x+x_dist, y=delayedSpawn.pos.y-11})
         SharedEnergySpawnOutput(player, {x=delayedSpawn.pos.x+x_dist, y=delayedSpawn.pos.y+10})
-
+    end
+    if (global.ocfg.enable_chest_sharing and not delayedSpawn.vanilla) then
         -- Input Chests
         SharedChestsSpawnInput(player, {x=delayedSpawn.pos.x+x_dist, y=delayedSpawn.pos.y-7})
         SharedChestsSpawnInput(player, {x=delayedSpawn.pos.x+x_dist, y=delayedSpawn.pos.y-6})
@@ -319,7 +318,7 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
     -- Send the player to that position
     SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], delayedSpawn.pos)
     if player.character then
-log("on_event::On Player created: destroy character")
+        log("on_event::On Player created: destroy character")
        player.character.destroy()
        player.character = nil
     end
@@ -1263,13 +1262,9 @@ end
 
 function SendPlayerToSpawn(player)
     if (DoesPlayerHaveCustomSpawn(player)) then
-        SafeTeleport(player,
-                        game.surfaces[GAME_SURFACE_NAME],
-                        global.ocore.playerSpawns[player.name])
+        SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], global.ocore.playerSpawns[player.name])
     else
-        SafeTeleport(player,
-                        game.surfaces[GAME_SURFACE_NAME],
-                        game.forces[global.ocfg.main_force].get_spawn_position(GAME_SURFACE_NAME))
+        SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], game.forces[global.ocfg.main_force].get_spawn_position(GAME_SURFACE_NAME))
     end
 end
 

@@ -148,7 +148,7 @@ function BNOCleanGPSStack()
                         -- the groups that attack will eventually go to group_state.attacking_target, but first moving
                         if (global.swarmGroup[k].group.state == defines.group_state.moving) then
                             if (not global.swarmGroup[k].gpsSent) then
-                                global.swarmGroup[k].target_player.print(global.swarmGroup[k].target_player.name .. ": Wave of biters incoming :" .. GetGPStext(global.swarmGroup[k].startPosition))
+                                global.swarmGroup[k].target_player.print(global.swarmGroup[k].target_player.name .. ": Wave of " .. #global.swarmGroup[k].group.members .. " biters incoming :" .. GetGPStext(global.swarmGroup[k].startPosition))
                                 global.swarmGroup[k].gpsSent=true   -- only send this ping once
                             end
                         end
@@ -438,35 +438,31 @@ end
 function SafeTeleport(player, surface, target_pos)
     local safe_pos = surface.find_non_colliding_position("character", target_pos, 15, 1)
     global.spawning = true
-    --vf - need to create and destroy the character in order to have focus moved from 0,0 to new area - try restarting a player to see this
-
---game.get_player(event.player_index)
 --	if not player or not player.valid then return end
     
     if (player == nil) then
         log("player was nil - assigning to: " .. game.players[player_index].name)
         player = game.players[player_index]
     end
+    player_index    = player.index
     log("Teleporting : " .. player.name .. " to " .. target_pos.x .. "," .. target_pos.y)
-    log("SafeTeleport::Creating Character")
     if (player.character ~= nil) then
         log("destroying character before teleporting")
         player.character.destroy()
+        player.character = nil
     end
-    log("creating character ")
-    player.create_character()
-    if (not safe_pos) then
-log("NOT SafeTeleport: 	" .. player.name .. " location: " .. target.x .. ", " .. target.y);
+--     player.create_character()
+     if (not safe_pos) then
+        log("NOT SafeTeleport: 	" .. player.name .. " location: " .. target_pos.x .. ", " .. target_pos.y);
         player.teleport(target_pos, surface)
     else
-log("SafeTeleport: 	" .. player.name .. " location: " .. safe_pos.x .. ", " .. safe_pos.y);
+        log("SafeTeleport: 	" .. player.name .. " location: " .. safe_pos.x .. ", " .. safe_pos.y);
         player.teleport(safe_pos, surface)
     end
-    log("Actual Player position: " .. game.players[player_index].position.x .. "," .. game.players[player_index].position.y)
-
-    log("SafeTeleport::Character destroyed")
-    player.character.destroy()
-    player.character = nil
+    log("Actual Player position: " .. player.position.x .. "," .. player.position.y)
+--    log("SafeTeleport::Character destroyed")
+--    player.character.destroy()
+--    player.character = nil
 end
 
 -- Create area given point and radius-distance

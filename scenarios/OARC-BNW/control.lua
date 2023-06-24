@@ -252,8 +252,21 @@ local player = game.players[event.player_index]
 
 log("on_event::On Player created: " .. player.name)
 
+-- Additions from BraveNewWork OnEvent_on_player_created(event) vf
+    if not global.players then
+        global.players = {}
+        global.players[event.player_index] = {
+            crafted = {},
+            inventory_items = {},
+            previous_position = player.position,
+        }
+    end
+
     -- Move the player to the game surface immediately.
-    player.teleport({x=0,y=0}, GAME_SURFACE_NAME)
+    --    player.teleport({x=0,y=0},  game.surfaces[GAME_SURFACE_NAME]) -- could cause crash - SafeTeleport bypasses safeguards
+    SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], {x=0,y=0})
+    player.set_controller{type=defines.controllers.character,character=player.surface.create_entity{name='character',force=player.force,position=player.position}}
+
 log("Player teleported to 0:0");
     if global.ocfg.enable_long_reach then
         GivePlayerLongReach(player)
@@ -266,17 +279,6 @@ log("Player teleported to 0:0");
     if global.ocfg.enable_coin_shop then
         InitOarcStoreGuiTabs(player)
     end
-
--- Additions from BraveNewWork OnEvent_on_player_created(event) vf
-    if not global.players then
-        global.players = {}
-    end
- --   local player = game.players[event.player_index]
-    global.players[event.player_index] = {
-        crafted = {},
-        inventory_items = {},
-        previous_position = player.position,
-    }
 
     -- disable light
     player.disable_flashlight()

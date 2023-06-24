@@ -207,6 +207,7 @@ function RegrowthSingleStepArray()
 
     -- Check if we reached the end
     if (not next_chunk) then 
+--        log("Iterator for chunk removal has completed")     -- test how often this occurs, because we need to slow down this iteration !
         global.rg.chunk_iter = game.surfaces[GAME_SURFACE_NAME].get_chunks()
         next_chunk = global.rg.chunk_iter()
     end
@@ -387,8 +388,8 @@ function WorldEaterSingleStep()
 
         if (total_count > 0) then
             for k,v in pairs(entities) do
-                -- don't destroy the bots because they have no last-user
-                if (v.last_user or (v.type == "character") or string.contains(v.type, "robot")) then
+                -- don't destroy the bots because they have no last-user, note unit is for transport mod
+                if (v.last_user or (v.type == "character") or string.contains(v.type, "robot") or string.contains(v.type, "unit")) then
                     has_last_user_set = true
                     return -- This means we're done checking this chunk.
                 end

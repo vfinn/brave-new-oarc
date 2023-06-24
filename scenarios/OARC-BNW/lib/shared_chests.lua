@@ -618,7 +618,6 @@ function SharedChestsDistributeRequests()
 end
 
 function SharedChestsOnTick()
-
     -- Every tick we share power
     SharedEnergyStoreInputOnTick()
     SharedEnergyDistributeOutputOnTick()
