@@ -255,13 +255,13 @@ log("on_event::On Player created: " .. player.name)
 -- Additions from BraveNewWork OnEvent_on_player_created(event) vf
     if not global.players then
         global.players = {}
-        global.players[event.player_index] = {
-            crafted = {},
-            inventory_items = {},
-            previous_position = player.position,
-        }
-    end
 
+    end
+    global.players[event.player_index] = {
+        crafted = {},
+        inventory_items = {},
+        previous_position = player.position,
+    }
     -- Move the player to the game surface immediately.
     --    player.teleport({x=0,y=0},  game.surfaces[GAME_SURFACE_NAME]) -- could cause crash - SafeTeleport bypasses safeguards
     SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], {x=0,y=0})
@@ -888,6 +888,10 @@ script.on_event(defines.events.on_player_changed_position, function(event)
     if not global.forces then
 		return
 	end
+    -- enable moving around at 0,0
+    if (event.player_index > #global.players) then
+        return
+    end
     local player = game.players[event.player_index]
     -- TODO: really shouldn't have to do this so often (can we do it in migrate function?)
     preventMining(player)
