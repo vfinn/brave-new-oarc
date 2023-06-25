@@ -1,5 +1,7 @@
 
-xx/xx/2023 - 4.2.08
+6/25/2023 - 4.2.08
+Bug fix - a new player could crash a server.  Talk about random - moving your character after the first
+person joins could crash the server. Thanks to SilverSname for working with me on this one.
 ---------------------------------------------------------------------------------------------------
 6/24/2023 - 4.2.07
 bug fixes due to large maps running into issues with spawning players into unsafe areas - fixed.
