@@ -1,6 +1,16 @@
 -- control.lua
 -- Mar 2019
 -- Dec 30, 2021 Mod by JustGoFly to merge OARC and Brave New World
+-- First issues that had to be dealt with were bugs in 1) Each of the mods, 2) in my merge of the mods
+-- BNW had some checks as if it were a single player game and crashes, all documented in the changelog.
+-- The biggest issue was exploding bots, this took a many months of digging.
+-- I added the larger roboport, which had to look different since it will show up in the list of items, 
+-- even if it's not placeable. It also doubles the logistics space and increases charging of bots from 
+-- 4 to 16 bots.  Eventually I'll make this researchable.
+-- After watching players get overrun with no warning, I added notification of swarms coming and tracking 
+-- of them by clicking on the notification.Also moved alot of the config settings into the mods settable
+-- UI.
+-- Comments below are from Oarcinae. 
 
 -- Oarc's Separated Spawn Scenario
 --
@@ -151,7 +161,14 @@ script.on_init(function(event)
     -- Display starting point text as a display of dominance.
     RenderPermanentGroundText(game.surfaces[GAME_SURFACE_NAME], {x=-34,y=-25}, 12, "Brave New OARC", {0.9, 0.7, 0.3, 0.8})
     BNOSwarmGroupInit()
+    log("Applying new values for Starting Area: " .. game.surfaces.oarc.map_gen_settings.starting_area *100 .. "%")
+    -- Apply the value set in game UI of Starting Area Size to the starting area radius's
+    local starting_area = game.surfaces.oarc.map_gen_settings.starting_area
+    OARC_CFG.safe_area.safe_radius = OARC_CFG.safe_area.safe_radius * starting_area
+    OARC_CFG.safe_area.warn_radius = OARC_CFG.safe_area.warn_radius * starting_area
+    OARC_CFG.safe_area.danger_radius = OARC_CFG.safe_area.danger_radius * starting_area
 end)
+
 
 
 ----------------------------------------
@@ -244,6 +261,8 @@ script.on_event(defines.events.on_player_joined_game, function(event)
 log("on_event::On Player Joined Game " .. game.players[event.player_index].name)
     PlayerJoinedMessages(event)
     ServerWriteFile("player_events", game.players[event.player_index].name .. " joined the game." .. "\n")
+    -- Remove player name from map while they are online_time
+    table.insert(global.oarc_renders_fadeout, global.players[event.player_index].drawOnExit)
 end)
 
 ----------------------------------------
@@ -261,6 +280,7 @@ log("on_event::On Player created: " .. player.name)
         crafted = {},
         inventory_items = {},
         previous_position = player.position,
+        drawOnExit = nil, 
     }
     -- Move the player to the game surface immediately.
     --    player.teleport({x=0,y=0},  game.surfaces[GAME_SURFACE_NAME]) -- could cause crash - SafeTeleport bypasses safeguards
@@ -323,6 +343,20 @@ log("on_event::on_player_left_game - " .. game.players[event.player_index].name)
         log("Player left early - removing: " .. player.name)
         SendBroadcastMsg(player.name .. "'s base was marked for immediate clean up because they left within "..global.ocfg.minimum_online_time.." minutes of joining.")
         RemoveOrResetPlayer(player, true, true, true, true)
+    else
+        global.players[event.player_index].drawOnExit = rendering.draw_text{text=player.name,
+                        surface=game.surfaces[GAME_SURFACE_NAME],
+                        target={x=pos.x-21, y=pos.y+5},
+                        color=tcolor,
+                        scale=20,
+                        font="compi",
+                        time_to_live=ttl+300,
+                        -- players={player},
+                        draw_on_ground=true,
+                        orientation=0,
+                        -- alignment=center,
+                        scale_with_zoom=false,
+                        only_in_alt_mode=false}
     end
 end)
 

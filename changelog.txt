@@ -1,4 +1,32 @@
+x/xx/2023 - 4.2.09
+Main roboport is named after the primary player.
 
+Player Name in base bothered some players, so it is removed shortly after creating your base, but restored while you are offline.
+This enables tracking of bases.  Also previous versions would not remove this name and it could be littered all around the map if
+a player restarted multiple times. Fixed!
+
+Modified Map Generation code to take Starting Area Size into account when building the map. So 
+Deathworld will be quite a bit more difficult.
+
+Map generation code changes to use the "Starting Area Size" setting in the Map creation to impact the 
+distance the biters are from your main base. Deathworld is not really deathworld in Oarc based on this 
+algorithm.  This is pretty awesome code, and made to look simple. Great code always looks simple.
+
+The map generation code modifies Factorios map settings to make each base playable and not completely 
+overrun with biter bases. It sets up three zone.
+Starting area is 6 chunks - a chunk is 32 tiles (turn on the grid in F4 to see this) - no nests in this area.
+Next zone is starts outside 6 and goes to 12 chunks
+Final area - Danger Zone - starts at 24, previously it was 30 and in Oarc is normally 32. I did testing 
+to see what is appropriate and 24 is right.
+
+When you play DeathWorld (75%) - this tightens up from 6,12,24 chunks to 4.5, 9 and 18.
+If you want the old 30 tiles - set the Starting area to 125%.
+
+The map generation modifies the biter nests so that in the second zone 5% of the nests are kept, and only small nests will be in this area.
+In the Danger zone, 20% of the nests are kept and only small and medium nests remain.
+Check my extensive list of screen shots in my discord to see what this looks like in a deathworld and normal game at 75%.
+Just for fun - give 17% Starting area size - you'll have biters in your main area!
+---------------------------------------------------------------------------------------------------
 6/25/2023 - 4.2.08
 Bug fix - a new player could crash a server.  Talk about random - moving your character after the first
 person joins could crash the server. Thanks to SilverSname for working with me on this one.

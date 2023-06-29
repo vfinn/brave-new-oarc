@@ -208,6 +208,7 @@ OARC_CFG = {
 
     -- Safe Spawn Area Options
     -- The default settings here are balanced for my recommended map gen settings (close to train world).
+    -- These values get modified in on_init based on the players Starting Area Size setting.
     safe_area =
     {
         -- Safe area has no aliens
@@ -216,14 +217,14 @@ OARC_CFG = {
 
         -- Warning area has significantly reduced aliens
         -- This is the radius in tiles of warning area.
-        warn_radius = CHUNK_SIZE*10,	-- vf previously *12	ved just prior to 
+        warn_radius = CHUNK_SIZE*12,	-- vf previously *12	 
 
         -- 1 : X (spawners alive : spawners destroyed) in this area
         warn_reduction = 20,
 
         -- Danger area has slightly reduce aliens
         -- This is the radius in tiles of danger area.
-        danger_radius = CHUNK_SIZE*30,		-- vf previously *32	(960 - previously was 1024)
+        danger_radius = CHUNK_SIZE*24,		-- vf previously *32	(960 - previously was 1024)
         -- 1 : X (spawners alive : spawners destroyed) in this area
         danger_reduction = 5,
     },

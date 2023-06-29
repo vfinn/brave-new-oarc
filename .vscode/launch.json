@@ -7,6 +7,11 @@
         {
             "type": "factoriomod",
             "request": "launch",
+            "name": "Factorio Mod Debug"
+        },
+        {
+            "type": "factoriomod",
+            "request": "launch",
             "name": "Brave New Oarc Mod Debug"
         },
         {

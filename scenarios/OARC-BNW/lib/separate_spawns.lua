@@ -265,7 +265,7 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
 
 	-- Render Brave New World Items - vf
     global.spawn[player.index] = delayedSpawn.pos  -- save the starting position, this is how we determine who died when a starting roboport is killed
-	setupBNWForce(player.force, player.surface, delayedSpawn.pos.x, delayedSpawn.pos.y, game.active_mods["SeaBlock"])
+	setupBNWForce(player, delayedSpawn.pos.x, delayedSpawn.pos.y, game.active_mods["SeaBlock"])
     GivePlayerStarterItems(player)
 
     -- Chart the area.
@@ -365,12 +365,13 @@ local function build_blueprint_from_string(bp_string, surface, position, force)
     end
 end
 
-function setupBNWForce(force, surface, x, y, seablock_enabled)
+function setupBNWForce(player, x, y, seablock_enabled)
 log("setupBNWForce: x=" .. x .. ", y=" .. y)
     if not global.forces then
         global.forces = {}
     end
-
+    local force = player.force
+    local surface = player.surface
 --    if global.forces[force.name] then
         -- force already existss
 --log("force already exists, exiting")		
@@ -545,6 +546,7 @@ log("Random oil - " .. xxx .. " : " .. yyy);
     build_blueprint_from_string(blueprint,surface,{x=x, y=y},force)
     local config = global.forces[force.name]
     config.roboport = surface.create_entity{name = "roboport-main", position = {x, y}, force = force, raise_built = true}
+    config.roboport.backer_name = player.name
     config.roboport.minable = false
     config.roboport.energy = 400000000    
     local roboport_inventory = config.roboport.get_inventory(defines.inventory.roboport_robot)
@@ -649,7 +651,7 @@ function DisplayWelcomeGroundTextAtSpawn(player, pos)
                         color=tcolor,
                         scale=20,
                         font="compi",
-                        -- time_to_live=ttl,
+                        time_to_live=ttl+720,
                         -- players={player},
                         draw_on_ground=true,
                         orientation=0,
@@ -671,7 +673,7 @@ function DisplayWelcomeGroundTextAtSpawn(player, pos)
                         only_in_alt_mode=false}
 
     table.insert(global.oarc_renders_fadeout, rid1)
---    table.insert(global.oarc_renders_fadeout, rid2)
+    table.insert(global.oarc_renders_fadeout, rid2)
     table.insert(global.oarc_renders_fadeout, rid3)
 end
 
