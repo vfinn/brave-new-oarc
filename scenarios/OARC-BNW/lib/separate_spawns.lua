@@ -677,6 +677,45 @@ function DisplayWelcomeGroundTextAtSpawn(player, pos)
     table.insert(global.oarc_renders_fadeout, rid3)
 end
 
+function DisplayWelcomeBackGroundTextAtSpawn(player, pos)
+    -- Render some welcoming text...
+    local tcolor = {0.9, 0.7, 0.3, 0.8}
+    local rid1 = rendering.draw_text{text="Welcome Back!",
+                        surface=game.surfaces[GAME_SURFACE_NAME],
+                        target={x=pos.x-35, y=pos.y-25},
+                        color=tcolor,
+                        scale=20,
+                        font="compi",
+                        time_to_live=600,
+                        -- players={player},
+                        draw_on_ground=true,
+                        orientation=0,
+                        -- alignment=center,
+                        scale_with_zoom=false,
+                        only_in_alt_mode=false}
+    local rid2 = rendering.draw_text{text=player.name,
+                        surface=game.surfaces[GAME_SURFACE_NAME],
+                        target={x=pos.x-21, y=pos.y+5},
+                        color=tcolor,
+                        scale=20,
+                        font="compi",
+                        time_to_live=600,
+                        -- players={player},
+                        draw_on_ground=true,
+                        orientation=0,
+                        -- alignment=center,
+                        scale_with_zoom=false,
+                        only_in_alt_mode=false}
+   -- remove player name, not one from above, one drawn when player quit, above one is temporary. 
+    if (global.players[player.index].drawOnExit ~=nil) then
+        rendering.set_visible(global.players[player.index].drawOnExit, false)
+    end
+    table.insert(global.oarc_renders_fadeout, rid1)
+    table.insert(global.oarc_renders_fadeout, rid2)
+
+end
+
+
 --[[
    ___  _  _  _   _  _  _  _  __     ___  ___  _  _  ___  ___    _  _____  ___  ___   _  _ 
   / __|| || || | | || \| || |/ /    / __|| __|| \| || __|| _ \  /_\|_   _||_ _|/ _ \ | \| |

@@ -1,4 +1,4 @@
-x/xx/2023 - 4.2.09
+6/30/2023 - 4.2.09
 Main roboport is named after the primary player.
 
 Player Name in base bothered some players, so it is removed shortly after creating your base, but restored while you are offline.

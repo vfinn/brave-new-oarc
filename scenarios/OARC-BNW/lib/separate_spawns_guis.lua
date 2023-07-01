@@ -762,9 +762,6 @@ function SpawnCtrlGuiClick(event)
                 joiningPlayer.force = game.players[player.name].force
                 global.spawn[joiningPlayer.index] = global.spawn[game.players[player.name].index]       -- vf update the global.spawn table, so when one dies, both die
 
-                -- Render some welcoming text...
-                DisplayWelcomeGroundTextAtSpawn(joiningPlayer, global.ocore.sharedSpawns[player.name].position)
-
                 -- Unlock spawn control gui tab
                 SetOarcGuiTabEnabled(joiningPlayer, OARC_SPAWN_CTRL_GUI_NAME, true)
             else
