@@ -72,12 +72,16 @@ function RenderPermanentGroundText(surface, position, scale, text, color)
 end 
 
 -- A standardized helper text that fades out over time
-function TemporaryHelperText(text, position, ttl)
+function TemporaryHelperText(text, position, ttl, scale, color)
+    local c=color
+    local s=scale
+    if color==nil then c = {0.7,0.7,0.7,0.7} end
+    if scale==nil then s = 1 end
     local rid = rendering.draw_text{text=text,
                     surface=game.surfaces[GAME_SURFACE_NAME],
                     target=position,
-                    color={0.7,0.7,0.7,0.7},
-                    scale=1,
+                    color=c,
+                    scale=s,
                     font="compi",
                     time_to_live=ttl,
                     draw_on_ground=false}
@@ -216,6 +220,14 @@ end
 function SendMsg(playerName, msg)
     if ((game.players[playerName] ~= nil) and (game.players[playerName].connected)) then
         game.players[playerName].print(msg)
+    end
+end
+
+function SendForceMsg(forceName, msg)
+    for name,player in pairs(game.connected_players) do
+        if (player.force == forceName) then
+            player.print(msg)
+        end
     end
 end
 

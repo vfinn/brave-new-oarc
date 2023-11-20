@@ -5,8 +5,10 @@
 
 require("lib/separate_spawns")
 
+local INFO_GUI_MAX_WIDTH  = 800
+
 local SPAWN_GUI_MAX_WIDTH = 500
-local SPAWN_GUI_MAX_HEIGHT = 1000
+local SPAWN_GUI_MAX_HEIGHT = 1400
 
 -- Use this for testing shared spawns...
 -- local sharedSpawnExample1 = {openAccess=true,
@@ -44,7 +46,7 @@ function DisplayWelcomeTextGui(player)
                             caption=global.ocfg.welcome_title}
     wGui.auto_center=true
 
-    wGui.style.maximal_width = SPAWN_GUI_MAX_WIDTH
+    wGui.style.maximal_width = INFO_GUI_MAX_WIDTH
     wGui.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
 
     -- Start with server message.
@@ -154,11 +156,18 @@ function DisplaySpawnOptions(player)
     --     "Additional spawn options can be selected here. Not all are compatible with each other.", my_label_style)
 
     -- Allow players to spawn with a moat around their area.
-    if (global.ocfg.spawn_config.gen_settings.moat_choice_enabled and not global.ocfg.enable_vanilla_spawns) then
-        soloSpawnFlow.add{name = "isolated_spawn_moat_option_checkbox",
-                        type = "checkbox",
-                        caption={"oarc-moat-option"},
-                        state=true}
+    if (global.ocfg.space_block) then
+            soloSpawnFlow.add{name = "easy_start_option_checkbox",
+                            type = "checkbox",
+                            caption={"oarc-easy-start-option"},
+                            state=global.ocfg.easyStart}
+    else
+        if (global.ocfg.spawn_config.gen_settings.moat_choice_enabled and not global.ocfg.enable_vanilla_spawns) then
+            soloSpawnFlow.add{name = "isolated_spawn_moat_option_checkbox",
+                            type = "checkbox",
+                            caption={"oarc-moat-option"},
+                            state=true}
+        end
     end
     -- if (global.ocfg.enable_vanilla_spawns and (#global.vanillaSpawns > 0)) then
     --     soloSpawnFlow.add{name = "isolated_spawn_vanilla_option_checkbox",
@@ -286,7 +295,7 @@ function SpawnOptsGuiClick(event)
     local pgcs = player.gui.screen.spawn_opts
 
     local joinMainTeamRadio, joinOwnTeamRadio, moatChoice, vanillaChoice = false
-
+    
     -- Check if a valid button on the gui was pressed
     -- and delete the GUI
     if ((elemName == "default_spawn_btn") or
@@ -304,6 +313,10 @@ function SpawnOptsGuiClick(event)
         else
             joinMainTeamRadio = true
             joinOwnTeamRadio = false
+        end
+        
+        if (global.ocfg.space_block) then
+            global.ocfg.easyStart = pgcs.spawn_solo_flow.easy_start_option_checkbox.state
         end
         if (global.ocfg.spawn_config.gen_settings.moat_choice_enabled and not global.ocfg.enable_vanilla_spawns and
             (pgcs.spawn_solo_flow.isolated_spawn_moat_option_checkbox ~= nil)) then

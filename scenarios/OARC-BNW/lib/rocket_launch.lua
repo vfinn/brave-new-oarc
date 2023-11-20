@@ -35,7 +35,9 @@ function RocketLaunchEvent(event)
     -- Track additional satellites launched by this force
     if global.ocore.satellite_sent[force.name] then
         global.ocore.satellite_sent[force.name] = global.ocore.satellite_sent[force.name] + 1
-        SendBroadcastMsg("Team " .. force.name .. " launched another rocket. Total " .. global.ocore.satellite_sent[force.name])
+        -- too verbose - stop bugging players with your skill
+        --SendBroadcastMsg("Team " .. force.name .. " launched another rocket. Total " .. global.ocore.satellite_sent[force.name])
+        SendForceMsg(force, "Your team launched another rocket. Total " .. global.ocore.satellite_sent[force.name])
         ServerWriteFile("rocket_events", "Team " .. force.name .. " launched another rocket. Total " .. global.ocore.satellite_sent[force.name] .. "\n")
 
     -- First sat launch for this force.

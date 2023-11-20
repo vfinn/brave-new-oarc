@@ -26,6 +26,21 @@ local function RemoveGhostEntities()
     end
 end
 
+commands.add_command("list" , "list players online to log file", function(command)
+    local player = game.players[command.player_index];
+    if player ~= nil and player.admin then
+        if (command.parameter ~= nil) then
+            if command.parameter == "online" or command.parameter == "players" then
+                for name,player in pairs(game.connected_players) do   log(player.name )   end 
+            elseif command.parameter == "all" then
+                for name,player in pairs(game.players) do   log(player.name )   end 
+            else
+                player.print("list | players | online| all");
+            end
+        end
+    end
+end)
+
 
 commands.add_command("rg", "remove ghosts", function(command)
     local player = game.players[command.player_index];

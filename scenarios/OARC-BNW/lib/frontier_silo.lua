@@ -42,8 +42,10 @@ function SpawnSilosAndGenerateSiloAreas()
 
     end
 
+    if not global.ocfg.space_block then
     -- Freezes the game at the start to generate all the chunks.
-    GenerateRocketSiloAreas(game.surfaces[GAME_SURFACE_NAME])
+        GenerateRocketSiloAreas(game.surfaces[GAME_SURFACE_NAME])
+    end
 end
 
 -- This creates a random silo position, stored to global.siloPosition
@@ -147,7 +149,7 @@ end
 -- Generates all rocket silos, should be called after the areas are generated
 -- Includes a crop circle
 function GenerateAllSilos()
-
+    log ("GenerateAllSilos()")
     -- Create each silo in the list
     for idx,siloPos in pairs(global.siloPosition) do
         CreateRocketSilo(game.surfaces[GAME_SURFACE_NAME], siloPos, global.ocfg.main_force)

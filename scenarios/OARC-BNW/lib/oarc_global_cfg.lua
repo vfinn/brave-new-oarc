@@ -13,7 +13,7 @@ function InitOarcConfig()
 
     global.ocfg = {}
 	global.spawn = {}
-
+    global.players = {}
     if (game.active_mods["clean-tutorial-grid"]) then
         global.ocfg.locked_build_area_tile = "clean-tutorial-grid"
     else
@@ -110,6 +110,13 @@ function InitOarcConfig()
     global.ocfg.warn_biter_attack = setGlobalSetting("bno-biter-swarm-attack", true, false)
     global.ocfg.warn_biter_setting = {}
 
+    global.ocfg.space_block = game.active_mods["spaceblock"]
+    if (global.ocfg.space_block) then    -- in data stage use:  mods["spaceblock"]
+        log("Space Block mod installed !")
+    end
+    global.ocfg.easyStart=false
+    
+
 
     -----------------------
     -- VALIDATION CHECKS --
@@ -147,4 +154,3 @@ function setGlobalSetting(settings_startup_name, default_val, isBool)
     log("setGlobalSetting: " .. settings_startup_name .. ", isBool? " .. tostring(isBool) .. ", input value: " .. tostring(default_val) .. ", output value: " .. tostring(tmpVal))
     return tmpVal
 end
-

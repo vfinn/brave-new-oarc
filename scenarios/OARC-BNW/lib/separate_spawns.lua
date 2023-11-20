@@ -240,26 +240,32 @@ function SendPlayerToNewSpawnAndCreateIt(delayedSpawn)
     -- DOUBLE CHECK and make sure the area is super safe.
     local player = game.players[delayedSpawn.playerName]
 log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
-    ClearNearbyEnemies(delayedSpawn.pos, global.ocfg.spawn_config.safe_area.safe_radius, game.surfaces[GAME_SURFACE_NAME])
+    if global.ocfg.space_block then
+        if not global.make_silos then
+            GenerateRocketSiloAreas(game.surfaces[GAME_SURFACE_NAME])
+            global.make_silos=true
+        end    
+    else
+        ClearNearbyEnemies(delayedSpawn.pos, global.ocfg.spawn_config.safe_area.safe_radius, game.surfaces[GAME_SURFACE_NAME])
 
-    if (not delayedSpawn.vanilla) then
+        if (not delayedSpawn.vanilla) then
 
-        -- Generate water strip only if we don't have a moat.
-        if (not delayedSpawn.moat) then
-            local water_data = global.ocfg.spawn_config.water
-            CreateWaterStrip(game.surfaces[GAME_SURFACE_NAME],
-                            {x=delayedSpawn.pos.x+water_data.x_offset, y=delayedSpawn.pos.y+water_data.y_offset},
-                            water_data.length)
-            CreateWaterStrip(game.surfaces[GAME_SURFACE_NAME],
-                            {x=delayedSpawn.pos.x+water_data.x_offset, y=delayedSpawn.pos.y+water_data.y_offset+1},
-                            water_data.length)
+            -- Generate water strip only if we don't have a moat.
+            if (not delayedSpawn.moat) then
+                local water_data = global.ocfg.spawn_config.water
+                CreateWaterStrip(game.surfaces[GAME_SURFACE_NAME],
+                                {x=delayedSpawn.pos.x+water_data.x_offset, y=delayedSpawn.pos.y+water_data.y_offset},
+                                water_data.length)
+                CreateWaterStrip(game.surfaces[GAME_SURFACE_NAME],
+                                {x=delayedSpawn.pos.x+water_data.x_offset, y=delayedSpawn.pos.y+water_data.y_offset+1},
+                                water_data.length)
+            end
+
+            -- Create the spawn resources here
+            GenerateStartingResources(game.surfaces[GAME_SURFACE_NAME], delayedSpawn.pos)
+
         end
-
-        -- Create the spawn resources here
-        GenerateStartingResources(game.surfaces[GAME_SURFACE_NAME], delayedSpawn.pos)
-
     end
-
     -- Render some welcoming text...
     DisplayWelcomeGroundTextAtSpawn(player, delayedSpawn.pos)	
 
@@ -457,7 +463,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     end
 	-- vf - We always need oil within reach on every map or you can't get outside main, so let's drop a few a small distance away randomly
 	-- put it outside of main, to the left
-	if BRAVE_NEW_OARC_MASHUP then
+	if BRAVE_NEW_OARC_MASHUP and not global.ocfg.space_block then
         local xx = x + math.random(CHUNK_SIZE*4, CHUNK_SIZE*5) * (math.random(1, 2) == 1 and 1 or -1)
 		
         local yy = y + math.random(CHUNK_SIZE*4, CHUNK_SIZE*5) * (math.random(1, 2) == 1 and 1 or -1)
@@ -512,14 +518,27 @@ log("Random oil - " .. xxx .. " : " .. yyy);
     end
     -- place dirt beneath structures
     tiles = {}
-    for xx = x - 14, x + 13 do
-        for yy = y - 5, y + 7 do
-            local tile = surface.get_tile(xx, yy)
-            local name = tile.name
-            if tile.prototype.layer <= 4 then
-                name = water_replace_tile
+    if global.ocfg.space_block then
+        for xx = x - 16, x + 19 do
+            for yy = y - 8, y + 9 do
+                local tile = surface.get_tile(xx, yy)
+                local name = tile.name
+                if tile.prototype.layer <= 4 then
+                    name = water_replace_tile
+                end
+                tiles[#tiles + 1] = {name = name, position = {xx, yy}}
             end
-            tiles[#tiles + 1] = {name = name, position = {xx, yy}}
+        end
+    else
+        for xx = x - 14, x + 13 do
+            for yy = y - 5, y + 7 do
+                local tile = surface.get_tile(xx, yy)
+                local name = tile.name
+                if tile.prototype.layer <= 4 then
+                    name = water_replace_tile
+                end
+                tiles[#tiles + 1] = {name = name, position = {xx, yy}}
+            end
         end
     end
     surface.set_tiles(tiles)
@@ -533,18 +552,37 @@ log("Random oil - " .. xxx .. " : " .. yyy);
 --        blueprint = "0eNqdmtFu2zgQRf9Fz3YhUiSH9K8UQSC72lSALLmSvNsg8L9XirN1gHI0c/sQBAmsY2p0OKR5/VYcu2tzGdt+Lg5vRXsa+qk4fH0rpvalr7v1f/PrpSkORTs352JX9PV5/WsaunrcX+q+6Yrbrmj7b83P4mBuT7ui6ed2bps75v2P1+f+ej424/KCB2Ae+mb/X911C/QyTMslQ7++3YLZJ/vF74rX4lDRF3+77f7gWCWnEjiVklMKHKfkGIHjdZwYBU5QcpLAISUnCJyo5JDASUqOEzimVIK8BFIaHSWjjVLpKCltlE5HyWmjlDpKUhul1SRZbZRak6S1UXpNktdGKTZJYhul2SSZbZVmk2S2VZpNYq9Wmk2S2VZpNklmW6XZJJltlWYHyWyrNDtIZlul2UEy2yrNDpLZVml2kMyulGYHyezKZLcxW8t1YkjwPoQDVSgoMiCnvLfHFoIbkteSvEQKWpKVSA+7x/pbPW72fo4RlaMh8b4eZnfDSzvN7Wl/+t5M835sflyX3824uRSs2F3x8drnf9puueC+a/5/O/0nfxyOw7xQT8N13bH7ch3Xx8sfMq67+Hm8ntb3zVzylNvBfppd50W+fVefL5vDZwx02tlF0tN2VkkK0jN3lZYUJJJDuxkH8iiIq3dAu5mzDInAJuQMA4ooqGRACe1m3L35h9716XQ9X7t6HsbsR5kPTpZitBS3RbFait2iPJxeZ/hlGOdsO7wjqizCKQdCm0V5mNz2UzMKbY971j5oB7NZW9JSNmsb0c7DepfQzsORQgk2DG52BoOCmCcW0N2PqxgQuvtha/SpO1+P01y/X81Pcresv33Tvnw/Dtf3pTek3NoYPDjtXXZwAZz2eQqBczZPieBky1OSrtxkuXK7XLkJNp3ximDTGa/IwmusZ0iw6hzIoSDHgDy8xnJDCuAaG7IUAidbnhLByZanJC2l3KBE7d5jHTRPMeDEz1MsOPHzlApcZfMUB6+yjHnRw6ssRwpoy+BAhIKY+Rkj3HuYTwoxoS2DO4UvUVBgQAbuPcy9JYueVrCkCj2tYEmOOx9YqjbWL83WqTxbe49Dfx+ss9DwF9AkQQk9aGELGf9ieCQNL6HnFNzwTFnCjYxFGbiTsSiLdiA2LKtQUuBI8K4lcSSPktg6BXCRT3kMgas8g4lordkKoQfvbIW0aenv2N6XHMmAT40nWTC650kVGN7zJAfG9zzJgwE+TwpghM+TCAzxeVIEY3yelMAcnyVpc9MoOq4NTqPouDY5jaLj2ug0io6rs1PRcW14SqLj2vSURMe18SmJjmvzUxId1waoJDquTVBJdLwyYKbPkywY6vOkCkz1eZIDY32e5MFcnycFMNjnSQQm+zwJ3avwpARm+3fS0+7+tcTDp28x7op/m3F6v8ZG4yhZCn75MXS7/QKW+w3c"
 --    else
         -- 1.1 MW, 120 MJ storage - large roboport
-        if (settings.startup["bno-main-area-design-boiler-n-steam-engines"].value == "solar only") then
---          solar only
-            blueprint = "0eNqdmttu2zAMQP9Fz0lhUjc7vzIUhZN6mQHHznzZVhT599lJ2xSbaJJ9KNoU8QktHUq0mFezb6bq3NftaHavpj507WB2317NUB/bsln+N76cK7Mz9VidzMa05Wl5NXRN2W/PZVs15rIxdftc/TE7uGzYK8vDYTpNTTl2/acr8fK4MVU71mNd3QK4vnh5aqfTvupn9P2jx66ttr/Lppmh526YL+na5eNmzNbBg9+YF7Oz8cFflnD+4aCQkzEcK+PYguE4ISdnOF7IiQwnCDmB4UQhxzOcXMhxDKcQcizDgUwIQg4kNNpyRoNQacspDUKnkXMahFIjJzUIrUbOahBqjZzWIPQaOa9BKDZyYoPQbOTMRqHZyJmNQrORXauFZiNnNgrNBs5sFJoNnNkoNBs4s1FoNnBmo9Bs4MxGodnAmY1Cs4Ez2wrNBs5sq65CCgKEWlBOgGyyJFsrRKiQnJQUOJKXkixHClJSxpHudvflc9mvbiIU4y520x3rYawP28OPahi3ffVzmn9X/epOsGA35u29T9/rZr7gVuu+l8//8/tu340z9dBNS4XusyWu95r54+1L1T7202H53MQlj6mb+ZRcp1m+bVOezqvhEwa6TDhHyM22AymJm22HQhJwc+6k+XVfzSiS0y5CFMhrQdTMBeUitPyRBMXk013qqerGwSQl14aTEeEUwnCWhCbD8ZmUEtYoIKW4NYrU54+HBYfEY+Ld52WdOHf9mFwKbxCbRNxFrtuh6pllj5olL90lPupN8p6CcIxxTT8vlRhWrcmllFVrpAbDmjVBW/ZQ+R1ACyLmPGjLHmcJkFWuOC5JcdpwCAODV6446XCCcsVJUz7V8dN+GMvrlfSC4+aapK3q4499N13LkZCn6oWQy7CYUdiYxBbKrEvec8yUWZemgDLr0hTUJgvheLRaEGFnVGvuCZBXZl1IUtRlhyPCicqsS4eTK7MuTSmU+3ySkmfqfZ6YqhzUuytFQuXumr4zq8zzNMUp8zxN8co8T1OCNj2pAY5aEJEPubqAps7cC+2hgiMeMYpMG1IgQKA9nSBDQu3pBEmy2tMJkuSok4V51PryWK0dnlOzWPgvQAMHDV+ARg4avwD1HDTXnkuQs1NozyUoEmSZ9mCCRoH2ZIJGqUsWsjmmrlkCRVIXLQVF8loSOU7iB823TaxIY6R1C4ZVTK4da3KECi2JGiHQrvc+o0igbNTTJFS26mmSVTbraZJTtutpklc27GlSULbsaVJUNu1pUq5s29OkQtm3J0nSPqllHZc2Si3ruLhTyjoubZUi67i0V4qs49JmKbKOS7ulyDoubZci67i0X4qs49KGKbKOSzumyDoubZki67i0Zwqs49Yqu/g0ySnb+DTJK/v4NCkoG/k0KSo7+TQpV7byaZK2VrmRHje3ryHuPn3fcWN+Vf1wvQZzcLHAGPz8A/Fy+QvyGhwj"
+        -- to make blueprint - be sure there is a roboport in it, and you should remove the 4 yellow chests or mod how they are handled
+        -- global.spawn[player.index]
+        if (global.ocfg.space_block) then
+            if global.ocfg.easyStart then
+                log("Space Block: EasyStart for " .. player.name)
+                TemporaryHelperText("Check chests for resources", {global.spawn[player.index].x-6, global.spawn[player.index].y+11},  TICKS_PER_MINUTE*4, 2,{0,1,.7,1})
+                TemporaryHelperText("Use Space Matter furnaces", {global.spawn[player.index].x-25, global.spawn[player.index].y+2}, TICKS_PER_MINUTE*4, 1,{1,1,1,1})
+                TemporaryHelperText("to copy raw iron,copper,stone", {global.spawn[player.index].x-25, global.spawn[player.index].y+3}, TICKS_PER_MINUTE*4, 1,{1,1,1,1})
+                blueprint = "0eNqtmt1yszYQQN+Fa/MN+oe8SieTASw7TAFRftpmMn73ynZqsL0y6/V3lcQRZyUhHZaVv6OinmzXV+0YvX1HVenaIXr74zsaqn2b18fPxq/ORm9RNdom2kRt3hz/Glyd93GXt7aODpuoarf23+iNHd43kW3HaqzsGXP64+ujnZrC9r7BBbDLhzGu2sH2o//HJurc4K9y7TGiJ8VCqfSX2kRfp99l8kv5MNuqt+W5lT5s7uj8Qq/dvhrGqozLT+vj9Pavyf8MBcruAv1c8LGran/VeSj/j3Geg9G11hNLNx1njx179NNo7knpus72sesDLcWlZdW7NtxOLoj+vizavC+627vmo5h2u1Ofx36ywCwtIj6cfv1o+jkAnrs49nk7dK4f48LWI4w3j/ASwKsLPh8G2xR11e7jJi8/q9bGDA4i5yAi+7mzZXVaz0OXl7aoXflnvJ06G5+mFQirwTUPRZO30QCawdPYOi1F00S6TsvwNLVOYwkexxE4hsbxDIHjeJxG4Aib6nhL1p3GyLvqng/tKqbI/AzF12S+RvENYeYNRmcsJffcoHqevSg0HRLaR+HcOPhOd5DQ+Lwx+3ybw9Ml1U0gCMRoMgvhFluyyes6rvOmg2niZq4hmqAlA1dsjU8GLkF6V7hxfj6rJJAWtP4GTaflAVzyDo1I0mwfmm5F030Ip2m6D+EMTfchXErTfQi3eFTOaUSTj359xLupb/1nIFwnF7SEwCIhJshCYh4mghFkKTGyFJwsS4mRpRBkvkLx5YsyFjQZi3kXHi1wHFbAx3MkcOFo3J290puCV7d4IklNbqYAws17Ly/LqZnqfHR9wFsr2yPDo/RjlEzwKLmCYngUX0FxPGpFJVKgUXxl2qXEo9amXb1uTg6CNdWcHGNOOe+JcxrwRABxJ9BN9DCXuLyK3qUN55IDmB5IerrKMYaUGZkvUK/3i/fFqRjG/NQUZPPFUvAX2Wr/WbjpNJtKQHOjGEVB4DpTnKIgGCWwI14Y6H7ECThiSXES3E1FcRKM0hQnwShDcRKMSl93UgKCM7o02O+TxqIECZpDk5NOVFVWM7I4UHVBzQlJLcMktZqedDJUz19NOhNa0qkVLcFL4ARPa4pdwR2jDcWuMCqlJHgwKqPIFESZhCJTGMUoMoVRnCJTGCXIzuPZ73Pe5TAFNJ6Rzxhv4Q2eYrxhyDVVjqrZGnJNlaNqtsY88hJf9RI3tKMWk5IKijxQAjQZqWAWwqUJqWAWxDFSwSyI46SCWRAnSAWzII684TQmxUhVqNh7Pgxd3xdPVHr/cW67OH9NQgXe5SntVRVYhE6Qr1rJBwfDVw3Vw7Pmq6azNybvjWpqHrSdHVD209bGrqrjIu97uzx8hivV6VPv4gaxfObOFD4fX32oLJIWjiqMpinxqwPsLhJqDd2sjqfP8NNZbYW/MaFiXxaeBei5lS0MN9q8iW27r1q7ekCEpNOOi05wCMdpdg/hBM3uIZyk2T2EUzS7h3CaZvcQbt6e3fGJD6/FBYcHOPMudLvd8OnlFHdT6BBwCQRet/yWOn1l6W3xDadN9LffVecVmjJpMm6Mlszw9HD4D3k8wQI=";
+            else
+                log("Space Block: Normal Start for " .. player.name)
+                if (settings.startup["bno-main-area-design-boiler-n-steam-engines"].value == "solar only") then
+                    blueprint = "0eNqlmeFymzAMx9/Fn8MOg40hr7Lr9QxxWt8AMwPber28+yBZC0vkoKifcsk5PxlZf1kS76ysR9N52w5s/85s5dqe7b+/s96+tLqefxveOsP2zA6mYTvW6mb+1rta+6jTranZacdsezB/2J6fnnbMtIMdrLlgzl/entuxKY2fFnwCBq/bvnN+iEpTDxO4c/30N9fOJieUKOLkm9yxN7aPkqSIv8nJzMF6U10WidPuhp580m3bGz9Mv0HcdMXl19wE4KbUXXPMrsUnXfe9acrati9Ro6tX25qIgzbkjWcmC/Z8TH2nK1PWrvrxXDo39NOOOwZYleBRAsb4tTEAlqFh+TZMYWEJ34blaJjYhhVomNqG8RhLS2MEjaNpKYL2uJLyHKMkTpXSLR6SEhdUfIHCyy9JNVc0qfJFXl4fNHgUXFzZgTiKItMgbSWtRtd1VOumA2HZ1TFCsIIi+tDWkpii+iCNU2QfpCUU2QdpKUX2QRpZPhnqepZUvELhM1TS+i8cs4AjFqXU7sX2g62i6tX0Q+TNz3H6RKA/xH5e/3y09fSnS030USzd2vCudLM3KjfO9ZiM5739W77EzVyjDX48uwL4yxP0QDnV9QLl+uLx+0KiKq+Yum+J2XfKv5bQBS2hp8tZzsc3PxRceS2GoChN0eLnxdWmIdqqDq2qsRlrPTjwGOcU9uFlkCTRJLFBytCkbIOk0KR8g5RjSXPw3iUVaNKGx0WMJm14XPDHlZxglCwSqpITVBNFLixTFP5rTVrOaYlCrLq0sewHfbYAGVuCNp0Mtca+vJZuPF84ooBuBJGRkgeHk4dQhOSRgqSckDxgUoF03ip33DpPQs6TMSGbgJuUnJBNYFJCyCYwKSVkE5hELihR8x5JLihRgxmZEYKag35QhKCGSTnhRoRJBSGGQVIWE2IYJnFCDMOkhBDDMGlRw1FPHcDda3EVYyrQ6mZUTSjUjCK7O6NItm4qldNuqow0Agz6iDQDDNJIQ8AgjTQFDNEUaQoYpJGmgEFaEuqCy/F4RCjggRb4t3OHpYvlcajz1XWgPV71QoNrTWDVoj3rp+bZ+dBCubLZdcbfWbpE/jjp2Y7NnbVLXFd+PJjI2ToqtfemXj882MKrR/JQenMKG+W5EpT3AUoGIkeSskGIlpGyQYimSNkgRMtJ2SBEK0jZIEDLY1I2ONOedpcXfvvV+8Ed+zXp9xJCORdqeiSVCa6S/HT6C7+g/kg="
+                else        
+                    blueprint = "0eNqlmW1vozAMx78Lr8tEgPDQr3KapkDTLjogXAh3N0397hfoNrjWKa73qmoVfg6O/47tvgdVM8reqM4G+/dA1bobgv2P92BQp04002/2rZfBPlBWtsEu6EQ7fRt0I0zYi042wXkXqO4g/wZ7dn7eBbKzyip5wcxf3l66sa2kcQu+ANaIbui1sWElG+vAvR7cY7qbTDpUWkbxE98Fb8E+jJM4feLOzEEZWV8WpefdDT3+oqtukMa63yBusuLya24McBPqrjlm1+kXXQyDbKtGdaewFfWr6mTIQBv8xjPOgpqPaehFLatG1z9fKq3t4HbcB4BVDh4lYIxdGwNgGRpWbMNyLCxm27ACDUu3YSUalm/DWISlJRGCxtC0BEEjKCnGKImRpRRjpMRSKj5B4fn3pMpoUmWLvIw4CPAoWHplB+KslNWKpgkb0fYgLLtyPAQrSJr3ba0kid5DiyOS6n00RpK9jxaTZO+jJSTZ+2hk+USo65lT8QyFz1BJ67/gjjyOWJTS6JMarKrD+lUONjTy1+g+EehPsc/rX46qcQ9daqLPYunWhtGVnrxR63Gqx3g07e1j+RI3U41mzTi7AnjkGXqhguj6SbwI15cP3xesRFVeEXXfJWbfCftWQv9wzsMJPVnOcjq+6aXgymsxBEVpghb/5I3/Ng3RVnVoXY/t2AirwWOcUtinl0ESR5PSDVKGJmUbpBxNKjZIBZY0Be9dUokmbXg8jdCkDY+n7HElZxglpzFVyRmqiaIWlixH4b/XpDFOSxTpqksbq8GK2QJkbAna3BnqpDq9VnqcL5y0hG6ENCMlDw4njzQnJI8cJBWE5AGTSqTzVrnj1nkcch6PCNkE3CRnhGwCk2JCNoFJCSGbwCRqQclQ8x5OLSgZajDDM0JQg/LgOSGoYVJBuBFhUkmIYXj6ExFiGCYxQgzDpJgQwzBpUcNRuA7g7rW4jjFP45yRNYGaUWR3ZxTx5k0V026qjDQC9PqINAP00khDQC+NNAX00XLSFNBLI00BvbTY1wVX4/GIUMADLfAfrQ9LF8siX+crGk97vOqFrO6kZ9WiPWVc86yNbyFf2ex7ae4sXSJ/dHpWY3tn7RLXtRkPMtSqCSthjGzWLw+28PkjeSi5OYWN8jxfPFO5TXnmG+wTGqG693xVvlop2lB2JzWfzd35JRJOyjgzG6KRMo6XRso4Xhop4/hoBSnjeGmkjOOlLVKvRtM52d2N8vJezGQQPyHN9aLixhAqqV2lq+nP0a/njG5fLmnUPWzNKKHtLqLUx+Pw6vJK2I+emf36sFAtc7Gos58u+y3o1ChPrzD/Ebxf/W+8C367t7gItWBp7sIwz1KWx8X5/A9KAql6"
+                end
+            end
         else
---      adding the boiler to existing solar - water pump over land - not water
-            blueprint = "0eNqdmu9uozoQxd+Fz8kK/wXyKlfViqRuikQgS+Duraq8+4Vku0G7PpnxfKpS4R/YPjMe2+cz27dTOA9NN2a7z6w59N0l2/3zmV2aY1e3y//Gj3PIdlkzhlO2ybr6tPy69G09bM91F9rsusma7jX8l+3UdUO2rA+H6TS19dgPq5b6+rLJQjc2YxPuH3D78fG9m077MMzox6vHvgvbn3XbztBzf5mb9N3yuhnjcu2+uU32ke1KZcw3d12+6A+U5qIKEmW4KE+iLBdVkSjHRZUkyjNRRpGogovKSVTJRRkSVXFRmkSpnMuiNaq4ejeWZnEFb2jBK67iDa14xZW8oSWvuJo3tOYVV/SWFr3iqt7Sqldc2Vta9oqre0vrXnN1bxm5mat7S+tec3Vvad1rru4trXvN1b2lda+5ure07jVX947Wvebq3tG611zdO1r3mqt7R+vecHXvaK0aSX3jAEsLWBawTLTkI6ol9GGWC1vXAAjm2DBDwzwb5mnYQ/tD/VoP1JKGMA/Zt/2xuYzNYXt4D5dxO4Qf0/w3DNSitJA32a/Hv7817dzmXl1/Fex/v2Lo9/04gw/9tOwJXL582leV/vvxZZ8wDtNheXWkyUusP6vQO82K3Lb16Uz1AMjS5tz5svTkW8WG0ZNvNRtGS8Cyo2+drhDMCtIVYjkBC82lF6SrArAKAcsDVhnds0ZT3xeqjIIqNqh6CnI5F7QsJ89Aig0yz0Fsta/3PCXYtj7UvmSUcz+M8Ur5i1NFKQ+ZN90lDIw0CQTg2CvMuhhFnfPcIbfP1eQKNohQE1vfjlATW9/uuZq8pKACmcArAQsIwUsKqgqwjIAFNOVtcoayeRTkkjMUAPnkDAVAq0Q+7S9jfWv8LEHNnLlJaI7v+366VTm+jJUhvmSSbYHJRZRcJUdmvPNFnhyZAKSSIxOAtCCaQAQURsACEVDY9GhaMn+U5QSsHLB8emTqKKhIj8w4qEyPzDioSq4d4qAyF9QOaPJKJVirIUwnr9WgiyY9I8RBNj0jxEEuPSPEQT49iuF4FwIWiLyyFEQxumaoBCwN7hlywUGKBVumSgkOUiBMCw5SIMwIDlIgzKITkHk6hvoYiJMVNK+Vk3BLmusF3NXBP+QWEq6iuaXgFAVOViU4RUEwleeCYxRMU4JzFEwTFEMW3hkKqiGUY1QuKYccgknqIThm/I3B75UQkPj7X0WQSsHQw9GqBDA0Wuyb5PXQewRT6X4HDNPpjgcMM+meBwyz6a4HDHPpvgcM8+nOBwwr0g0LGCYwUmBYlW5ZgDAt8FJgmEo3LWCYwE2BYSbdtoBhAj8Fhrl04wKGCRwVGFak2yAwrEz3QWBYlW5egDAjcFVgmEq3L2CYwFeBYSbdwIBhAmcFhrl0CwOGCbwVGFakmxgwTOCuwDBJFYRgq0velAvwdeVR8S/AD33dktfeP/v+9fHQvEuJ3nSr1Y3yfhq6MGyfXUWt6677B782Qzjcn/FR/uOL9n3TBuJA8C+ojkLXkRjq0zZ0x6YLVG3BhFs+vEiGPyK1f3u7vPdD2J6nuLlgNdhLqHEG+xG65+YciJLyBl3MzDfX825lr95k/87iu/di7lpR6cJXOi+Nvl7/B8QsV20="
+            if (settings.startup["bno-main-area-design-boiler-n-steam-engines"].value == "solar only") then
+    --          solar only
+                blueprint = "0eNqdmuuOm0gQRt+F33ZEVV/xq6xGEXbIBAmDF/DujkZ+9wVPJrYSqqu6fo08MsdcvlN0d/V7ceyuzWVs+7k4vBftaein4vDXezG1r33drf+b3y5NcSjauTkXu6Kvz+unaejqcX+p+6Yrbrui7b81/xUHuO3YI+vT6Xq+dvU8jE9H4u1lVzT93M5t83EC9w9vX/vr+diMC/rx0/PQN/t/665boJdhWg4Z+vXnFszeRotf3K54W44wFXxxt/WUfmOhmFWyLCNmAcuyUpaJLMuJWRXL8mKWZ1lBzAosK4pZlmVVYpZjWVCKYXxYQZx8Y3iYOPqGjz6Is2/47IM4/MiHH8TpRz79II4/8vEHcf6Rzz+IBUBeABAbgLwBKDYABeVabADyBqDYAOQNQLEByBuAYgOANwDFBgBvAIoNAN4AFBsAvAEoNgB4A1BsAPAGGLEBwIfWqEY/SMBQAzMEzGwOCbnBFEWzYtrz8ICiOTnN8jQvpwFPe1gw1t/qkX3TUZwnAc7Lc9x39fnCvpyoZDwE6IbXdprb0/70o5nm/dj8fV3+NiOLXs9zV/z8/tfvbbcc9DGg/5wj/Pkb43Ac5oV8Gq7rNMSV67l9Tgx+fX2dmszj9bT+9sYhL1sD6lL8zJBPgAU5jU+ARTEN+BxYuYfPxYuiWU3xIlJlnQZGnZnXFC9LwIIG5ghY3Jzibk8FP1l+k1SJSauxCZIr5aSQJoGc5NIkee6fZ0eemOY+cr+WhMswzkQp/QSFTcwj8G0/NaOk0hGhcvK3zvNwlbo+L77vmE6VC2ISMKmSJx2YVMmTDulUedVwi3iEHjQwoi541XCLiIM3GlggYFZRseImySkq1jbJKyrWNumpuF+P01zfj04XrLgMXfqmff1xHK73UYuPW8MKH6VoBBodNtGVwtLN6w+lwtJtEigs3SahRizChWA0MMKFYDViRQLmNLCKgPlsS21ZbpJCtqUUKWZbSpGq7HEFQYqlalxB3PUIqrc4RcPstzh1lSa7PlAkm10fKJLLrg8UyWuUJiyMQQOjnmDMV3q5SAJWaWBU46JUrMDYkpisVaBYgaFpqFiBoWlGsQJD06xibYCmOcXaAE3zirUBmhYUawM0LeZrRZpQVRoY2XYrNV4hRQMNzVC0jFfAr8JttlHydwAGBmU195+8Y05DI++Y19x/S9FCftM/QYv5bf8Ercpv/NO0jO5zJaBBfvM/QcP89n+CZvI3ACRoNn8LQILm8vcAJGg+fxNAghbydwEkaDF/G0CCVuXvA6BpGX1ogQsZjWiBCxmdaIELGa1ogQvyXjQKXJA3o1HggrwbjQIX5O1oFLgg70ejwIWMhrTAhYyOtMAFeUsaBC7Ie9IgcMGY/F0BCZrN3xaQoKnGSHfay+5jK+Xhac/mrvinGaf7cbhcTagwBG8hYLzd/gdAgBor"
+            else
+    --      adding the boiler to existing solar - water pump over land - not water
+                blueprint = "0eNqdmutum0AQhd+F36Zihr2AX6WKKuxsEiQMFEPbKPK7F+ymRu2OZ5hfkSP243bO7OwePpJDM4V+qNsx2X8k9bFrz8n+60dyrl/bqln+N773Idkn9RhOyS5pq9Py69w11ZD2VRua5LJL6vY5/Er2cNmxI6vjcTpNTTV2w2okXp52SWjHeqzD7QKuP96/tdPpEIYZfT/12LUh/Vk1zQztu/M8pGuX082Y1BQGv9hd8j6PMFh+sZflkv5hoZgFLCsXszKWZaSsvGRZVswqWJYTszzL8mKWY1mFmGVZVilmGZYFmRiW8zCx8nNe+SCWfs5LH8Taz3ntg1j8yIsfxOpHXv0glj/y8gex/pHXP4gNgLwBQOwA5B2AYgcg7wAUOwAFtV/sAOQdgGIHIO8AFDsAeAeg2AHAOwDFDgDeASh2APAOQLEDgHcAih0AvANysQOAd0Cu6X6WohuFoQYGBCyPtoRMA0TSjJi2ajVImpXTDE9zchrwtLsLhuq5GrjJieSsDHCa32PaVKeem09IZdwN0HSv9Xmsj+nxLZzHdAjfp/lvGFj0cp275M/x317qZh50a+g/1wj/n2PoDt04k4/dtCxDbLZc2+fC4O/hy9JkHKbjcu7IkKdYQ52J3xnyCjAgp/EKMCimAa8DI/fhqhKSNKMoXpSqjNXAqCtzmuKFBMxrYDkBK6JL3Piy8pNloqRSTFoc+4BkMznJPyaBnGQfk+S6Xy1olgIdpd11v5SEvhtGopR+guKYu+Dr9hwGSaUjRGXls86q9yXvz4mfOz5WlfViEjCqkisdGFXJlQ6PVeU07Rb1Ch1oYERdcKp2i5CDyzUwS8CMomK5KMkqKlac5BQVK05aFffpcB6r6+jHBcvNrUsb6te3QzdduxZXxNoKV0jRCDTaR9GlwqXR+/eZwqVxEihcGiehxliEF3yugRFe8EZjLEfArAbmCZhTuLSIkrzCpXFSoXBpnFQq+oooqchUfQXx1AtQzeIUDRWzePwuc0V9iJOMoj7ESVZRH+Ikp7E04cLCa2DUGyw0li4IWKmBUcFFptmBMcRirQTNDgxJQ80ODEnLNTswJM1o9gZImtXsDZA0p9kbIGleszdA0gqNrQgnlKUGRsZumcJX1H1Cptl0NUDRNkwB5V9YHCWfA9AzKM1GD/3ENDs99BPTbPUYpGheEfrTtEIR+9O0UhH8k7QN6XMhoIEi/KdpqIj/aVquCO1pmlF8TkDTrCK2p2lO8UUBTfOK4J6mFYpvCmhaqYjuSdqGHFrgrA1BtEC9G5JogbM2RNEC9cqzaBQ4Sx5Go8AL8jQaBV6Qx9Eo8II8j0aBFzYE0gIvbEikBV6QR9Ig8II8kwaBF/JcEeTTNKP4xoCmqXokknb3wmEa2jCkD+OLdTNir0Htcz2E4+0gFz2B10XC6ybKyiPhY1c1bBD8s+ue7wfNXX80+4VVNH7o6iYwO13/PxCMUteeDNUpDe1r3Qa2T5DR14E1S8820+8Punt5Ob91Q0j7ifheYK0VL9LKKtHu6z6wDex1q+Vpd/s+eL/6EHmX/JgVcruP2aK+RO+dAY/F5fIb+V3+cQ=="
+                             
+            end
         end
---    end
 
         
     build_blueprint_from_string(blueprint,surface,{x=x, y=y},force)
-    local config = global.forces[force.name]
+     local config = global.forces[force.name]
     config.roboport = surface.create_entity{name = "roboport-main", position = {x, y}, force = force, raise_built = true}
     config.roboport.backer_name = player.name
     config.roboport.minable = false
@@ -569,6 +607,7 @@ log("Random oil - " .. xxx .. " : " .. yyy);
     roboport_inventory.insert{name = "logistic-robot", count = numLogisticBots}
 
     roboport_inventory = config.roboport.get_inventory(defines.inventory.roboport_material)
+
     roboport_inventory.insert{name = "repair-pack", count = 10}
         
     -- storage chest
@@ -578,51 +617,88 @@ log("Random oil - " .. xxx .. " : " .. yyy);
     -- storage chest, contains the items the force starts with
     local chest = surface.create_entity{name = "logistic-chest-storage", position = {x + 1, y + 4}, force = force, raise_built = true}
     local chest_inventory = chest.get_inventory(defines.inventory.chest)
-    chest_inventory.insert{name = "transport-belt", count = 400}
-    chest_inventory.insert{name = "underground-belt", count = 20}
-    chest_inventory.insert{name = "splitter", count = 10}
-    chest_inventory.insert{name = "pipe", count = 20}
-    chest_inventory.insert{name = "pipe-to-ground", count = 10}
-    chest_inventory.insert{name = "burner-inserter", count = 4}
-    chest_inventory.insert{name = "inserter", count = 20}
-    chest_inventory.insert{name = "medium-electric-pole", count = 50}
-    chest_inventory.insert{name = "small-lamp", count = 10}
-    chest_inventory.insert{name = "stone-furnace", count = 4}
-    chest_inventory.insert{name = "offshore-pump", count = 1}
-    chest_inventory.insert{name = "boiler", count = 1}
-    chest_inventory.insert{name = "steam-engine", count = 2}
-    chest_inventory.insert{name = "assembling-machine-1", count = 4}
-    -- chest_inventory.insert{name = "roboport", count = 4}
-    --chest_inventory.insert{name = "logistic-chest-storage", count = 2}
-    chest_inventory.insert{name = "logistic-chest-passive-provider", count = 4}
+    if global.ocfg.space_block then      
+        chest_inventory.insert{name = "inserter", count = 10}
+        chest_inventory.insert{name = "transport-belt", count = 10}
+        chest_inventory.insert{name = "small-lamp", count = 10}
+        chest_inventory.insert{name = "filter-inserter", count = 1}
+        chest_inventory.insert{name = "fast-inserter", count = 2}
+        chest_inventory.insert{name = "burner-inserter", count = 2}
+        chest_inventory.insert{name = "copper-cable", count = 20}
+        
+
+        -- now normal items from space block
+--	    chest_inventory.insert{name="assembling-machine-2",count=1}
+--	    chest_inventory.insert{name="assembling-machine-1",count=4}
+--	    chest_inventory.insert{name="solar-panel",count=20}
+--	    chest_inventory.insert{name="accumulator",count=10}
+--	    chest_inventory.insert{name="small-electric-pole",count=5}
+--	    chest_inventory.insert{name="offshore-pump",count=1}
+	    chest_inventory.insert{name="spaceblock-water",count=50}
+  	    chest_inventory.insert{name="landfill",count=800}
+        chest_inventory.insert{name="iron-ore", count=50}
+        chest_inventory.insert{name="copper-ore", count=50}
+        chest_inventory.insert{name="stone", count=50}
+        chest_inventory.insert{name="coal", count=50}
+    	chest_inventory.insert{name="crude-oil-barrel",count=5}
+        chest_inventory.insert{name="small-lamp", count = 10}
+        chest_inventory.insert{name="advanced-circuit", count=4}
+        chest_inventory.insert{name = "lab", count = 2}
+        if not global.ocfg.easyStart then
+            -- these 5 are extra items in the easyStart bp, so give to normal mode
+            chest_inventory.insert{name = "inserter", count = 1}
+            chest_inventory.insert{name = "fast-inserter", count = 5}   
+            chest_inventory.insert{name = "filter-inserter", count = 3} 
+            chest_inventory.insert{name="spaceblock-matter-furnace", count = 3}
+        end
+    else
+        chest_inventory.insert{name = "transport-belt", count = 400}
+        chest_inventory.insert{name = "underground-belt", count = 20}
+        chest_inventory.insert{name = "splitter", count = 10}
+        chest_inventory.insert{name = "pipe", count = 20}
+        chest_inventory.insert{name = "pipe-to-ground", count = 10}
+        chest_inventory.insert{name = "burner-inserter", count = 4}
+        chest_inventory.insert{name = "inserter", count = 20}
+        chest_inventory.insert{name = "medium-electric-pole", count = 50}
+        chest_inventory.insert{name = "small-lamp", count = 10}
+        chest_inventory.insert{name = "stone-furnace", count = 4}
+        chest_inventory.insert{name = "offshore-pump", count = 1}
+        chest_inventory.insert{name = "boiler", count = 1}
+        chest_inventory.insert{name = "steam-engine", count = 2}
+        chest_inventory.insert{name = "assembling-machine-1", count = 4}
+        -- chest_inventory.insert{name = "roboport", count = 4}
+        --chest_inventory.insert{name = "logistic-chest-storage", count = 2}
+        chest_inventory.insert{name = "lab", count = 2}
+        chest_inventory.insert{name = "gun-turret", count = 2}
+        chest_inventory.insert{name = "firearm-magazine", count = 20}
+        if seablock_enabled then
+            -- need some stuff for SeaBlock so we won't get stuck (also slightly accelerate gameplay)
+            chest_inventory.insert{name = "ore-crusher", count = 4}
+            chest_inventory.insert{name = "angels-electrolyser", count = 1}
+            chest_inventory.insert{name = "liquifier", count = 2}
+            chest_inventory.insert{name = "algae-farm", count = 2}
+            chest_inventory.insert{name = "hydro-plant", count = 1}
+            chest_inventory.insert{name = "crystallizer", count = 1}
+            chest_inventory.insert{name = "angels-flare-stack", count = 2}
+            chest_inventory.insert{name = "clarifier", count = 1}
+            chest_inventory.insert{name = "wood-pellets", count = 50}
+            global.seablock_chest = seablock_chest
+        else
+            -- prevent error when looking for "rock-chest" later
+            global.seablocked = true
+            -- only give player this when we're not seablocking
+            chest_inventory.insert{name = "electric-mining-drill", count = 4}
+            chest_inventory.insert{name = "logistic-chest-buffer", count = 1}   -- no green in this bp, so add 1
+        end
+    end
     if (settings.startup["bno-main-area-design-boiler-n-steam-engines"].value == "solar only") then
-        chest_inventory.insert{name = "logistic-chest-requester", count = 3}
+        chest_inventory.insert{name = "logistic-chest-requester", count = 3}    -- blue chests
     else
-        chest_inventory.insert{name = "logistic-chest-requester", count = 2}
+        chest_inventory.insert{name = "logistic-chest-requester", count = 2}    -- blue chests
     end
-    chest_inventory.insert{name = "logistic-chest-buffer", count = 4}
-    chest_inventory.insert{name = "logistic-chest-active-provider", count = 4}
-    chest_inventory.insert{name = "lab", count = 2}
-    chest_inventory.insert{name = "gun-turret", count = 2}
-    chest_inventory.insert{name = "firearm-magazine", count = 20}
-    if seablock_enabled then
-        -- need some stuff for SeaBlock so we won't get stuck (also slightly accelerate gameplay)
-        chest_inventory.insert{name = "ore-crusher", count = 4}
-        chest_inventory.insert{name = "angels-electrolyser", count = 1}
-        chest_inventory.insert{name = "liquifier", count = 2}
-        chest_inventory.insert{name = "algae-farm", count = 2}
-        chest_inventory.insert{name = "hydro-plant", count = 1}
-        chest_inventory.insert{name = "crystallizer", count = 1}
-        chest_inventory.insert{name = "angels-flare-stack", count = 2}
-        chest_inventory.insert{name = "clarifier", count = 1}
-        chest_inventory.insert{name = "wood-pellets", count = 50}
-        global.seablock_chest = seablock_chest
-    else
-        -- prevent error when looking for "rock-chest" later
-        global.seablocked = true
-        -- only give player this when we're not seablocking
-        chest_inventory.insert{name = "electric-mining-drill", count = 4}
-    end
+    chest_inventory.insert{name = "logistic-chest-passive-provider", count = 4} -- red chests 
+    chest_inventory.insert{name = "logistic-chest-buffer", count = 3}           -- add to green chests based on blueprint
+    chest_inventory.insert{name = "logistic-chest-active-provider", count = 4}  -- purple chests
 end
 
 
@@ -1371,6 +1447,11 @@ function CreateForce(force_name)
                 DisableTech(newForce, v.t)
             end
         end
+        if global.ocfg.space_block then
+            for _,v in ipairs(SPACE_BLOCK_LOCKED_TECHNOLOGIES) do
+                DisableTech(newForce, v.t)
+            end
+        end    
     else
         log("TOO MANY FORCES!!! - CreateForce()")
         return game.forces[global.ocfg.main_force]

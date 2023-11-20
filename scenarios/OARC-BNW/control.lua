@@ -90,17 +90,21 @@ default_qb_slots = {
         [15] = "logistic-chest-buffer",
 		[16] = "logistic-chest-active-provider",
         [17] = "gun-turret",
-        [18] = "stone-wall",
-        [19]  = "small-lamp",
-        [20] = "radar",
+        [18] = "assembling-machine-2",
+        [19] = "small-lamp",
+        [20] = "stone-wall",
         [21] = "pipe-to-ground",
         [22] = "pipe",
         [23] = "offshore-pump",
         [24] = "boiler",
         [25] = "steam-engine",
         [26] = "burner-inserter",
-        [27] = "lab"
+        [27] = "fast-inserter",
+        [28] = "filter-inserter",
+        [29] = "lab",
+        [30] = "radar"
 }
+
 commands.add_command("trigger-map-cleanup",
     "Force immediate removal of all expired chunks (unused chunk removal mod)",
     RegrowthForceRemoveChunksCmd)
@@ -160,6 +164,9 @@ script.on_init(function(event)
 
     -- Display starting point text as a display of dominance.
     RenderPermanentGroundText(game.surfaces[GAME_SURFACE_NAME], {x=-34,y=-25}, 12, "Brave New OARC", {0.9, 0.7, 0.3, 0.8})
+    if global.ocfg.space_block then -- Space block
+        RenderPermanentGroundText(game.surfaces[GAME_SURFACE_NAME], {x=-24,y=-17}, 8, "Space Block", {0.9, 0.7, 0.3, 0.8})        
+    end
     BNOSwarmGroupInit()
     log("Applying new values for Starting Area: " .. game.surfaces.oarc.map_gen_settings.starting_area *100 .. "%")
     -- Apply the value set in game UI of Starting Area Size to the starting area radius's
@@ -267,8 +274,21 @@ script.on_event(defines.events.on_player_joined_game, function(event)
     if (global.players[event.player_index].drawOnExit ~=nil) then
         DisplayWelcomeBackGroundTextAtSpawn(joiningPlayer, global.spawn[joiningPlayer.index])
     end
-end)
 
+    -- Transfer the items loaded by space block into a chesk, but store them globally until the players base is setup
+
+    -- SPACE BLOCK 
+--    if global.ocfg.space_block then  
+--       log("Space block: clear inventory")
+--        local p=game.players[event.player_index]
+--        local inv=p.get_main_inventory()        
+        -- clear inventory
+--        for k,v in pairs(inv.get_contents())do
+--            inv.remove({name=k, count=v})
+--        end
+--    end
+end)
+    
 ----------------------------------------
 script.on_event(defines.events.on_player_created, function(event)
 local player = game.players[event.player_index]
@@ -276,13 +296,12 @@ local player = game.players[event.player_index]
 log("on_event::On Player created: " .. player.name)
 
 -- Additions from BraveNewWork OnEvent_on_player_created(event) vf
-    if not global.players then
+    if not global.players then  
         global.players = {}
-
     end
     global.players[event.player_index] = {
         crafted = {},
-        inventory_items = {},
+        inventory_items = {},     
         previous_position = player.position,
         drawOnExit = nil, 
     }
@@ -310,6 +329,19 @@ log("Player teleported to 0:0");
     player.cheat_mode = true
 
     -- Set-up a sane default for the quickbar
+    if global.ocfg.space_block then 
+        default_qb_slots[6]="fast-inserter"    
+        default_qb_slots[7]="burner-inserter"    
+    
+        default_qb_slots[10]="landfill"    
+        default_qb_slots[17]="iron-chest"  
+        default_qb_slots[19]="spaceblock-matter-furnace"  
+        
+        default_qb_slots[20]="spaceblock-water" 
+        default_qb_slots[26]="medium-electric-pole"
+        default_qb_slots[27]="small-electric-pole"        
+        default_qb_slots[29]="small-lamp"
+    end
     for i = 1, 100 do
         if not player.get_quick_bar_slot(i) then
             if default_qb_slots[i] then
@@ -322,6 +354,10 @@ log("Player teleported to 0:0");
     -- setup force   vf TODO do this in on_gui_click using new location that comes back from SpawnOptsGuiClick
     -- setupForce(player.force, player.surface, 0, 0, game.active_mods["SeaBlock"])
     preventMining(player)
+    TemporaryHelperText("Assemblers produce coal,wood, iron,copper,stone and random items at a slower rate than space matter furnaces", {-22, -10}, TICKS_PER_MINUTE*5, 1.5,{0,.7,1,1})
+    TemporaryHelperText("You can pick up modules, and any wire from chests, nothing else.",                                             {-22, 10}, TICKS_PER_MINUTE*5, 1.5,{0,.7,1,1})
+    TemporaryHelperText("Fog of war is on to keep griefers away from your base, use radars to expand this invisible shield.",           {-22, 12}, TICKS_PER_MINUTE*5, 1.5,{0,.7,1,1})
+
 
 end)
 
@@ -378,7 +414,7 @@ script.on_event(defines.events.on_tick, function(event)
         RegrowthOnTick()
         RegrowthForceRemovalOnTick()
     end
-
+    
     DelayedSpawnOnTick()
 
     if global.ocfg.enable_chest_sharing then
@@ -666,6 +702,8 @@ function inventoryChanged(event)
         return
     end
     local player = game.players[event.player_index]
+    if global.seablocked ==nil then
+    else
     if not global.seablocked then
         -- tiny hack to work around that SeaBlock sets up stuff after BNW on load
         global.seablocked = true
@@ -681,6 +719,7 @@ function inventoryChanged(event)
 
         -- and clear the starting items from player inventory
         player.clear_items_inside()
+    end
     end
     -- remove any crafted items (and possibly make ghost cursor of item)
     for _, item in pairs(global.players[event.player_index].crafted) do
@@ -954,6 +993,7 @@ script.on_event(defines.events.on_player_changed_position, function(event)
             if not charted(math.floor(player.position.x / CHUNK_SIZE), math.floor(player.position.y / CHUNK_SIZE)) then -- 32  32
                 -- can't move here, chunk not charted
                 local prev_pos = global.players[event.player_index].previous_position
+
                 if charted(math.floor(player.position.x / CHUNK_SIZE), math.floor(prev_pos.y / CHUNK_SIZE)) then    -- 32 32
                     -- we can move here, though
                     prev_pos.x = player.position.x

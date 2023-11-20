@@ -96,7 +96,8 @@ my_player_list_style_spacer = {
 my_color_red = {r=1,g=0.1,b=0.1}
 
 my_longer_label_style = {
-    maximal_width = 600,
+    maximal_width = 800,
+    maximal_height = 1400,
     single_line = false,
     font_color = {r=1,g=1,b=1},
     top_padding = 0,

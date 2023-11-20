@@ -29,11 +29,11 @@ function GameOptionsGuiClick(event)
         local pIndex = event.element.parent.ban_players_dropdown.selected_index
 
         if (pIndex ~= 0) then
-            local resetPlayer = event.element.parent.ban_players_dropdown.get_item(pIndex)
-            if (game.players[resetPlayer]) then
-                RemoveOrResetPlayer(game.players[resetPlayer], false, true, true, true)
-                SeparateSpawnsPlayerCreated(resetPlayer, true)
-                log("Resetting " .. resetPlayer)
+            local resetPlayerName = event.element.parent.ban_players_dropdown.get_item(pIndex)
+            if (game.players[resetPlayerName]) then
+                RemoveOrResetPlayer(game.players[resetPlayerName], false, true, true, true)
+                SeparateSpawnsPlayerCreated(resetPlayerName, true)
+                log("Resetting " .. resetPlayerName)
             end
         end
     end
@@ -172,7 +172,7 @@ function CreateGameOptionsTab(tab_container, player)
 --        tab_container.selected_index(1)
     end
     -- Ending Spacer
-    if (player.index) then
+    if (player.index and not global.ocfg.space_block) then
         AddSpacerLine(tab_container)
         AddLabel(tab_container, "individual_user_settings2", "Individual User Settings:", my_label_header_style)
         tab_container.add{name = "warn_biter_attack_option_checkbox",

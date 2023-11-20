@@ -1,3 +1,55 @@
+---------------------------------------------------------------------------------------------------
+11/20/2023 - 4.2.16 Happy Thanksgiving !
+bug found in previous versions that removed resources in main spawn if not playing with Space Block.
+This bug removed all main resources.
+Space Block changes:
+- Added 2 labs to chests to remove some initial grind.
+- Added another Q&A regarding Fog of War.
+- 
+---------------------------------------------------------------------------------------------------
+10/31/2023 - 4.2.15 Happy Halloween !
+- Some changes to Space Block. Easy Start and Normal start are identical in the items they provide. 
+  The difference, is Easy Start has a layout to teach the player how to play Space Port. The ONLY
+  advantage is that if the host chooses not to provide a boiler/steam engine setup, EasyStart turns 
+  that on.
+- Larger Info screen, shown at start and in top left info screen. This answers the most asked 
+  questions.
+- 3 tiles wider to support the broader setup. I stretched the substation to it's proper distance
+  covering more area, added more capacitors, it looks like 2.5MW and 100 MJ storage. 
+---------------------------------------------------------------------------------------------------
+10/26/2023 - 4.2.14
+- Added more text on ground. Some in both easy/normal modes, more in easy mode.
+- You can always choose one mode - look at box contents, and restart - flipping back and forth to decide which mode you want.
+- Turned off constant reporting of missile launch of OTHER forces, each force that launch's will see the message that they launched - but nothing other than first launch of other teams.
+---------------------------------------------------------------------------------------------------
+10/24/2023 - 4.2.13
+- Fix bug that crashes with:  
+	"brave-new-oarc/data.lua:29: attempt to concatenate global 'energyBotsMovement' (a nil value)"
+---------------------------------------------------------------------------------------------------
+10/23/2023 - 4.2.12
+- Bug fix - crash occurs on rejoin of game - fixed
+- Updated the checkbox on "Easy Start" to remember a previous setting - after you restart
+---------------------------------------------------------------------------------------------------
+10/22/2023 - 4.2.11
+More changes after Space Block server run and launch of missile.
+- Fix emptying of storage on every reload
+- Words on ground at start to help new players
+- Easy Start - in place of moat choice - per player at start
+- Add more items to chests for easy start with one assembler and one space furnace as examples
+- Fix Silo's not generating
+- Add radar around silos (Philips code)
+- Add water to toolbar
+- Remove choice to ask for moat
+- Remove check box in game to offer warning of biter attacks
+---------------------------------------------------------------------------------------------------
+10/17/2023 - 4.2.10
+Modified to support Space Block
+changed areas:  gather area at 0,0 looks like space block
+				spawn base changed to support limitations of bots only with space block
+				hot bars change
+				size of main base
+				items in chests changed, removed from inventory				
+---------------------------------------------------------------------------------------------------
 6/30/2023 - 4.2.09
 Main roboport is named after the primary player.
 
@@ -166,7 +218,7 @@ Many settings added to the "Mod settings" screen:
 	- TTL for ghost images - default is 30 minutes, options, 10, 30, 60, 120, 240, 360 or use config.lua to define
 	- Item and Energy Sharing - chests and accumulators that enable you to share items and power with EVERYONE.
 	- Base shape - Circle or Octagon
-	- Resitances to make you bots near indestructible !
+	- Resistances to make you bots near indestructible !
 
 Verified - buddy spawn to kick all players associated with that base
 

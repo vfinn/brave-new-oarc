@@ -13,17 +13,31 @@
 -- This stuff is shown in the welcome GUI and Info panel. Make sure it's valid.
 WELCOME_MSG_TITLE = "Welcome to Brave New Oarc"
 WELCOME_MSG = "I hope you enjoy this mash up of OARC and Brave New World" -- Printed to player on join as well.
-SERVER_MSG = "This is OARC but with bots only, and only special items can be put into your inventory.\n" ..
-        "boxes in your base contain enough items for you to get started.\n\n" ..
-        "If your starting roboport DIES, you will immediately be teleported back to the starting location, your base removed, and allowed to start over!\n"
+SERVER_MSG = "This game provides the OARC multiplayer capability, and the Brave New World\n" ..
+             "Bot only and lazy bastard style of game play. You can not craft anything.\n" ..
+             "Boxes in your base contain enough items for you to get started.\n" ..
+             "RESTART is available in the menu choices, and will automatically occur if your main large roboport is destroyed\n\n" ..
+             "Q: Why do I have no man?\n" ..
+             "A: This part of the scenario. It makes early game harder, but later it becomes an advantage and enables extremely quick building of your base. Bots do all your work. For easier use selected Settings->Interface->Pick ghosts if no items are available.\n" ..
+             "Q: Why can't I move outside the area that my main base is located?\n" ..
+             "A: If you play this with Space Block, it is very dark. That makes it impossible for you to see the Fog of war that limits your movement, but is intended as an antigrief, to keep malicious players away from your base. Use a Radar near the edges to claim more area.\n" ..
+             "Q: What items can I hold in inventory, and pick up from chests/assemblers?\n" ..
+             "A: 1) Red&Green wires, copper cable, 2) Any module, 3) Any vehicles and all the items that go into a vehicles 4) Blueprints\n" ..
+             "Q: Why can't I make level 3 speed modules and Artillery?\n" ..
+             "A: These are available after you launch one missile.\n" ..
+	         "Q: Can I drive a vehicle?\n" ..
+             "A: Yes - hover cursor over vehicle and press <enter>, you can NOT fire weapons though. Use them to steam roll the enemy.\n" ..
+	         "Q: Why is my power dropping so rapidly?\n" ..
+             "A: The main roboport has 16 charge slots, each capable of charging your bots at 1 MW each, so can pull 20MW!\n"
 
 SCENARIO_INFO_MSG = "Latest updates in this scenario version:\n"..
 "No attacks on your base while you are offline!\n"..
-"This scenario gives you and/or your friends your own starting area.\n"..
+"This scenario offers the option of a buddy base with your friends if you start at the same time.\n"..
+"Join - play, then use RESTART to buddy up with a friend and each have your own base next to each other\n" ..
 "You can be on the main team or your own. All teams are friendly.\n"..
 "If you leave in the first 15 minutes, your base and character will be deleted!"
 
-CONTACT_MSG = "Contact: SteamID:JustGoFly | Discord:JustGoFly#8949"
+CONTACT_MSG = "Contact: SteamID:JustGoFly | Discord:JustGoFly"
 DISCORD_INV = "https://discord.gg/RjxsUfkJzj"
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -96,6 +110,18 @@ LOCK_GOODIES_UNTIL_ROCKET_LAUNCH = true
 LOCKED_TECHNOLOGIES = {
     {t="atomic-bomb"},{t="artillery"}
 }
+SPACE_BLOCK_LOCKED_TECHNOLOGIES = {
+    {t="military"},
+    {t="gun-turret"},
+    {t="landfill"},
+    {t="car"},
+    {t="laser"},
+    {t="explosives"},
+    {t="repair-pack"},
+    {t="steel-axe"},
+    {t="automobilism"}
+}
+
 LOCKED_RECIPES = {
     {r="speed-module-3"}
 }
