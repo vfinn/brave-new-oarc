@@ -14,6 +14,11 @@
     "? resource-islands >= 0.1.1",
     "? alien-module >= 1.2.4",
     "? Transport_Drones >= 1.0.14",
+    "? FreightForwarding >= 1.8.2",
+    "? bzlead >= 1.2.18",
+    "? bztitanium >= 1.2.12",
+    "? cargo-ships >= 0.2.6",
+    "? lex-aircraft >= 1.1.1",
     "! Braver_New_World",
     "! brave-new-world"
   ]

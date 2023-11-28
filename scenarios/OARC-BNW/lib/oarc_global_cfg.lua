@@ -116,7 +116,11 @@ function InitOarcConfig()
     end
     global.ocfg.easyStart=false
     
+    global.ocfg.freight_forwarding  = game.active_mods["FreightForwarding"]
+    global.ocfg.bzlead              = game.active_mods["bzlead"]
+    global.ocfg.bztitanium          = game.active_mods["bztitanium"]
 
+    if global.ocfg.freight_forwarding then global.ocfg.frontier_rocket_silo=false end
 
     -----------------------
     -- VALIDATION CHECKS --

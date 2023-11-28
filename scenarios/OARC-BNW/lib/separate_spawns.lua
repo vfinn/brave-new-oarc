@@ -187,6 +187,12 @@ function GenerateStartingResources(surface, pos)
 
     local rand_settings = global.ocfg.spawn_config.resource_rand_pos_settings
 
+    if global.ocfg.bzlead then
+        GenerateResourcePatch(surface, "lead-ore", 15, {x=pos.x-64, y=pos.y+29}, 80000)
+    end
+    if global.ocfg.bztitanium then
+        GenerateResourcePatch(surface, "titanium-ore", 8, {x=pos.x-61, y=pos.y-34}, 80000)
+    end
     -- Generate all resource tile patches
     if (not rand_settings.enabled) then
         for t_name,t_data in pairs (global.ocfg.spawn_config.resource_tiles) do
@@ -463,7 +469,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     end
 	-- vf - We always need oil within reach on every map or you can't get outside main, so let's drop a few a small distance away randomly
 	-- put it outside of main, to the left
-	if BRAVE_NEW_OARC_MASHUP and not global.ocfg.space_block then
+	if BRAVE_NEW_OARC_MASHUP and not global.ocfg.space_block and not global.ocfg.freight_forwarding then
         local xx = x + math.random(CHUNK_SIZE*4, CHUNK_SIZE*5) * (math.random(1, 2) == 1 and 1 or -1)
 		
         local yy = y + math.random(CHUNK_SIZE*4, CHUNK_SIZE*5) * (math.random(1, 2) == 1 and 1 or -1)
