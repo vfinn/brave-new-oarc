@@ -116,9 +116,11 @@ function InitOarcConfig()
     end
     global.ocfg.easyStart=false
     
+    -- The results of each of these can be treated as a boolean, but also contain the version number of the mod
     global.ocfg.freight_forwarding  = game.active_mods["FreightForwarding"]
     global.ocfg.bzlead              = game.active_mods["bzlead"]
     global.ocfg.bztitanium          = game.active_mods["bztitanium"]
+    global.ocfg.bzkrastorio2        = game.active_mods["Krastorio2"]
 
     if global.ocfg.freight_forwarding then global.ocfg.frontier_rocket_silo=false end
 

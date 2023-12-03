@@ -840,6 +840,12 @@ function itemCountAllowed(name, count, player)
     elseif string.match(name, ".*module.*") then
         -- allow modules
         return count
+    elseif string.match(name, ".*dt-cell") then
+        -- allow Krastorio 2 empty fuel cells
+        return count
+    elseif string.match(name, ".*fuel-cell") then
+        -- allow Krastorio 2 empty fuel cells
+        return count
     elseif name == "BlueprintAlignment-blueprint-holder" then
         -- temporary holding location for original blueprint, should only ever be one of these.
         return count
