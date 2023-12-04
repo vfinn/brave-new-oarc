@@ -120,8 +120,8 @@ function InitOarcConfig()
     global.ocfg.freight_forwarding  = game.active_mods["FreightForwarding"]
     global.ocfg.bzlead              = game.active_mods["bzlead"]
     global.ocfg.bztitanium          = game.active_mods["bztitanium"]
-    global.ocfg.bzkrastorio2        = game.active_mods["Krastorio2"]
-
+    global.ocfg.krastorio2          = game.active_mods["Krastorio2"]
+    if (global.ocfg.krastorio2) then global.ocfg.spawn_config.gen_settings.land_area_tiles = global.ocfg.spawn_config.gen_settings.land_area_tiles + 32 end
     if global.ocfg.freight_forwarding then global.ocfg.frontier_rocket_silo=false end
 
     -----------------------

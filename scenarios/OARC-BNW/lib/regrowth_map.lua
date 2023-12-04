@@ -289,6 +289,7 @@ function RegrowthOnTick()
 
     -- Every half a second, refresh all chunks near a single player
     -- Cyles through all players. Tick is offset by 2
+    global.disableRegrowthWhileWaitingToRemoveAllChunks=true
     if ((game.tick % (30)) == 2) then
         RefreshPlayerArea()
     end
@@ -319,6 +320,7 @@ function RegrowthOnTick()
             SendBroadcastMsg("aw, sorry for your loss.")
         end
     end
+    global.disableRegrowthWhileWaitingToRemoveAllChunks=false
 end
 
 -- This function removes any chunks flagged but on demand.
@@ -327,13 +329,11 @@ end
 function RegrowthForceRemovalOnTick()
     -- Catch force remove flag
     if (game.tick == global.rg.force_removal_flag+60) then
-        SendBroadcastMsg("Map cleanup (forced) in 5 seconds... Unused and old map chunks will be deleted!")
-        global.disableRegrowthWhileWaitingToRemoveAllChunks=true
+        SendBroadcastMsg("Map cleanup (forced) in 5 seconds... Unused and old map chunks will be deleted!")        
     end
 
     if (game.tick == global.rg.force_removal_flag+(60*5 + 60)) then		-- used to be 30 changed to 5
         OarcRegrowthRemoveAllChunks()
-        global.disableRegrowthWhileWaitingToRemoveAllChunks=false
         SendBroadcastMsg("Map cleanup done, sorry for your loss.")
     end
 end

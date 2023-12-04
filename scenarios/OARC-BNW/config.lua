@@ -12,23 +12,20 @@
 
 -- This stuff is shown in the welcome GUI and Info panel. Make sure it's valid.
 WELCOME_MSG_TITLE = "Welcome to Brave New Oarc"
-WELCOME_MSG = "I hope you enjoy this mash up of OARC and Brave New World" -- Printed to player on join as well.
-SERVER_MSG = "This game provides the OARC multiplayer capability, and the Brave New World\n" ..
-             "Bot only and lazy bastard style of game play. You can not craft anything.\n" ..
+WELCOME_MSG = "This game provides the OARC multiplayer capability, and the Brave New World" -- Printed to player on join as well.
+SERVER_MSG = "Bot only and lazy bastard style of game play. You can not craft anything.\n" ..
              "Boxes in your base contain enough items for you to get started.\n" ..
-             "RESTART is available in the menu choices, and will automatically occur if your main large roboport is destroyed\n\n" ..
+             "RESTART is available in the menu choices, and will automatically occur if your main large roboport is destroyed.\n" ..
              "Q: Why do I have no man?\n" ..
              "A: This part of the scenario. It makes early game harder, but later it becomes an advantage and enables extremely quick building of your base. Bots do all your work. For easier use selected Settings->Interface->Pick ghosts if no items are available.\n" ..
              "Q: Why can't I move outside the area that my main base is located?\n" ..
-             "A: If you play this with Space Block, it is very dark. That makes it impossible for you to see the Fog of war that limits your movement, but is intended as an antigrief, to keep malicious players away from your base. Use a Radar near the edges to claim more area.\n" ..
+             "A: Fog of war that limits your movement, but is intended as an antigrief. Use a Radars to claim more area.\n" ..
              "Q: What items can I hold in inventory, and pick up from chests/assemblers?\n" ..
-             "A: 1) Red&Green wires, copper cable, 2) Any module, 3) Any vehicles and all the items that go into a vehicles 4) Blueprints\n" ..
+             "A: 1) Red&Green wires, copper cable, 2) Any module, 3) Any vehicles and all the items that go into a vehicles, 4) fuel cells 5) Blueprints\n" ..
              "Q: Why can't I make level 3 speed modules and Artillery?\n" ..
-             "A: These are available after you launch one missile.\n" ..
+             "A: These are available after you launch one rocket.\n" ..
 	         "Q: Can I drive a vehicle?\n" ..
-             "A: Yes - hover cursor over vehicle and press <enter>, you can NOT fire weapons though. Use them to steam roll the enemy.\n" ..
-	         "Q: Why is my power dropping so rapidly?\n" ..
-             "A: The main roboport has 16 charge slots, each capable of charging your bots at 1 MW each, so can pull 20MW!\n"
+             "A: Yes - hover cursor over vehicle and press <enter>, you can NOT fire weapons though. Use them to steam roll the enemy.\n" 
 
 SCENARIO_INFO_MSG = "Latest updates in this scenario version:\n"..
 "No attacks on your base while you are offline!\n"..
@@ -461,7 +458,7 @@ ENABLE_FRIENDLY_FIRE = false
 
 -- This turns on writing chat and certain events to specific files so that I can use that for discord integration. I
 -- suggest you leave this off unless you know what you are doing.
-ENABLE_SERVER_WRITE_FILES = false
+ENABLE_SERVER_WRITE_FILES = true
 
 -- Enable this to have a vanilla style starting spawn. This changes the experience pretty drastically. If you enable
 -- this, you will NOT get the option to spawn using the "pre-fab" fixed layout spawns. This is because the spawn types

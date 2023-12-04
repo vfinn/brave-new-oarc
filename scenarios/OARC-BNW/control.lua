@@ -354,9 +354,10 @@ log("Player teleported to 0:0");
     -- setup force   vf TODO do this in on_gui_click using new location that comes back from SpawnOptsGuiClick
     -- setupForce(player.force, player.surface, 0, 0, game.active_mods["SeaBlock"])
     preventMining(player)
-    TemporaryHelperText("Assemblers produce coal,wood, iron,copper,stone and random items at a slower rate than space matter furnaces", {-22, -10}, TICKS_PER_MINUTE*5, 1.5,{0,.7,1,1})
-    TemporaryHelperText("You can pick up modules, and any wire from chests, nothing else.",                                             {-22, 10}, TICKS_PER_MINUTE*5, 1.5,{0,.7,1,1})
-    TemporaryHelperText("Fog of war is on to keep griefers away from your base, use radars to expand this invisible shield.",           {-22, 12}, TICKS_PER_MINUTE*5, 1.5,{0,.7,1,1})
+    if (global.ocfg.space_block) then
+        TemporaryHelperText("Assemblers produce coal,wood, iron,copper,stone and random items at a slower rate than space matter furnaces", {-22, -10}, TICKS_PER_MINUTE*5, 1.5,{0,.7,1,1})
+    end
+    TemporaryHelperText("Check Top left - System Info for more information",                                             {-22, 10}, TICKS_PER_MINUTE*5, 1.5,{0,.7,1,1})
 
 
 end)
@@ -840,11 +841,11 @@ function itemCountAllowed(name, count, player)
     elseif string.match(name, ".*module.*") then
         -- allow modules
         return count
-    elseif string.match(name, ".*dt-cell") then
-        -- allow Krastorio 2 empty fuel cells
+    elseif string.match(name, "dt%-cell") then
+        -- allow Krastorio 2 special cells
         return count
-    elseif string.match(name, ".*fuel-cell") then
-        -- allow Krastorio 2 empty fuel cells
+    elseif string.match(name, ".*fuel%-cell") then
+        -- allow Krastorio 2 fuel cells
         return count
     elseif name == "BlueprintAlignment-blueprint-holder" then
         -- temporary holding location for original blueprint, should only ever be one of these.

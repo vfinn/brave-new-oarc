@@ -1,6 +1,20 @@
 ---------------------------------------------------------------------------------------------------
 11/28/2023 - 4.2.17 Merry Christmas !
-Changes made to support Freight Forward
+Changes to support Freight Forward
+-Added titanium if bztitanium mod loaded
+-Added lead if bzlead mod loaded
+-removed all silo's if Freight Forwading loaded
+
+Changes to support Krastorio 2
+-Move bot speed to keep Krastorio from over riding with slower bots
+-Enabled picking up any "fuel-cell" and "dt-cell"
+-Provide Rifle Ammo - instead of pistol ammo
+-Gave each player 2 kr-bio-lab
+-Make base larger
+-Doubled the in base resource richness
+-Add rare metal to base
+-Space Matter text at spawn location (0,0) for space block only
+-Removal of restart in K2 only
 ---------------------------------------------------------------------------------------------------
 11/20/2023 - 4.2.16 Happy Thanksgiving !
 bug found in previous versions that removed resources in main spawn if not playing with Space Block.
@@ -8,7 +22,6 @@ This bug removed all main resources.
 Space Block changes:
 - Added 2 labs to chests to remove some initial grind.
 - Added another Q&A regarding Fog of War.
-- 
 ---------------------------------------------------------------------------------------------------
 10/31/2023 - 4.2.15 Happy Halloween !
 - Some changes to Space Block. Easy Start and Normal start are identical in the items they provide. 

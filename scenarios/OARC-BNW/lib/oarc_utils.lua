@@ -1355,7 +1355,7 @@ function CreateMoat(surface, centerPos, chunkArea, tileRadius, moatTile, bridge)
                 -- This ( X^2 + Y^2 ) is used to calculate if something
                 -- is inside a circle area.
                 local distVar = math.floor((centerPos.x - i)^2 + (centerPos.y - j)^2)
-
+ 
                 -- Create a circle of water
                 if ((distVar < tileRadSqr+(1500*global.ocfg.spawn_config.gen_settings.moat_size_modifier)) and
                     (distVar > tileRadSqr)) then

@@ -191,7 +191,15 @@ function GenerateStartingResources(surface, pos)
         GenerateResourcePatch(surface, "lead-ore", 15, {x=pos.x-64, y=pos.y+29}, 80000)
     end
     if global.ocfg.bztitanium then
-        GenerateResourcePatch(surface, "titanium-ore", 8, {x=pos.x-61, y=pos.y-34}, 80000)
+        GenerateResourcePatch(surface, "titanium-ore", 8, {x=pos.x-61, y=pos.y-34}, 40000)
+    end
+    if global.ocfg.krastorio2 then
+        GenerateResourcePatch(surface, "rare-metals", 15, {x=pos.x-29, y=pos.y-66}, 40000)
+        for k,item in pairs(global.ocfg.spawn_config.resource_tiles) do
+            if (item ~= "") then
+                item.amount = item.amount+64
+            end
+        end        
     end
     -- Generate all resource tile patches
     if (not rand_settings.enabled) then
@@ -288,6 +296,7 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
     end
 
     local x_dist = global.ocfg.spawn_config.resource_rand_pos_settings.radius +10        -- moved slightly further out
+    if (global.ocfg.krastorio2) then x_dist = x_dist + 32 end  
     if (global.ocfg.enable_energy_sharing) then
         -- Shared electricity IO pair of scripted electric-energy-interfaces
         SharedEnergySpawnInput(player, {x=delayedSpawn.pos.x+x_dist, y=delayedSpawn.pos.y-11})
@@ -676,7 +685,13 @@ log("Random oil - " .. xxx .. " : " .. yyy);
         --chest_inventory.insert{name = "logistic-chest-storage", count = 2}
         chest_inventory.insert{name = "lab", count = 2}
         chest_inventory.insert{name = "gun-turret", count = 2}
-        chest_inventory.insert{name = "firearm-magazine", count = 20}
+        if global.ocfg.krastorio2 then
+            chest_inventory.insert{name = "piercing-rounds-magazine", count = 20}   -- rifle ammo
+            chest_inventory.insert{name = "kr-bio-lab", count = 2}                  -- bio labs
+            
+        else
+            chest_inventory.insert{name = "firearm-magazine", count = 20}
+        end
         if seablock_enabled then
             -- need some stuff for SeaBlock so we won't get stuck (also slightly accelerate gameplay)
             chest_inventory.insert{name = "ore-crusher", count = 4}
@@ -852,7 +867,7 @@ function SetupAndClearSpawnAreas(surface, chunkArea)
                 RemoveInCircle(surface, chunkArea, "tree", spawn.pos, global.ocfg.spawn_config.gen_settings.land_area_tiles)
                 RemoveInCircle(surface, chunkArea, "resource", spawn.pos, global.ocfg.spawn_config.gen_settings.land_area_tiles+5)
                 RemoveInCircle(surface, chunkArea, "cliff", spawn.pos, global.ocfg.spawn_config.gen_settings.land_area_tiles+5)
-
+                
                 local fill_tile = "landfill"
                 if (game.active_mods["oarc-restricted-build"]) then
                     fill_tile = global.ocfg.locked_build_area_tile
