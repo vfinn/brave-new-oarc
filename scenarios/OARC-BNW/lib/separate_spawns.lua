@@ -277,7 +277,10 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
 
             -- Create the spawn resources here
             GenerateStartingResources(game.surfaces[GAME_SURFACE_NAME], delayedSpawn.pos)
-
+        end
+        -- If krastorio - which requires the technology to make bio-matter, and is not collectable in BNO, so unlock that technology
+        if global.ocfg.krastorio2 then
+           player.force.recipes["kr-biomass-growing"].enabled=true
         end
     end
     -- Render some welcoming text...
@@ -296,7 +299,7 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
     end
 
     local x_dist = global.ocfg.spawn_config.resource_rand_pos_settings.radius +10        -- moved slightly further out
-    if (global.ocfg.krastorio2) then x_dist = x_dist + 32 end  
+    if (global.ocfg.krastorio2) then x_dist = x_dist + 32 end  -- not quite a full tile - but exactly to the end of the robot network
     if (global.ocfg.enable_energy_sharing) then
         -- Shared electricity IO pair of scripted electric-energy-interfaces
         SharedEnergySpawnInput(player, {x=delayedSpawn.pos.x+x_dist, y=delayedSpawn.pos.y-11})
@@ -632,6 +635,11 @@ log("Random oil - " .. xxx .. " : " .. yyy);
     -- storage chest, contains the items the force starts with
     local chest = surface.create_entity{name = "logistic-chest-storage", position = {x + 1, y + 4}, force = force, raise_built = true}
     local chest_inventory = chest.get_inventory(defines.inventory.chest)
+    -- add chests for Krastorio
+    if global.ocfg.krastorio2 then
+        chest_inventory.insert{name = "logistic-chest-requester", count = 2}        -- blue chests
+        chest_inventory.insert{name = "logistic-chest-passive-provider", count = 2} -- red chests 
+    end
     if global.ocfg.space_block then      
         chest_inventory.insert{name = "inserter", count = 10}
         chest_inventory.insert{name = "transport-belt", count = 10}
@@ -686,9 +694,9 @@ log("Random oil - " .. xxx .. " : " .. yyy);
         chest_inventory.insert{name = "lab", count = 2}
         chest_inventory.insert{name = "gun-turret", count = 2}
         if global.ocfg.krastorio2 then
-            chest_inventory.insert{name = "piercing-rounds-magazine", count = 20}   -- rifle ammo
-            chest_inventory.insert{name = "kr-bio-lab", count = 2}                  -- bio labs
-            
+            chest_inventory.insert{name = "rifle-magazine", count = 20}         -- rifle ammo
+            chest_inventory.insert{name = "kr-bio-lab", count = 2}              -- bio labs
+            chest_inventory.insert{name = "electric-mining-drill", count = 4}   -- we want kr-electric-mining-drill !
         else
             chest_inventory.insert{name = "firearm-magazine", count = 20}
         end
@@ -708,7 +716,9 @@ log("Random oil - " .. xxx .. " : " .. yyy);
             -- prevent error when looking for "rock-chest" later
             global.seablocked = true
             -- only give player this when we're not seablocking
-            chest_inventory.insert{name = "electric-mining-drill", count = 4}
+            if not global.ocfg.krastorio2 then
+                chest_inventory.insert{name = "electric-mining-drill", count = 4}
+            end
             chest_inventory.insert{name = "logistic-chest-buffer", count = 1}   -- no green in this bp, so add 1
         end
     end
