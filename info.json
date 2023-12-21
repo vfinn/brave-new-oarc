@@ -9,6 +9,7 @@
   "description": "This mod provides a scenario that overhauls multiplayer spawning for Brave New World.\n[color=red][font=default-bold]You can play Brave New World and OARC separately, this mod merges both of those scenarios for an awesome single player / multiplayer game![/font][/color]\n Read the FAQ if you are having troubles with how to get started in this scenario.",
   "dependencies": [
     "base >= 1.0",
+    "? Krastorio2 >= 1.3.23",
     "? spaceblock >= 0.3.9",
     "? SeaBlock >= 0.5.1",
     "? resource-islands >= 0.1.1",

@@ -92,9 +92,10 @@ function InitOarcConfig()
     global.ocfg.frontier_pos_table = SILO_POSITIONS
     global.ocfg.frontier_silo_vision = ENABLE_SILO_VISION
     global.ocfg.frontier_allow_build = ENABLE_SILO_PLAYER_BUILD
-    global.ocfg.circle_shape = (tree_circle == true)    -- otherwise it's an octagon
-    global.ocfg.spawn_config.gen_settings.tree_circle = (setGlobalSetting("bno-spawn-base-shape-circle",  global.ocfg.spawn_config.gen_settings.tree_circle)=="circle")
-    global.ocfg.spawn_config.gen_settings.tree_octagon = not global.ocfg.spawn_config.gen_settings.tree_circle
+    -- global.ocfg.circle_shape = (tree_circle == true)    -- otherwise it's an octagon
+    -- global.ocfg.spawn_config.gen_settings.tree_circle = (setGlobalSetting("bno-spawn-base-shape",  global.ocfg.spawn_config.gen_settings.tree_circle)=="circle")
+    -- global.ocfg.spawn_config.gen_settings.tree_octagon = not global.ocfg.spawn_config.gen_settings.tree_circle
+    global.ocfg.spawn_config.gen_settings.base_shape = setGlobalSetting("bno-spawn-base-shape", "circle")
     global.ocfg.enable_anti_grief =  setGlobalSetting("bno-anti-grief", ENABLE_ANTI_GRIEFING, true)
     global.ocfg.starting_bot_count = setGlobalSetting("bno-num-starting-bots", "100/50") 
     -- ghost ttl is special due to a string array of numbers and multiplying by TICKS_PER_MINUTE
@@ -143,7 +144,6 @@ function InitOarcConfig()
     if (not global.ocfg.enable_chest_sharing) then
         global.ocfg.enable_magic_factories = false
     end
-
 end
 
 -- Set a value either based on MOD settings or config.lua

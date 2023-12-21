@@ -191,20 +191,22 @@ function GenerateStartingResources(surface, pos)
         GenerateResourcePatch(surface, "lead-ore", 15, {x=pos.x-64, y=pos.y+29}, 80000)
     end
     if global.ocfg.bztitanium then
-        GenerateResourcePatch(surface, "titanium-ore", 8, {x=pos.x-61, y=pos.y-34}, 40000)
+        GenerateResourcePatch(surface, "titanium-ore", 8, {x=pos.x-61, y=pos.y-34}, 10000)
     end
+    local kOffset=0
     if global.ocfg.krastorio2 then
-        GenerateResourcePatch(surface, "rare-metals", 15, {x=pos.x-29, y=pos.y-66}, 40000)
+        kOffset=32
+        GenerateResourcePatch(surface, "rare-metals", 16, {x=pos.x-62-kOffset, y=pos.y-38}, 10000)
         for k,item in pairs(global.ocfg.spawn_config.resource_tiles) do
             if (item ~= "") then
-                item.amount = item.amount+64
+                item.amount = item.amount*4
             end
-        end        
+        end
     end
     -- Generate all resource tile patches
     if (not rand_settings.enabled) then
         for t_name,t_data in pairs (global.ocfg.spawn_config.resource_tiles) do
-            local pos = {x=pos.x+t_data.x_offset, y=pos.y+t_data.y_offset}
+            local pos = {x=pos.x+t_data.x_offset - kOffset, y=pos.y+t_data.y_offset}
             GenerateResourcePatch(surface, t_name, t_data.size, pos, t_data.amount)
         end
     else
@@ -696,7 +698,6 @@ log("Random oil - " .. xxx .. " : " .. yyy);
         if global.ocfg.krastorio2 then
             chest_inventory.insert{name = "rifle-magazine", count = 20}         -- rifle ammo
             chest_inventory.insert{name = "kr-bio-lab", count = 2}              -- bio labs
-            chest_inventory.insert{name = "electric-mining-drill", count = 4}   -- we want kr-electric-mining-drill !
         else
             chest_inventory.insert{name = "firearm-magazine", count = 20}
         end
@@ -716,9 +717,7 @@ log("Random oil - " .. xxx .. " : " .. yyy);
             -- prevent error when looking for "rock-chest" later
             global.seablocked = true
             -- only give player this when we're not seablocking
-            if not global.ocfg.krastorio2 then
-                chest_inventory.insert{name = "electric-mining-drill", count = 4}
-            end
+            chest_inventory.insert{name = "electric-mining-drill", count = 4}
             chest_inventory.insert{name = "logistic-chest-buffer", count = 1}   -- no green in this bp, so add 1
         end
     end
@@ -840,7 +839,15 @@ function SetupAndClearSpawnAreas(surface, chunkArea)
     for name,spawn in pairs(global.ocore.uniqueSpawns) do
 
         -- Create a bunch of useful area and position variables
+        local areaAroundPos = GetAreaAroundPos(spawn.pos, global.ocfg.spawn_config.gen_settings.land_area_tiles)
         local landArea = GetAreaAroundPos(spawn.pos, global.ocfg.spawn_config.gen_settings.land_area_tiles+CHUNK_SIZE)
+
+        -- 1.414 is Sqrt(2) to increase land area to include corners  
+        local offsetForSquare=1
+
+        if global.ocfg.spawn_config.gen_settings.base_shape == "square" then    
+            offsetForSquare=1.414
+        end
         -- local safeArea = GetAreaAroundPos(spawn.pos, global.ocfg.spawn_config.safe_area.safe_radius)
         -- local warningArea = GetAreaAroundPos(spawn.pos, global.ocfg.spawn_config.safe_area.warn_radius)
         -- local reducedArea = GetAreaAroundPos(spawn.pos, global.ocfg.spawn_config.safe_area.danger_radius)
@@ -870,25 +877,28 @@ function SetupAndClearSpawnAreas(surface, chunkArea)
 
         if (not spawn.vanilla) then
             -- If the chunk is within the main land area, then clear trees/resources
-            -- and create the land spawn areas (guaranteed land with a circle of trees)
-            if CheckIfInArea(chunkAreaCenter,landArea) then
+            -- and create the land spawn areas (guaranteed land with a circle of trees)            
+            if CheckIfInArea(chunkAreaCenter,areaAroundPos) then -- previously used landArea vf
 
                 -- Remove trees/resources inside the spawn area
                 RemoveInCircle(surface, chunkArea, "tree", spawn.pos, global.ocfg.spawn_config.gen_settings.land_area_tiles)
-                RemoveInCircle(surface, chunkArea, "resource", spawn.pos, global.ocfg.spawn_config.gen_settings.land_area_tiles+5)
-                RemoveInCircle(surface, chunkArea, "cliff", spawn.pos, global.ocfg.spawn_config.gen_settings.land_area_tiles+5)
+                RemoveInCircle(surface, chunkArea, "resource", spawn.pos, global.ocfg.spawn_config.gen_settings.land_area_tiles*offsetForSquare+5)
+                RemoveInCircle(surface, chunkArea, "cliff", spawn.pos, global.ocfg.spawn_config.gen_settings.land_area_tiles*offsetForSquare+5)
                 
                 local fill_tile = "landfill"
                 if (game.active_mods["oarc-restricted-build"]) then
                     fill_tile = global.ocfg.locked_build_area_tile
                 end
 
-                if (global.ocfg.spawn_config.gen_settings.tree_circle) then
-                    CreateCropCircle(surface, spawn.pos, chunkArea, global.ocfg.spawn_config.gen_settings.land_area_tiles, fill_tile)
-                elseif (global.ocfg.spawn_config.gen_settings.tree_octagon) then
-                    CreateCropOctagon(surface, spawn.pos, chunkArea, global.ocfg.spawn_config.gen_settings.land_area_tiles, fill_tile)
+                if global.ocfg.spawn_config.gen_settings.base_shape ~= nil then
+                    if (global.ocfg.spawn_config.gen_settings.base_shape == "circle") then
+                        CreateCropCircle(surface, spawn.pos, chunkArea, global.ocfg.spawn_config.gen_settings.land_area_tiles, fill_tile)
+                    else
+                        CreateCropOctagon(surface, spawn.pos, chunkArea, global.ocfg.spawn_config.gen_settings.land_area_tiles, fill_tile, global.ocfg.spawn_config.gen_settings.base_shape)
+                    end
                 end
-
+            end
+            if CheckIfInArea(chunkAreaCenter,landArea) then -- previously used landArea vf
                 if (spawn.moat) then
                     -- allowed_values = {"yes", "no", "use config.lua setting"}
                     local moat_bridge_enabled=global.ocfg.spawn_config.gen_settings.moat_bridging
@@ -901,7 +911,8 @@ function SetupAndClearSpawnAreas(surface, chunkArea)
                         chunkArea,
                         global.ocfg.spawn_config.gen_settings.land_area_tiles,
                         "water",
-                        moat_bridge_enabled)
+                        moat_bridge_enabled,
+                        global.ocfg.spawn_config.gen_settings.base_shape)
                 end
             end
         end

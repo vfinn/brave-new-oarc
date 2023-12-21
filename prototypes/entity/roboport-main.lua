@@ -22,8 +22,8 @@ roboportmain.minable.result = "roboport-main"
 roboportmain.corpse = "roboport-main-remnants"
 -- double radius
 
-roboportmain.logistics_radius = roboportmain.logistics_radius * 2
-roboportmain.construction_radius = roboportmain.construction_radius * 2
+roboportmain.logistics_radius = roboportmain.logistics_radius * 2	
+roboportmain.construction_radius = roboportmain.construction_radius * 2 + 2		-- slightly larger to enable access to the tree line
 
 -- quadruple charging capacities
 roboportmain.energy_source.input_flow_limit = tostring(util.parse_energy(roboportmain.energy_source.input_flow_limit)*60*4) .. "W"

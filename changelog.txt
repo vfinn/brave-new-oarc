@@ -1,8 +1,18 @@
 ---------------------------------------------------------------------------------------------------
-12/19/2023 - 4.2.18 Merry Christmas !
-
+Version: 4.2.18
+Date: 12/19/2023 -  Merry Christmas !
+Changes:
+Modified settings for Krastorio
+- support square and diamond bases - Thx JVM !
+- fixed Restart for Krastorio2
+- moved resource patches for Krastorio2
+- increased richness of in base - iron, coal, stone, copper for K2, reduced rare-metals 
+- Fixed some of the items provided - rifle-ammo, and drills for K2.
+- increased main roboport construction zone by 2 tiles, to enable access to the trees that go around a square base
+- Previously starting area less than 50% could cause biter bases to spawn inside your base, fixed
 ---------------------------------------------------------------------------------------------------
-12/3/2023 - 4.2.17 Merry Christmas !
+Version: 4.2.17
+Date: 12/3/2023 
 Changes to support Freight Forward
 -Added titanium if bztitanium mod loaded
 -Added lead if bzlead mod loaded

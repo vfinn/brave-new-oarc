@@ -1309,15 +1309,25 @@ end
 -- COPIED FROM jvmguy!
 -- Enforce a square of land, with a tree border
 -- this is equivalent to the CreateCropCircle code
-function CreateCropOctagon(surface, centerPos, chunkArea, tileRadius, fillTile)
 
+function DistVarFunc(shape, centerPos, i, j)
+        local distVar1 = math.floor(math.max(math.abs(centerPos.x - i), math.abs(centerPos.y - j)))
+        local distVar2 = math.floor(math.abs(centerPos.x - i) + math.abs(centerPos.y - j))
+        local distVar = math.max(distVar1*1.1, distVar2 * 0.707*1.1);
+        if shape == "square" then
+            distVar = distVar1;
+        end
+        if shape == "diamond" then
+            distVar = distVar2;
+        end
+    return distVar
+end
+
+function CreateCropOctagon(surface, centerPos, chunkArea, tileRadius, fillTile, shape)
     local dirtTiles = {}
     for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
         for j=chunkArea.left_top.y,chunkArea.right_bottom.y,1 do
-
-            local distVar1 = math.floor(math.max(math.abs(centerPos.x - i), math.abs(centerPos.y - j)))
-            local distVar2 = math.floor(math.abs(centerPos.x - i) + math.abs(centerPos.y - j))
-            local distVar = math.max(distVar1*1.1, distVar2 * 0.707*1.1);
+            local distVar = DistVarFunc( shape, centerPos, i, j)
 
             -- Fill in all unexpected water in a circle
             if (distVar < tileRadius+2) then
@@ -1338,35 +1348,53 @@ function CreateCropOctagon(surface, centerPos, chunkArea, tileRadius, fillTile)
     surface.set_tiles(dirtTiles)
 end
 
--- Add a circle of water
-function CreateMoat(surface, centerPos, chunkArea, tileRadius, moatTile, bridge)
 
-    local tileRadSqr = tileRadius^2
+-- Add a circle of water
+function CreateMoat(surface, centerPos, chunkArea, tileRadius, moatTile, bridge, shape)
 
     local tiles = {}
-    for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
-        for j=chunkArea.left_top.y,chunkArea.right_bottom.y,1 do
-
-            if (bridge and ((j == centerPos.y-1) or (j == centerPos.y) or (j == centerPos.y+1))) then
-                -- This will leave the tiles "as is" on the left and right of the spawn which has the effect of creating
-                -- land connections if the spawn is on or near land.
-            else
-
-                -- This ( X^2 + Y^2 ) is used to calculate if something
-                -- is inside a circle area.
-                local distVar = math.floor((centerPos.x - i)^2 + (centerPos.y - j)^2)
- 
-                -- Create a circle of water
-                if ((distVar < tileRadSqr+(1500*global.ocfg.spawn_config.gen_settings.moat_size_modifier)) and
-                    (distVar > tileRadSqr)) then
-                    table.insert(tiles, {name = moatTile, position ={i,j}})
+    if shape == "circle" then
+        local tileRadSqr = tileRadius^2
+        for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
+            for j=chunkArea.left_top.y,chunkArea.right_bottom.y,1 do
+    
+                if (bridge and ((j == centerPos.y-1) or (j == centerPos.y) or (j == centerPos.y+1))) then
+                    -- This will leave the tiles "as is" on the left and right of the spawn which has the effect of creating
+                    -- land connections if the spawn is on or near land.
+                else
+    
+                    -- This ( X^2 + Y^2 ) is used to calculate if something
+                    -- is inside a circle area.
+                    local distVar = math.floor((centerPos.x - i)^2 + (centerPos.y - j)^2)
+    
+                    -- Create a circle of water
+                    if ((distVar < tileRadSqr+(1500*global.ocfg.spawn_config.gen_settings.moat_size_modifier)) and
+                        (distVar > tileRadSqr)) then
+                        table.insert(tiles, {name = moatTile, position ={i,j}})
+                    end
+                end
+            end
+        end
+    else
+        for i=chunkArea.left_top.x,chunkArea.right_bottom.x,1 do
+            for j=chunkArea.left_top.y,chunkArea.right_bottom.y,1 do
+                if (bridge and ((j == centerPos.y-1) or (j == centerPos.y) or (j == centerPos.y+1))) then
+                    -- This will leave the tiles "as is" on the left and right of the spawn which has the effect of creating
+                    -- land connections if the spawn is on or near land.
+                else
+                    local distVar = DistVarFunc( shape, centerPos, i, j)
+                    -- Create a circle of water
+                    if ((distVar < tileRadius + global.ocfg.spawn_config.gen_settings.moat_size) and
+                        (distVar > tileRadius)) then
+                        table.insert(tiles, {name = moatTile, position ={i,j}})
+                    end
                 end
             end
         end
     end
-
     surface.set_tiles(tiles)
 end
+
 
 -- Create a horizontal line of water
 function CreateWaterStrip(surface, leftPos, length)

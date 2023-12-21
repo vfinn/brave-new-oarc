@@ -171,7 +171,11 @@ script.on_init(function(event)
     log("Applying new values for Starting Area: " .. game.surfaces.oarc.map_gen_settings.starting_area *100 .. "%")
     -- Apply the value set in game UI of Starting Area Size to the starting area radius's
     local starting_area = game.surfaces.oarc.map_gen_settings.starting_area
-    OARC_CFG.safe_area.safe_radius = OARC_CFG.safe_area.safe_radius * starting_area
+    if (starting_area<.5) then
+        OARC_CFG.safe_area.safe_radius = OARC_CFG.safe_area.safe_radius * 0.6
+    else
+        OARC_CFG.safe_area.safe_radius = OARC_CFG.safe_area.safe_radius * starting_area
+    end
     OARC_CFG.safe_area.warn_radius = OARC_CFG.safe_area.warn_radius * starting_area
     OARC_CFG.safe_area.danger_radius = OARC_CFG.safe_area.danger_radius * starting_area
 end)

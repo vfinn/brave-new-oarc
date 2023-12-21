@@ -163,12 +163,9 @@ function CreateGameOptionsTab(tab_container, player)
         end
         tab_container.add{name="restart_player", type="button", caption="Restart Player"}
         tab_container.add{name="ban_player", type="button", caption="Ban Player"}
-        tab_container.add{name = "ban_players_dropdown",type = "drop-down",items = player_list, selected_index = si}
+        tab_container.add{name="ban_players_dropdown",type = "drop-down",items = player_list, selected_index = si}
     else
-        -- this fails by leaving bases after every restart. Manual cleaning will clear them on the next regrowth, but otherwise they remain forever
-        if not global.ocfg.krastorio2 then
-            tab_container.add{name="restart_player", type="button", caption="Restart Player"}
-        end
+        tab_container.add{name="restart_player", type="button", caption="Restart Player"}
         player_list = {}
         table.insert(player_list, player.name)
         tab_container.add{name = "ban_players_dropdown",type = "drop-down",items = player_list, selected_index = 1}

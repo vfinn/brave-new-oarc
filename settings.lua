@@ -75,9 +75,9 @@ data:extend({
     },
     {
         type = "string-setting",
-        name = "bno-spawn-base-shape-circle",     
+        name = "bno-spawn-base-shape",     
         setting_type = "startup",
-        allowed_values = {"circle", "octagon", "use config.lua setting"},
+        allowed_values = {"circle", "octagon", "square", "diamond", "use config.lua setting"},
         default_value = "use config.lua setting",
         order="bnw-09"
     },    

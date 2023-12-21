@@ -206,6 +206,8 @@ OARC_CFG = {
         -- If there is a moat, this attempts to connect to land to avoid "turtling"
         moat_bridging = true, 
 
+        -- This only applies to non-circle shaped spawns
+        moat_size = 7,
         -- If you change the spawn area size, you might have to adjust this as well
         moat_size_modifier = 1.5,     -- 1 is 8 spaces, spitters range is 15, this would need to be 2 to keep spitters from hitting pumps jgf
 
@@ -216,13 +218,11 @@ OARC_CFG = {
         force_grass = true,
 
         -- Spawn a circle/octagon of trees around the base outline.
-        tree_circle = true,
-        tree_octagon = false,
+        -- tree_circle = true,
+        -- tree_octagon = false,
+        -- Spawn a square/circle/octagon/diamond of trees around the base outline.
+        base_shape = "circle",
 
-        -- Add a crashed ship like a vanilla game (create_crash_site)
-        -- Resources go in the ship itself. (5 slots)
-        -- Wreakage is distributed in small pieces. (I recommend only 1 item type.)
-        crashed_ship = false,
         crashed_ship_resources = {
                                  },
         crashed_ship_wreakage = {

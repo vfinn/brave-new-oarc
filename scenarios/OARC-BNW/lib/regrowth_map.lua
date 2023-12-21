@@ -271,6 +271,10 @@ function OarcRegrowthRemoveAllChunks()
 -- log("OarcRegrowthRemoveAllChunks: removal - delete chunk " .. c_pos.y .. ", " .. c_pos.y)			
                 game.surfaces[GAME_SURFACE_NAME].delete_chunk(c_pos)
             end
+        else
+            if global.ocfg.krastorio2 and c_remove.force then 
+                game.surfaces[GAME_SURFACE_NAME].delete_chunk(c_pos)
+            end
         end
 
         -- Remove entry
