@@ -23,7 +23,9 @@ roboportmain.corpse = "roboport-main-remnants"
 -- double radius
 
 roboportmain.logistics_radius = roboportmain.logistics_radius * 2	
-roboportmain.construction_radius = roboportmain.construction_radius * 2 + 2		-- slightly larger to enable access to the tree line
+roboportmain.construction_radius = roboportmain.construction_radius * 2 + 3		-- slightly larger to enable access to the tree line, and water
+local zoneIncrease = settings.startup["bno-increase-logistics"].value
+roboportmain.logistics_radius = roboportmain.logistics_radius + zoneIncrease
 
 -- quadruple charging capacities
 roboportmain.energy_source.input_flow_limit = tostring(util.parse_energy(roboportmain.energy_source.input_flow_limit)*60*4) .. "W"

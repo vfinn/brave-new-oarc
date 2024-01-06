@@ -1,4 +1,26 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.20
+- completion of as much multiplayer testing as I was able to do with the Character checkbox gui.
+  Time for release. See the 4.19 releases for items that have changed.
+---------------------------------------------------------------------------------------------------
+Version: 4.2.192
+Date: 1/1/2023 
+- No release of 4.2.19.. this was temporarily released and removed once bugs were found in multiplayer testing.
+- Bug fixes around character / Brave New Player mode.  The issue was that a force/team has to all 
+  be the same type, since there are some settings for each mode that are forced based.
+---------------------------------------------------------------------------------------------------
+Version: 4.2.191
+Date: 12/31/2023 -  Happy New Year !
+- Added a value in game settings to increase the logistics range. I highly recommend a maximum value of 32 for a normal BNO game, and 64 for a Krastorio2 game.
+  Krastorio base is 32 tiles larger.
+- Added ability to pick up -fuel.  This enables loading of solid-fuel, rocket-fuel, nuclear-fuel into vehicles like lex-aircraft.
+  This also enables you to fly a craft like a lex-aircraft that has logistics to a remote location, carry a power source, setup a remote base, without cascading
+  roboports to that location. This will be useful later when we offer a teleport feature to remote bases, and silo's.
+- Added support for both Character mode and non-character mode. Spawning as a character will be normal Factorio mode, with crafting, inventory, but with fewer items
+  and with 1/5 the number of bots that the non-character BNO mode player gets.
+- Fixed the stickiness of the team and moat settings at the start of the game. Choose restart - will show your original choices without making you reselect them.
+- Added checkbox in System Info menu to disable sharing your map view, this is both a privacy and a anti griefing feature
+---------------------------------------------------------------------------------------------------
 Version: 4.2.18
 Date: 12/19/2023 -  Merry Christmas !
 Changes:

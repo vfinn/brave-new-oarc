@@ -12,8 +12,10 @@ function CreatePlayerListGuiTab(tab_container, player)
     scrollFrame.horizontal_scroll_policy = "never"
 
     AddLabel(scrollFrame, "online_title_msg", "Online Players:", my_label_header_style)
+    local charMode = "Brave New Player"
+    if global.players[player.index].characterMode then charMode = "Character" end
     for _,player in pairs(game.connected_players) do
-        local caption_str = player.name.." ["..player.force.name.."]".." ("..formattime_hours_mins(player.online_time)..")"
+        local caption_str = player.name.." ["..player.force.name.."]".." ("..formattime_hours_mins(player.online_time)..")    ".. charMode
         if (player.admin) then
             AddLabel(scrollFrame, player.name.."_plist", caption_str, my_player_list_admin_style)
         else

@@ -288,11 +288,10 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
     -- Render some welcoming text...
     DisplayWelcomeGroundTextAtSpawn(player, delayedSpawn.pos)	
 
-	-- Render Brave New World Items - vf
+    -- Render Brave New World Items - vf
     global.spawn[player.index] = delayedSpawn.pos  -- save the starting position, this is how we determine who died when a starting roboport is killed
-	setupBNWForce(player, delayedSpawn.pos.x, delayedSpawn.pos.y, game.active_mods["SeaBlock"])
+    setupBNWForce(player, delayedSpawn.pos.x, delayedSpawn.pos.y, game.active_mods["SeaBlock"])
     GivePlayerStarterItems(player)
-
     -- Chart the area.
     ChartArea(player.force, delayedSpawn.pos, math.ceil(global.ocfg.spawn_config.gen_settings.land_area_tiles/CHUNK_SIZE), player.surface)
 
@@ -342,13 +341,19 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
                                     global.ocfg.spawn_config.gen_settings.crashed_ship_wreakage)
     end
     -- Send the player to that position
-    SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], delayedSpawn.pos)
-    if player.character then
-        log("on_event::On Player created: destroy character")
-       player.character.destroy()
-       player.character = nil
+    local SP=delayedSpawn.pos
+    SP.y=SP.y+10        -- move them down 10 tiles, otherwise they spawn inside the walls, next to large roboport
+    if global.players[player.index].characterMode then 
+        if not player.character then player.create_character() end
+        SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], SP)
+    else
+        SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], SP)
+        if not global.players[player.index].characterMode and player.character then
+            log("on_event::On Player created: destroy character")
+            player.character.destroy()
+            player.character = nil
+        end
     end
-
 end
 
 -- likely not needed - all chunks within the spawn area are deleted in OarcRegrowthRemoveAllChunks
@@ -405,6 +410,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
 --    end
     global.forces[force.name] = {}
 
+
     -- setup event listeners for creative mode
     if remote.interfaces["creative-mode"] then
         script.on_event(remote.call("creative-mode", "on_enabled"), function(event)
@@ -435,58 +441,12 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     -- setup starting location
     local water_replace_tile = "sand-1"
     force.chart(surface, {{x - 192, y - 192}, {x + 192, y + 192}})
-    if not seablock_enabled and not BRAVE_NEW_OARC_MASHUP then	-- this is what Brave new world does to add oil - done differently in OARC
-        water_replace_tile = "dirt-3"
-        -- oil is rare, but mandatory to continue research. add some oil patches near spawn point
-        local xx = x + math.random(16, 32) * (math.random(1, 2) == 1 and 1 or -1)
-        local yy = y + math.random(16, 32) * (math.random(1, 2) == 1 and 1 or -1)
-        local tiles = {}
-        surface.create_entity{name = "crude-oil", amount = math.random(1800000, 2500000), position = {xx, yy}, force=force, raise_built = true}
-        for xxx = xx - 2, xx + 2 do
-            for yyy = yy - 2, yy + 2 do
-                local tile = surface.get_tile(xxx, yyy)
-                local name = tile.name
-                if tile.prototype.layer <= 4 then
-                    name = water_replace_tile
-                end
-                tiles[#tiles + 1] = {name = name, position = {xxx, yyy}}
-            end
-        end
-		
-        xxx = xx + math.random(-8, 8)
-        yyy = yy - math.random(4, 8)
-        for xxxx = xxx - 2, xxx + 2 do
-            for yyyy = yyy - 2, yyy + 2 do
-                local tile = surface.get_tile(xxxx, yyyy)
-                local name = tile.name
-                if tile.prototype.layer <= 4 then
-                    name = water_replace_tile
-                end
-                tiles[#tiles + 1] = {name = name, position = {xxxx, yyyy}}
-            end
-        end
-        surface.create_entity{name = "crude-oil", amount = math.random(1800000, 2500000), position = {xxx, yyy}, force=force, raise_built = true}
-        xxx = xx + math.random(-8, 8)
-        yyy = yy + math.random(4, 8)
-        for xxxx = xxx - 2, xxx + 2 do
-            for yyyy = yyy - 2, yyy + 2 do
-                local tile = surface.get_tile(xxxx, yyyy)
-                local name = tile.name
-                if tile.prototype.layer <= 4 then
-                    name = water_replace_tile
-                end
-                tiles[#tiles + 1] = {name = name, position = {xxxx, yyyy}}
-            end
-        end
-        surface.create_entity{name = "crude-oil", amount = math.random(1800000, 2500000), position = {xxx, yyy}, force=force, raise_built = true}
-        surface.set_tiles(tiles)
-    end
 	-- vf - We always need oil within reach on every map or you can't get outside main, so let's drop a few a small distance away randomly
 	-- put it outside of main, to the left
-	if BRAVE_NEW_OARC_MASHUP and not global.ocfg.space_block and not global.ocfg.freight_forwarding then
-        local xx = x + math.random(CHUNK_SIZE*4, CHUNK_SIZE*5) * (math.random(1, 2) == 1 and 1 or -1)
+	if not global.ocfg.space_block and not global.ocfg.freight_forwarding then
+        local xx = x + math.random(CHUNK_SIZE*5, CHUNK_SIZE*6) * (math.random(1, 2) == 1 and 1 or -1)
 		
-        local yy = y + math.random(CHUNK_SIZE*4, CHUNK_SIZE*5) * (math.random(1, 2) == 1 and 1 or -1)
+        local yy = y + math.random(CHUNK_SIZE*5, CHUNK_SIZE*6) * (math.random(1, 2) == 1 and 1 or -1)
         local tiles = {}
         surface.create_entity{name = "crude-oil", amount = math.random(2500000, 2900000), position = {xx, yy}, force=force, raise_built = true}
 log("Random oil - " .. xx .. " : " .. yy);		
@@ -574,6 +534,10 @@ log("Random oil - " .. xxx .. " : " .. yyy);
         -- 1.1 MW, 120 MJ storage - large roboport
         -- to make blueprint - be sure there is a roboport in it, and you should remove the 4 yellow chests or mod how they are handled
         -- global.spawn[player.index]
+    if global.players[player.index].characterMode then
+        -- Normal Oarc game - with a character
+        blueprint = "0eNqVmluO2kAQRffibxi52/1kK9EoMjNWYglsZEyS0Yi9h0ciUNLluvcThA92+1S5i8tntd2dusPUD3O1+az6t3E4Vpsvn9Wx/za0u+t788ehqzZVP3f7alUN7f766jju2ml9aIduV51XVT+8d7+qjTmv1CPbt7fT/rRr53F6OtKeX1dVN8z93Hf3E7i9+Pg6nPbbbrqgH189j0O3/tnudhfoYTxeDhmH69ddMGtTv/hV9XH5vHnx5+vp/MOxGCcrmAbDJAXjMExUMB7DBAUTMIxXMBHDOAWTMEyjYDKGsQrG1KCAGgcUWfPYYCKrGExk9aowkdVFxkTWbrnBRNYENJjIWjkYTGStOA0mstYqLOax1rgsprHWRi1msd7VQY01jy3msdFEtpjIRjPZYiYbTWWLqWw0ly3mstFktpjMRrO5wWw2ms4Nvb1oBJBlQVYANcW91sIWQzojB4K8BvIgyGqggIHUtX5IPbXv7bTwoJAITzrvLzdqvWv3h4UOL92rjF1QVE7H1RhHtdAZEKQtkLMgKGighixUieNIjnDLnGfr1AugwIKcAIrFEakwmtwxoQhJICQuQTII8QsQX4OQZgkCevzYLQdhQHp4PI3b8TBOc2E/eEfEIgBsx0k7EYcty3VMkJfFg5DFtQ0gZPEug9KaJd98ImtaKEWfSY5QiaFmSzoKIHpXIVgTLNcbUhHScL2hDHFcbyhDnprvaXuc29uBYmtI58vHu/7b9+14mq4/DoXwWqIGiPq3sv6n+iI1crVWvuDE1VoZkrlaK0Iiu2EW1I6G5AhmR3q/nAVQw4KSAHJUrdm6CPFUrQmQQNWaAInUc1iAJPY5LN2lTD5GBU6qqcdo+aqSoUpbgFiqtAVIQ5W2AGG3xtLaepIjFFJid8ZW+iE4sqBaACVyprbC9JAyOVNLoFyTM7UIMtxMLXIsN8qKnIYcZUWQI0dZEeTJUVYEBa4+JK1zJDmC1Tmx5SHM1jmzICtlJWB7/tNYmzIEbM9+EWLJRW6kSyJ/wJDXxrGr7CSS57JMGRS4NFMGRS7PlEGJSzRlUOYyTRGE5n9OBRku15RBlks2ZVDDRZsyyHHZpgzyVLgpcwKVbsqcSMWbMidR+abMyVTAKXLAMFAtDjANVKsVjAPV9gHGgWo/A+NAtcGicaAqNJoHqkajgaCqNJoIqk6jkaAqNZoJqlaDoaBRtQZDQaN63bCbkBvodXX/C9bm6b9eq+pHNx1vh9hkXMw2JptjnfL5/Bug4jI/"
+    else
         if (global.ocfg.space_block) then
             if global.ocfg.easyStart then
                 log("Space Block: EasyStart for " .. player.name)
@@ -594,14 +558,14 @@ log("Random oil - " .. xxx .. " : " .. yyy);
     --          solar only
                 blueprint = "0eNqdmuuOm0gQRt+F33ZEVV/xq6xGEXbIBAmDF/DujkZ+9wVPJrYSqqu6fo08MsdcvlN0d/V7ceyuzWVs+7k4vBftaein4vDXezG1r33drf+b3y5NcSjauTkXu6Kvz+unaejqcX+p+6Yrbrui7b81/xUHuO3YI+vT6Xq+dvU8jE9H4u1lVzT93M5t83EC9w9vX/vr+diMC/rx0/PQN/t/665boJdhWg4Z+vXnFszeRotf3K54W44wFXxxt/WUfmOhmFWyLCNmAcuyUpaJLMuJWRXL8mKWZ1lBzAosK4pZlmVVYpZjWVCKYXxYQZx8Y3iYOPqGjz6Is2/47IM4/MiHH8TpRz79II4/8vEHcf6Rzz+IBUBeABAbgLwBKDYABeVabADyBqDYAOQNQLEByBuAYgOANwDFBgBvAIoNAN4AFBsAvAEoNgB4A1BsAPAGGLEBwIfWqEY/SMBQAzMEzGwOCbnBFEWzYtrz8ICiOTnN8jQvpwFPe1gw1t/qkX3TUZwnAc7Lc9x39fnCvpyoZDwE6IbXdprb0/70o5nm/dj8fV3+NiOLXs9zV/z8/tfvbbcc9DGg/5wj/Pkb43Ac5oV8Gq7rNMSV67l9Tgx+fX2dmszj9bT+9sYhL1sD6lL8zJBPgAU5jU+ARTEN+BxYuYfPxYuiWU3xIlJlnQZGnZnXFC9LwIIG5ghY3Jzibk8FP1l+k1SJSauxCZIr5aSQJoGc5NIkee6fZ0eemOY+cr+WhMswzkQp/QSFTcwj8G0/NaOk0hGhcvK3zvNwlbo+L77vmE6VC2ISMKmSJx2YVMmTDulUedVwi3iEHjQwoi541XCLiIM3GlggYFZRseImySkq1jbJKyrWNumpuF+P01zfj04XrLgMXfqmff1xHK73UYuPW8MKH6VoBBodNtGVwtLN6w+lwtJtEigs3SahRizChWA0MMKFYDViRQLmNLCKgPlsS21ZbpJCtqUUKWZbSpGq7HEFQYqlalxB3PUIqrc4RcPstzh1lSa7PlAkm10fKJLLrg8UyWuUJiyMQQOjnmDMV3q5SAJWaWBU46JUrMDYkpisVaBYgaFpqFiBoWlGsQJD06xibYCmOcXaAE3zirUBmhYUawM0LeZrRZpQVRoY2XYrNV4hRQMNzVC0jFfAr8JttlHydwAGBmU195+8Y05DI++Y19x/S9FCftM/QYv5bf8Ercpv/NO0jO5zJaBBfvM/QcP89n+CZvI3ACRoNn8LQILm8vcAJGg+fxNAghbydwEkaDF/G0CCVuXvA6BpGX1ogQsZjWiBCxmdaIELGa1ogQvyXjQKXJA3o1HggrwbjQIX5O1oFLgg70ejwIWMhrTAhYyOtMAFeUsaBC7Ie9IgcMGY/F0BCZrN3xaQoKnGSHfay+5jK+Xhac/mrvinGaf7cbhcTagwBG8hYLzd/gdAgBor"
             else
-    --      adding the boiler to existing solar - water pump over land - not water
+    --      adding the boiler to existing ssolar - water pump over land - not water
                 blueprint = "0eNqdmutum0AQhd+F36Zihr2AX6WKKuxsEiQMFEPbKPK7F+ymRu2OZ5hfkSP243bO7OwePpJDM4V+qNsx2X8k9bFrz8n+60dyrl/bqln+N773Idkn9RhOyS5pq9Py69w11ZD2VRua5LJL6vY5/Er2cNmxI6vjcTpNTTV2w2okXp52SWjHeqzD7QKuP96/tdPpEIYZfT/12LUh/Vk1zQztu/M8pGuX082Y1BQGv9hd8j6PMFh+sZflkv5hoZgFLCsXszKWZaSsvGRZVswqWJYTszzL8mKWY1mFmGVZVilmGZYFmRiW8zCx8nNe+SCWfs5LH8Taz3ntg1j8yIsfxOpHXv0glj/y8gex/pHXP4gNgLwBQOwA5B2AYgcg7wAUOwAFtV/sAOQdgGIHIO8AFDsAeAeg2AHAOwDFDgDeASh2APAOQLEDgHcAih0AvANysQOAd0Cu6X6WohuFoQYGBCyPtoRMA0TSjJi2ajVImpXTDE9zchrwtLsLhuq5GrjJieSsDHCa32PaVKeem09IZdwN0HSv9Xmsj+nxLZzHdAjfp/lvGFj0cp275M/x317qZh50a+g/1wj/n2PoDt04k4/dtCxDbLZc2+fC4O/hy9JkHKbjcu7IkKdYQ52J3xnyCjAgp/EKMCimAa8DI/fhqhKSNKMoXpSqjNXAqCtzmuKFBMxrYDkBK6JL3Piy8pNloqRSTFoc+4BkMznJPyaBnGQfk+S6Xy1olgIdpd11v5SEvhtGopR+guKYu+Dr9hwGSaUjRGXls86q9yXvz4mfOz5WlfViEjCqkisdGFXJlQ6PVeU07Rb1Ch1oYERdcKp2i5CDyzUwS8CMomK5KMkqKlac5BQVK05aFffpcB6r6+jHBcvNrUsb6te3QzdduxZXxNoKV0jRCDTaR9GlwqXR+/eZwqVxEihcGiehxliEF3yugRFe8EZjLEfArAbmCZhTuLSIkrzCpXFSoXBpnFQq+oooqchUfQXx1AtQzeIUDRWzePwuc0V9iJOMoj7ESVZRH+Ikp7E04cLCa2DUGyw0li4IWKmBUcFFptmBMcRirQTNDgxJQ80ODEnLNTswJM1o9gZImtXsDZA0p9kbIGleszdA0gqNrQgnlKUGRsZumcJX1H1Cptl0NUDRNkwB5V9YHCWfA9AzKM1GD/3ENDs99BPTbPUYpGheEfrTtEIR+9O0UhH8k7QN6XMhoIEi/KdpqIj/aVquCO1pmlF8TkDTrCK2p2lO8UUBTfOK4J6mFYpvCmhaqYjuSdqGHFrgrA1BtEC9G5JogbM2RNEC9cqzaBQ4Sx5Go8AL8jQaBV6Qx9Eo8II8j0aBFzYE0gIvbEikBV6QR9Ig8II8kwaBF/JcEeTTNKP4xoCmqXokknb3wmEa2jCkD+OLdTNir0Htcz2E4+0gFz2B10XC6ybKyiPhY1c1bBD8s+ue7wfNXX80+4VVNH7o6iYwO13/PxCMUteeDNUpDe1r3Qa2T5DR14E1S8820+8Punt5Ob91Q0j7ifheYK0VL9LKKtHu6z6wDex1q+Vpd/s+eL/6EHmX/JgVcruP2aK+RO+dAY/F5fIb+V3+cQ=="
                              
             end
         end
-
-        
+    end
     build_blueprint_from_string(blueprint,surface,{x=x, y=y},force)
+        
      local config = global.forces[force.name]
     config.roboport = surface.create_entity{name = "roboport-main", position = {x, y}, force = force, raise_built = true}
     config.roboport.backer_name = player.name
@@ -609,7 +573,6 @@ log("Random oil - " .. xxx .. " : " .. yyy);
     config.roboport.energy = 400000000    
     local roboport_inventory = config.roboport.get_inventory(defines.inventory.roboport_robot)
     -- start with 100/50 construction/logistic bots
-
     -- {"10/5", "50/25", "100/50", "200/100", "500/250"}
     local numLogisticBots
     if (global.ocfg.starting_bot_count == "10/5") then
@@ -623,20 +586,31 @@ log("Random oil - " .. xxx .. " : " .. yyy);
     elseif (global.ocfg.starting_bot_count == "500/250") then
         numLogisticBots=250
     end
+    if global.players[player.index].characterMode then   numLogisticBots = numLogisticBots / 5 end     -- 1/5 the number of bots if you are in character moed
+    -- setup robots in main roboport
     roboport_inventory.insert{name = "construction-robot", count = numLogisticBots*2}
     roboport_inventory.insert{name = "logistic-robot", count = numLogisticBots}
-
     roboport_inventory = config.roboport.get_inventory(defines.inventory.roboport_material)
-
     roboport_inventory.insert{name = "repair-pack", count = 10}
-        
-    -- storage chest
+
+    -- setup main logistic chests
     surface.create_entity{name = "logistic-chest-storage", position = {x - 1, y + 4}, force = force, raise_built = true}
     surface.create_entity{name = "logistic-chest-storage", position = {x - 2, y + 4}, force = force, raise_built = true}
     local seablock_chest = surface.create_entity{name = "logistic-chest-storage", position = {x + 0, y + 4}, force = force, raise_built = true}
     -- storage chest, contains the items the force starts with
     local chest = surface.create_entity{name = "logistic-chest-storage", position = {x + 1, y + 4}, force = force, raise_built = true}
+    -- storage chest
     local chest_inventory = chest.get_inventory(defines.inventory.chest)
+
+
+    if global.players[player.index].characterMode then
+        player.insert{name="power-armor", count = 1}
+
+        chest_inventory.insert({name = "gun-turret", count = 2})
+
+        return
+    end
+
     -- add chests for Krastorio
     if global.ocfg.krastorio2 then
         chest_inventory.insert{name = "logistic-chest-requester", count = 2}        -- blue chests
@@ -691,8 +665,6 @@ log("Random oil - " .. xxx .. " : " .. yyy);
         chest_inventory.insert{name = "boiler", count = 1}
         chest_inventory.insert{name = "steam-engine", count = 2}
         chest_inventory.insert{name = "assembling-machine-1", count = 4}
-        -- chest_inventory.insert{name = "roboport", count = 4}
-        --chest_inventory.insert{name = "logistic-chest-storage", count = 2}
         chest_inventory.insert{name = "lab", count = 2}
         chest_inventory.insert{name = "gun-turret", count = 2}
         if global.ocfg.krastorio2 then
@@ -720,15 +692,15 @@ log("Random oil - " .. xxx .. " : " .. yyy);
             chest_inventory.insert{name = "electric-mining-drill", count = 4}
             chest_inventory.insert{name = "logistic-chest-buffer", count = 1}   -- no green in this bp, so add 1
         end
+        if (settings.startup["bno-main-area-design-boiler-n-steam-engines"].value == "solar only") then
+            chest_inventory.insert{name = "logistic-chest-requester", count = 3}    -- blue chests
+        else
+            chest_inventory.insert{name = "logistic-chest-requester", count = 2}    -- blue chests
+        end
+        chest_inventory.insert{name = "logistic-chest-passive-provider", count = 4} -- red chests 
+        chest_inventory.insert{name = "logistic-chest-buffer", count = 3}           -- add to green chests based on blueprint
+        chest_inventory.insert{name = "logistic-chest-active-provider", count = 4}  -- purple chests
     end
-    if (settings.startup["bno-main-area-design-boiler-n-steam-engines"].value == "solar only") then
-        chest_inventory.insert{name = "logistic-chest-requester", count = 3}    -- blue chests
-    else
-        chest_inventory.insert{name = "logistic-chest-requester", count = 2}    -- blue chests
-    end
-    chest_inventory.insert{name = "logistic-chest-passive-provider", count = 4} -- red chests 
-    chest_inventory.insert{name = "logistic-chest-buffer", count = 3}           -- add to green chests based on blueprint
-    chest_inventory.insert{name = "logistic-chest-active-provider", count = 4}  -- purple chests
 end
 
 
@@ -1101,6 +1073,7 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
     --    player.create_character()
     --end
     player.teleport({x=0,y=0}, GAME_SURFACE_NAME)
+
     local player_old_force = player.force
     player.force = global.ocfg.main_force
 

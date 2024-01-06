@@ -60,6 +60,7 @@ function DisplayWelcomeTextGui(player)
     AddLabel(wGui, "scenario_info_msg_lbl1", SCENARIO_INFO_MSG, my_label_style)
     AddSpacer(wGui)
 
+    -- Not enough room on the screen for this
     -- Warning about spawn creation time
     AddLabel(wGui, "spawn_time_msg_lbl1", {"oarc-spawn-time-warning-msg"}, my_warning_style)
 
@@ -144,11 +145,11 @@ function DisplaySpawnOptions(player)
         soloSpawnFlow.add{name = "isolated_spawn_main_team_radio",
                         type = "radiobutton",
                         caption={"oarc-join-main-team-radio"},
-                        state=true}
+                        state=global.ocfg.main_team}
         soloSpawnFlow.add{name = "isolated_spawn_new_team_radio",
                         type = "radiobutton",
                         caption={"oarc-create-own-team-radio"},
-                        state=false}
+                        state=not global.ocfg.main_team}
     end
 
     -- OPTIONS frame
@@ -162,13 +163,19 @@ function DisplaySpawnOptions(player)
                             caption={"oarc-easy-start-option"},
                             state=global.ocfg.easyStart}
     else
+        local moatChoice = global.ocfg.moatChoice
+        if global.ocore.buddySpawnOpts[player.name] then
+            moatChoice = global.ocore.buddySpawnOpts[player.name].moatChoice
+        end
         if (global.ocfg.spawn_config.gen_settings.moat_choice_enabled and not global.ocfg.enable_vanilla_spawns) then
             soloSpawnFlow.add{name = "isolated_spawn_moat_option_checkbox",
                             type = "checkbox",
                             caption={"oarc-moat-option"},
-                            state=true}
+                            state=moatChoice}
         end
-    end
+    end    
+    DisplayCharacterSpawnOptions(player, soloSpawnFlow)
+
     -- if (global.ocfg.enable_vanilla_spawns and (#global.vanillaSpawns > 0)) then
     --     soloSpawnFlow.add{name = "isolated_spawn_vanilla_option_checkbox",
     --                     type = "checkbox",
@@ -252,9 +259,45 @@ function DisplaySpawnOptions(player)
     AddLabel(sGui, "note_lbl1", spawn_distance_notes, my_note_style)
 end
 
+function DisplayCharacterSpawnOptions(player, soloSpawnFlow)
+    local characterModeState = CharacterOptionChosenForThisPlayersForce(player, true) --0 not chosen, 1 char, 2 bno
+    AddLabel(soloSpawnFlow, "bno-character-warning-lbl1", "Character Mode checkbox will be enforced by options that may have already been selected for this team", my_green_style)
+    soloSpawnFlow.add{name = "character_mode_option_checkbox",
+                type = "checkbox",
+                caption={"bno-mode-option"},
+                state=characterModeState==1}
+--    AddLabel(soloSpawnFlow, "character_mode_spawn_lbl1",{"bno-mode-start"}, my_label_style)
+end
+
+-- returns  0 if no team has chosen 
+--          1= character mode
+--          2= bno mode
+function CharacterOptionChosenForThisPlayersForce(thisPlayer, bMainTeam)
+    -- if choosing start your own team - that will ALWAYS be choosable, only main-team might have already spawned as char or bno
+    -- if at least 1 team has already joined then Character option has been selected already
+    if bMainTeam then 
+        for idx,player in pairs(game.players) do
+            local t = player.force.name
+            if idx ~= thisPlayer.index then     -- don't count this player
+                if (player.force.name == thisPlayer.force.name)  then
+                    if global.players[idx].characterMode then
+                        log("char option selection- team: " .. tostring(t) .. " in characterMode - " ..tostring(global.players[idx].characterMode))
+                        return 1
+                    else
+                        log("char option selection- team: " .. tostring(t) .. " in characterMode - " ..tostring(global.players[idx].characterMode))
+                        return 2
+                    end
+                end
+            end            
+        end
+    end
+    log("char option choose any - no one started this team: " .. thisPlayer.force.name)
+    return 0
+end
 
 -- This just updates the radio buttons/checkboxes when players click them.
 function SpawnOptsRadioSelect(event)
+    
     if not (event and event.element and event.element.valid) then return end
     local elemName = event.element.name
 
@@ -262,6 +305,19 @@ function SpawnOptsRadioSelect(event)
         event.element.parent.isolated_spawn_new_team_radio.state=false
     elseif (elemName == "isolated_spawn_new_team_radio") then
         event.element.parent.isolated_spawn_main_team_radio.state=false
+    end
+    if (elemName == "character_mode_option_checkbox") or (elemName == "isolated_spawn_main_team_radio") then
+        -- If this returned 0 then nothing chosen yet, 1=char, 2=BNO mode
+        if event.element.parent.isolated_spawn_main_team_radio.state then
+            local c=CharacterOptionChosenForThisPlayersForce(game.players[event.player_index], event.element.parent.isolated_spawn_main_team_radio.state)
+            if c==0 then
+                  -- nothing yet chosen, let checkbox change state
+            elseif c==1 then
+                event.element.parent.character_mode_option_checkbox.state=true   -- character mode already chosen - force on
+            elseif c== 2 then
+                event.element.parent.character_mode_option_checkbox.state=false  -- bno mode already chosen force off
+            end
+        end
     end
 
     if (elemName == "buddy_spawn_main_team_radio") then
@@ -306,22 +362,29 @@ function SpawnOptsGuiClick(event)
         (elemName == "join_other_spawn_check")) then
 
         if (global.ocfg.enable_separate_teams) then
-            joinMainTeamRadio =
-                pgcs.spawn_solo_flow.isolated_spawn_main_team_radio.state
-            joinOwnTeamRadio =
-                pgcs.spawn_solo_flow.isolated_spawn_new_team_radio.state
+            joinMainTeamRadio = pgcs.spawn_solo_flow.isolated_spawn_main_team_radio.state
+            joinOwnTeamRadio  = pgcs.spawn_solo_flow.isolated_spawn_new_team_radio.state
         else
             joinMainTeamRadio = true
-            joinOwnTeamRadio = false
+            joinOwnTeamRadio  = false
         end
+        global.ocfg.main_team = joinMainTeamRadio       -- remember so on a restart we keep the setting
         
         if (global.ocfg.space_block) then
             global.ocfg.easyStart = pgcs.spawn_solo_flow.easy_start_option_checkbox.state
         end
         if (global.ocfg.spawn_config.gen_settings.moat_choice_enabled and not global.ocfg.enable_vanilla_spawns and
-            (pgcs.spawn_solo_flow.isolated_spawn_moat_option_checkbox ~= nil)) then
-            moatChoice = pgcs.spawn_solo_flow.isolated_spawn_moat_option_checkbox.state
+           (pgcs.spawn_solo_flow.isolated_spawn_moat_option_checkbox ~= nil)) then
+                global.ocfg.moatChoice = pgcs.spawn_solo_flow.isolated_spawn_moat_option_checkbox.state
+                moatChoice = global.ocfg.moatChoice
         end
+
+        if (pgcs.spawn_solo_flow.character_mode_option_checkbox ~= nil) then
+            global.players[player.index].characterMode = pgcs.spawn_solo_flow.character_mode_option_checkbox.state
+            player.cheat_mode=not global.players[player.index].characterMode
+--            if global.players[player.index].characterMode and not player.character then player.create_character() end        -- character mode - make a character
+        end
+        
         -- if (global.ocfg.enable_vanilla_spawns and
         --     (pgcs.spawn_solo_flow.isolated_spawn_vanilla_option_checkbox ~= nil)) then
         --     vanillaChoice = pgcs.spawn_solo_flow.isolated_spawn_vanilla_option_checkbox.state
@@ -842,6 +905,8 @@ function DisplayBuddySpawnOptions(player)
                         caption={"oarc-moat-option"},
                         state=true}
     end
+
+    DisplayCharacterSpawnOptions(player, buddySpawnFlow)
 
     -- AddSpacerLine(buddySpawnFlow)
     buddySpawnFlow.add{name = "buddy_spawn_request_near",

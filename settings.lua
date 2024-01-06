@@ -9,6 +9,15 @@ data:extend({
         order="bnw-01"
     },    
     {
+        type = "int-setting",
+        name = "bno-increase-logistics",     
+        setting_type = "startup",
+        minimum_value=0,
+        maximum_value=64,
+        default_value = 0,
+        order="bnw-015"
+    },    
+    {
         type = "string-setting",
         name = "bno-map-size",     
         setting_type = "startup",
@@ -123,5 +132,5 @@ data:extend({
         setting_type = "startup",
         default_value = false,
         order="bnw-93"
-    }
+    }    
 })

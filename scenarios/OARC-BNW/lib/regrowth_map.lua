@@ -88,7 +88,7 @@ function RegrowthMarkAreaForRemoval(pos, chunk_radius)
             end
             table.insert(global.rg.removal_list, {pos={x=x,y=y},force=true})
         end
-        if (table_size(global.rg.map[x]) == 0) then
+        if (global.rg.map[x] ~=nil and table_size(global.rg.map[x]) == 0) then
             global.rg.map[x] = nil
         end
     end
@@ -272,7 +272,8 @@ function OarcRegrowthRemoveAllChunks()
                 game.surfaces[GAME_SURFACE_NAME].delete_chunk(c_pos)
             end
         else
-            if global.ocfg.krastorio2 and c_remove.force then 
+            if c_remove.force then 
+                log("OarcRegrowthRemoveAllChunks: forced and not mapped " .. c_pos.y .. ", " .. c_pos.y)
                 game.surfaces[GAME_SURFACE_NAME].delete_chunk(c_pos)
             end
         end

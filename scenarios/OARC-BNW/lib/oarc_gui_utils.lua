@@ -49,6 +49,13 @@ my_warning_style = {
     top_padding = 0,
     bottom_padding = 0
 }
+my_green_style = {
+    single_line = false,
+    font_color = {r=0.1,g=1,b=0.1},
+    top_padding = 0,
+    bottom_padding = 0
+}
+
 my_spacer_style = {
     minimal_height = 10,
     top_padding = 0,

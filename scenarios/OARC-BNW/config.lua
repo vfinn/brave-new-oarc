@@ -13,17 +13,17 @@
 -- This stuff is shown in the welcome GUI and Info panel. Make sure it's valid.
 WELCOME_MSG_TITLE = "Welcome to Brave New Oarc"
 WELCOME_MSG = "This game provides the OARC multiplayer capability, and the Brave New World" -- Printed to player on join as well.
-SERVER_MSG = "Bot only and lazy bastard style of game play. You can not craft anything.\n" ..
-             "Boxes in your base contain enough items for you to get started.\n" ..
+SERVER_MSG = "Character Mode is same as normal factorio, but with less starting items, and 1/5 the number of robots as in non-char mode.\n" ..
              "RESTART is available in the menu choices, and will automatically occur if your main large roboport is destroyed.\n" ..
-             "Q: Why do I have no man?\n" ..
-             "A: This part of the scenario. It makes early game harder, but later it becomes an advantage and enables extremely quick building of your base. Bots do all your work. For easier use selected Settings->Interface->Pick ghosts if no items are available.\n" ..
              "Q: Why can't I move outside the area that my main base is located?\n" ..
              "A: Fog of war that limits your movement, but is intended as an antigrief. Use a Radars to claim more area.\n" ..
-             "Q: What items can I hold in inventory, and pick up from chests/assemblers?\n" ..
-             "A: 1) Red&Green wires, copper cable, 2) Any module, 3) Any vehicles and all the items that go into a vehicles, 4) fuel cells 5) Blueprints\n" ..
              "Q: Why can't I make level 3 speed modules and Artillery?\n" ..
              "A: These are available after you launch one rocket.\n" ..
+             "Non-Character Mode:\n" ..
+             "Q: Why do I have no man?\n" ..
+             "A: This part of the scenario. It makes early game harder, but later it becomes an advantage and enables extremely quick building of your base. Bots do all your work. For easier use selected Settings->Interface->Pick ghosts if no items are available.\n" ..
+             "Q: What items can I hold in inventory, and pick up from chests/assemblers?\n" ..
+             "A: 1) Red&Green wires, copper cable, 2) Any module, 3) Any vehicles and all the items that go into a vehicles, 4) fuel cells 5) Blueprints\n" ..
 	         "Q: Can I drive a vehicle?\n" ..
              "A: Yes - hover cursor over vehicle and press <enter>, you can NOT fire weapons though. Use them to steam roll the enemy.\n" 
 
@@ -41,7 +41,7 @@ DISCORD_INV = "https://discord.gg/RjxsUfkJzj"
 -- Module Enables
 -- Each of the following things enable special features. These can't be changed once the game starts.
 ------------------------------------------------------------------------------------------------------------------------
-BRAVE_NEW_OARC_MASHUP = true
+BRAVE_NEW_OARC_MASHUP = false  -- true is BNO mode, false provides a character
 
 ENABLE_LARGE_ROBOPORT = true
 -- This allows 2 players to spawn next to each other in the wilderness, each with their own starting point. It adds more
@@ -155,7 +155,11 @@ OARC_MODIFIED_ENEMY_SPAWNING = true
 -- Starting Items
 ------------------------------------------------------------------------------------------------------------------------
 -- Items provided to the player the first time they join
-PLAYER_SPAWN_START_ITEMS = {
+PLAYER_SPAWN_START_ITEMS = {["pistol"] = 1,["pistol"] = 1,
+                            ["firearm-magazine"] = 10,
+                            ["coal"] = 10,
+                            ["stone-furnace"] = 4,
+                            ["burner-mining-drill"] = 10
 }
 
 -- Items provided after EVERY respawn (disabled by default)

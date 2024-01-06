@@ -14,6 +14,9 @@ function InitOarcConfig()
     global.ocfg = {}
 	global.spawn = {}
     global.players = {}
+    -- store the Force Name and in global.players - index into this list (LOOKUP WHERE THE PLAYERS FORCES ARE STORED)
+    -- global.forces = {}      -- use for backward lookup of players and forces they join to see if that force is Character or BNO mode
+    
     if (game.active_mods["clean-tutorial-grid"]) then
         global.ocfg.locked_build_area_tile = "clean-tutorial-grid"
     else
@@ -110,13 +113,17 @@ function InitOarcConfig()
     global.ocfg.enable_server_write_files = ENABLE_SERVER_WRITE_FILES
     global.ocfg.warn_biter_attack = setGlobalSetting("bno-biter-swarm-attack", true, false)
     global.ocfg.warn_biter_setting = {}
+    global.ocfg.share_chart = {}
+
 
     global.ocfg.space_block = game.active_mods["spaceblock"]
     if (global.ocfg.space_block) then    -- in data stage use:  mods["spaceblock"]
         log("Space Block mod installed !")
     end
     global.ocfg.easyStart=false
-    
+    global.ocfg.moatChoice=true
+
+    global.ocfg.main_team=true
     -- The results of each of these can be treated as a boolean, but also contain the version number of the mod
     global.ocfg.freight_forwarding  = game.active_mods["FreightForwarding"]
     global.ocfg.bzlead              = game.active_mods["bzlead"]
@@ -152,10 +159,12 @@ function setGlobalSetting(settings_startup_name, default_val, isBool)
     isBool = isBool or false    -- set default to false
     local tmpVal = default_val
     local settingVal = settings.startup[settings_startup_name].value
-    if ((settingVal ~= "use config.lua setting") and isBool) then
-        tmpVal = settingVal=="yes"      -- convert Yes/No into boolean
-    else
-        tmpVal = settingVal
+    if ((settingVal ~= "use config.lua setting")) then
+        if (isBool) then
+            tmpVal = settingVal=="yes"      -- convert Yes/No into boolean
+        else
+            tmpVal = settingVal
+        end
     end   
     log("setGlobalSetting: " .. settings_startup_name .. ", isBool? " .. tostring(isBool) .. ", input value: " .. tostring(default_val) .. ", output value: " .. tostring(tmpVal))
     return tmpVal

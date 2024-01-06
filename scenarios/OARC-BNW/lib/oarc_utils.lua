@@ -379,6 +379,7 @@ end
 
 -- Starter only items
 function GivePlayerStarterItems(player)
+log("GivePlayerStarterItems: CharacterMode - " .. tostring(global.players[player.index].characterMode))
     for name,count in pairs(PLAYER_SPAWN_START_ITEMS) do
         player.insert({name=name, count=count})
     end
@@ -458,7 +459,8 @@ function SafeTeleport(player, surface, target_pos)
     end
     player_index    = player.index
     log("Teleporting : " .. player.name .. " to " .. target_pos.x .. "," .. target_pos.y)
-    if (player.character ~= nil) then
+    -- if spawning at 0,0 create character, if spawning in base with characterMode
+    if (not (target_pos.x==0 and target_pos.y ==0) and not global.players[player.index].characterMode and player.character ~= nil) then
         log("destroying character before teleporting")
         player.character.destroy()
         player.character = nil
@@ -512,12 +514,12 @@ function SetCeaseFireBetweenAllForces()
 end
 
 -- Set all forces to friendly
-function SetFriendlyBetweenAllForces()
+function SetFriendlyBetweenAllForces(setting)
     for name,team in pairs(game.forces) do
         if name ~= "neutral" and name ~= "enemy" and name ~= global.ocore.abandoned_force then
             for x,y in pairs(game.forces) do
                 if x ~= "neutral" and x ~= "enemy" and name ~= global.ocore.abandoned_force then
-                    team.set_friend(x,true)
+                    team.set_friend(x,setting or true)
                 end
             end
         end
@@ -1462,7 +1464,12 @@ function PlayerJoinedMessages(event)
     local player = game.players[event.player_index]
     player.print(global.ocfg.welcome_msg)
     log("player: " .. player.name .. " joined")
-    global.ocfg.warn_biter_setting[event.player_index] = global.ocfg.warn_biter_attack; -- init individual setting
+    if (global.ocfg.warn_biter_setting[event.player_index]==nil) then
+        global.ocfg.warn_biter_setting[event.player_index] = global.ocfg.warn_biter_attack -- init individual setting
+    end 
+    if (global.ocfg.share_chart[event.player_index]==nil) then
+        global.ocfg.share_chart[event.player_index] = true       -- init individual setting
+    end
 
     if (global.oarc_announcements) then
         player.print(global.oarc_announcements)

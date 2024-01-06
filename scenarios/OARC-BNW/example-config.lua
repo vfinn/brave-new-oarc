@@ -29,7 +29,7 @@ DISCORD_INV = "https://discord.gg/RjxsUfkJzj"
 -- Module Enables
 -- Each of the following things enable special features. These can't be changed once the game starts.
 ------------------------------------------------------------------------------------------------------------------------
-BRAVE_NEW_OARC_MASHUP = true
+-- BRAVE_NEW_OARC_MASHUP = true
 
 -- This allows 2 players to spawn next to each other in the wilderness, each with their own starting point. It adds more
 -- GUI selection options.

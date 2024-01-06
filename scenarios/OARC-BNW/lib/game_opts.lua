@@ -47,6 +47,21 @@ function GameOptionsGuiClick(event)
         if global.ocfg.warn_biter_setting[event.player_index] then onOff = " ON" end
         player.print(player.name .. " changed the 'warn of biter attacking' option to " .. onOff)
     end
+    if (name == "share_chart_checkbox") then
+        if (global.ocfg.share_chart[event.player_index] == nil) then
+            global.ocfg.share_chart[event.player_index] = true
+        else
+            global.ocfg.share_chart[event.player_index] = not global.ocfg.share_chart[event.player_index]
+        end
+        local onOff = " OFF"
+        if global.ocfg.share_chart[event.player_index] then 
+            onOff = " ON" 
+            player.force.share_chart=true    
+        else
+            player.force.share_chart=false    
+        end
+        player.print(player.name .. " changed the 'Sharing of Chart' option to " .. onOff)
+    end
 
 end
 
@@ -72,15 +87,16 @@ function CreateGameOptionsTab(tab_container, player)
     local enemy_expansion_txt = "disabled"
     if game.map_settings.enemy_expansion.enabled then enemy_expansion_txt = "enabled" end
 
-    local enemy_text="Server Run Time: " .. formattime_hours_mins(game.tick) .. "\n" ..
-    "Current Evolution: " .. string.format("%.4f", game.forces["enemy"].evolution_factor) .. "\n" ..
-    "Enemy evolution time/pollution/destroy factors: " .. game.map_settings.enemy_evolution.time_factor .. "/" ..
-    game.map_settings.enemy_evolution.pollution_factor .. "/" ..
-    game.map_settings.enemy_evolution.destroy_factor .. "\n" ..
-    "Enemy expansion is " .. enemy_expansion_txt
-
-    AddLabel(tab_container, "enemy_info", enemy_text, my_longer_label_style)
-    AddSpacerLine(tab_container)
+-- NO ROOM FOR THIS !
+--    local enemy_text="Server Run Time: " .. formattime_hours_mins(game.tick) .. "\n" ..
+--    "Current Evolution: " .. string.format("%.4f", game.forces["enemy"].evolution_factor) .. "\n" ..
+--    "Enemy evolution time/pollution/destroy factors: " .. game.map_settings.enemy_evolution.time_factor .. "/" ..
+--    game.map_settings.enemy_evolution.pollution_factor .. "/" ..
+--    game.map_settings.enemy_evolution.destroy_factor .. "\n" ..
+--    "Enemy expansion is " .. enemy_expansion_txt
+--
+--    AddLabel(tab_container, "enemy_info", enemy_text, my_longer_label_style)
+--    AddSpacerLine(tab_container)
 
     -- Soft Mods:
     local soft_mods_string = "Oarc Core"
@@ -179,5 +195,11 @@ function CreateGameOptionsTab(tab_container, player)
                         type = "checkbox",
                         caption={"warn-biter-attack-option"},
                         state=(global.ocfg.warn_biter_setting[player.index])}
+    end
+    if (player.index) then
+        tab_container.add{name = "share_chart_checkbox",
+                        type = "checkbox",
+                        caption={"bno-share-chart"},
+                        state=(global.ocfg.share_chart[player.index])}
     end
 end

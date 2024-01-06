@@ -303,12 +303,15 @@ log("on_event::On Player created: " .. player.name)
     if not global.players then  
         global.players = {}
     end
-    global.players[event.player_index] = {
-        crafted = {},
-        inventory_items = {},     
-        previous_position = player.position,
-        drawOnExit = nil, 
-    }
+    if (#global.players == 0) then
+        global.players[event.player_index] = {
+            crafted = {},
+            inventory_items = {},   
+            previous_position = player.position,
+            drawOnExit = nil, 
+            characterMode = false
+        }
+    end
     -- Move the player to the game surface immediately.
     --    player.teleport({x=0,y=0},  game.surfaces[GAME_SURFACE_NAME]) -- could cause crash - SafeTeleport bypasses safeguards
     SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], {x=0,y=0})
@@ -329,9 +332,9 @@ log("Player teleported to 0:0");
 
     -- disable light
     player.disable_flashlight()
-    -- enable cheat mode
-    player.cheat_mode = true
-
+    -- enable cheat mode - Allows for infinite free crafting which we don't want in normal mode, and done via code when enabled in BNO mode.
+    player.cheat_mode = not global.players[player.index].characterMode        -- must be false to enable crafting in normal mode
+    
     -- Set-up a sane default for the quickbar
     if global.ocfg.space_block then 
         default_qb_slots[6]="fast-inserter"    
@@ -703,7 +706,7 @@ script.on_event(defines.events.on_worker_robot_expired, robotdied)
 -----------------------------------------------------------------------------------------------------------
 
 function inventoryChanged(event)
-    if global.creative then
+    if global.creative or global.players[event.player_index].characterMode then
         return
     end
     local player = game.players[event.player_index]
@@ -740,25 +743,25 @@ function inventoryChanged(event)
 
     -- player is only allowed to carry whitelisted items
     -- everything else goes into entity opened or entity beneath mouse cursor
-	-- log("Clearing inventory")
+    -- log("Clearing inventory")
     local inventory_main = player.get_inventory(defines.inventory.god_main)
     local items = {}
-	if (inventory_main ~= nil) then	-- vf
-		for i = 1, #inventory_main do
-			local item_stack = inventory_main[i]
-			if item_stack and item_stack.valid_for_read and not item_stack.is_blueprint then
-				local name = item_stack.name
-				if items[name] then
-					items[name].count = items[name].count + item_stack.count
-				else
-					items[name] = {
-						count = item_stack.count,
-						slot = item_stack
-					}
-				end
-			end
-		end
-	end
+    if (inventory_main ~= nil) then	-- vf
+        for i = 1, #inventory_main do
+            local item_stack = inventory_main[i]
+            if item_stack and item_stack.valid_for_read and not item_stack.is_blueprint then
+                local name = item_stack.name
+                if items[name] then
+                    items[name].count = items[name].count + item_stack.count
+                else
+                    items[name] = {
+                        count = item_stack.count,
+                        slot = item_stack
+                    }
+                end
+            end
+        end
+    end
     global.players[event.player_index].inventory_items = items
 
     local entity = player.selected or player.opened
@@ -851,6 +854,9 @@ function itemCountAllowed(name, count, player)
     elseif string.match(name, ".*fuel%-cell") then
         -- allow Krastorio 2 fuel cells
         return count
+    elseif string.match(name, ".*%-fuel") then
+        -- allow lexi-aircraft to load fuel cells into aircraft by hand
+        return count
     elseif name == "BlueprintAlignment-blueprint-holder" then
         -- temporary holding location for original blueprint, should only ever be one of these.
         return count
@@ -860,8 +866,13 @@ end
 
 
 function preventMining(player)
+    if global.players[player.index].characterMode then 
+        player.force.manual_mining_speed_modifier = 0  -- allow mining
+        return
+    else
     -- prevent mining (this appeared to be reset when loading a 0.16.26 save in 0.16.27)
-    player.force.manual_mining_speed_modifier = -0.99999999 -- allows removing ghosts with right-click
+        player.force.manual_mining_speed_modifier = -0.99999999 -- allows removing ghosts with right-click
+    end
 end
 
 script.on_configuration_changed(function(chgdata)
@@ -877,7 +888,7 @@ log("on_configuration_changed")
 end)
 
 script.on_event(defines.events.on_player_pipette, function(event)
-    if global.creative then
+    if global.creative or global.players[event.player_index].characterMode then
         return
     end
     game.players[event.player_index].cursor_stack.clear()
@@ -885,7 +896,7 @@ script.on_event(defines.events.on_player_pipette, function(event)
 end)
 
 script.on_event(defines.events.on_player_crafted_item, function(event)
-    if global.creative then
+    if global.creative or global.players[event.player_index].characterMode then
         return
     end
     game.players[event.player_index].cursor_ghost = event.item_stack.prototype
@@ -895,7 +906,7 @@ end)
 script.on_event(defines.events.on_player_main_inventory_changed, inventoryChanged)
 
 script.on_event(defines.events.on_player_cursor_stack_changed, function(event)
-    if global.creative then
+    if global.creative or global.players[event.player_index].characterMode  then
         return
     end
     local player = game.players[event.player_index]
@@ -949,9 +960,12 @@ script.on_event(defines.events.on_entity_died, function(event)
         log("Force DIED: " .. entity.force.name)
         SendBroadcastMsg("Oh No someone on '" .. entity.force.name ..  "'' Gone like a fart in the wind")        
         for name,player in pairs(game.connected_players) do
-            if (GetGPStext(global.spawn[player.index]) == GetGPStext(entity.position)) then
+            local SP=entity.position
+            SP.y=SP.y+10        -- move them down 10 tiles, otherwise they spawn inside the walls, next to large roboport
+            
+            if (GetGPStext(global.spawn[player.index]) == GetGPStext(SP)) then
                 log ("player: " .. player.name .. " at " ..GetGPStext(global.spawn[player.index]) .. " Died due to the starting roboport being destroyed.")
-                log ("and entity at " .. GetGPStext(entity.position))
+                log ("and entity at " .. GetGPStext(SP))
                 SendBroadcastMsg("Our buddy " .. player.name .. " on force: '" .. entity.force.name .. "' Died due to the starting roboport being destroyed.")        
                 SendMsg(player.name, "Sorry '" .. player.name .. "' you LOSE! Rejoin if you like, and give it another try")
                 RemoveOrResetPlayer(player, false, true, true, true)
@@ -1023,7 +1037,7 @@ end)
 
 --script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
 --    log("events.on_runtime_mod_setting_changed: setting " .. event.setting .. " for: " .. game.players[event.player_index].name .. "type: " .. event.setting_type)
-    -- log("Physical setting changed to: " .. settings.get_player_settings(event.player_index)["bno-bots-resistance-physical"])
+--    log("Physical setting changed to: " .. settings.get_player_settings(event.player_index)["bno-share-chart"])
 --end)
 
 function change_bots()
