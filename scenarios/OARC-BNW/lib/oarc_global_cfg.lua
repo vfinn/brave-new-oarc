@@ -14,9 +14,6 @@ function InitOarcConfig()
     global.ocfg = {}
 	global.spawn = {}
     global.players = {}
-    -- store the Force Name and in global.players - index into this list (LOOKUP WHERE THE PLAYERS FORCES ARE STORED)
-    -- global.forces = {}      -- use for backward lookup of players and forces they join to see if that force is Character or BNO mode
-    
     if (game.active_mods["clean-tutorial-grid"]) then
         global.ocfg.locked_build_area_tile = "clean-tutorial-grid"
     else
