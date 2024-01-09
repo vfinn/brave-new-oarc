@@ -275,6 +275,7 @@ script.on_event(defines.events.on_player_joined_game, function(event)
     ServerWriteFile("player_events", joiningPlayer.name .. " joined the game." .. "\n")
     -- Remove player name from map while they are online_time
     -- Render some welcoming text... but only if the player was previously on - this detected from the existance of the drawOnExit
+
     if (global.players[event.player_index].drawOnExit ~=nil) then
         DisplayWelcomeBackGroundTextAtSpawn(joiningPlayer, global.spawn[joiningPlayer.index])
     end
@@ -303,7 +304,7 @@ log("on_event::On Player created: " .. player.name)
     if not global.players then  
         global.players = {}
     end
-    if (#global.players == 0) then
+    if (#global.players < event.player_index) then
         global.players[event.player_index] = {
             crafted = {},
             inventory_items = {},   
@@ -333,7 +334,6 @@ log("Player teleported to 0:0");
     -- disable light
     player.disable_flashlight()
     -- enable cheat mode - Allows for infinite free crafting which we don't want in normal mode, and done via code when enabled in BNO mode.
-    player.cheat_mode = not global.players[player.index].characterMode        -- must be false to enable crafting in normal mode
     
     -- Set-up a sane default for the quickbar
     if global.ocfg.space_block then 
@@ -360,7 +360,6 @@ log("Player teleported to 0:0");
     global.bnw_scenario_version = game.active_mods["brave-new-oarc"]
     -- setup force   vf TODO do this in on_gui_click using new location that comes back from SpawnOptsGuiClick
     -- setupForce(player.force, player.surface, 0, 0, game.active_mods["SeaBlock"])
-    preventMining(player)
     if (global.ocfg.space_block) then
         TemporaryHelperText("Assemblers produce coal,wood, iron,copper,stone and random items at a slower rate than space matter furnaces", {-22, -10}, TICKS_PER_MINUTE*5, 1.5,{0,.7,1,1})
     end
@@ -997,7 +996,7 @@ script.on_event(defines.events.on_player_changed_position, function(event)
     end
     local player = game.players[event.player_index]
     -- TODO: really shouldn't have to do this so often (can we do it in migrate function?)
-    preventMining(player)
+    -- preventMining(player)
 
     local config = global.forces[player.force.name]
     local x_chunk = math.floor(player.position.x / CHUNK_SIZE)      -- 32

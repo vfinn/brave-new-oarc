@@ -343,6 +343,7 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
     -- Send the player to that position
     local SP=delayedSpawn.pos
     SP.y=SP.y+10        -- move them down 10 tiles, otherwise they spawn inside the walls, next to large roboport
+    preventMining(player)   -- enables or prevents based on character mode
     if global.players[player.index].characterMode then 
         if not player.character then player.create_character() end
         SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], SP)

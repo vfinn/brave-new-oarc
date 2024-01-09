@@ -1,4 +1,7 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.21
+- bug fix
+---------------------------------------------------------------------------------------------------
 Version: 4.2.20
 - completion of as much multiplayer testing as I was able to do with the Character checkbox gui.
   Time for release. See the 4.19 releases for items that have changed.
