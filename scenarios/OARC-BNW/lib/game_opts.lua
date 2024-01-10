@@ -199,7 +199,7 @@ function CreateGameOptionsTab(tab_container, player)
 --        tab_container.selected_index(1)
     end
     -- Ending Spacer
-    if (player.index and not global.ocfg.space_block) then
+    if (player.index) then
         AddSpacerLine(tab_container)
         AddLabel(tab_container, "individual_user_settings2", "Individual User Settings:", my_label_header_style)
         tab_container.add{name = "warn_biter_attack_option_checkbox",
