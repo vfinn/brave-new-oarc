@@ -30,10 +30,21 @@ function GameOptionsGuiClick(event)
 
         if (pIndex ~= 0) then
             local resetPlayerName = event.element.parent.ban_players_dropdown.get_item(pIndex)
+            local idx = game.players[resetPlayerName].index
             if (game.players[resetPlayerName]) then
                 RemoveOrResetPlayer(game.players[resetPlayerName], false, true, true, true)
                 SeparateSpawnsPlayerCreated(resetPlayerName, true)
-                log("Resetting " .. resetPlayerName)
+                if (global.players[idx].drawOnExit) then                    
+                    rendering.destroy(global.players[idx].drawOnExit)
+                end
+                global.players[idx] = {
+                    crafted = {},
+                    inventory_items = {},
+                    previous_position = {x=0, y=0},
+                    drawOnExit = nil,
+                    characterMode = false
+                }
+            log("Resetting " .. resetPlayerName)
             end
         end
     end

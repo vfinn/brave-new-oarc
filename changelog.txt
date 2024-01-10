@@ -1,6 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.22
+- bug fix - all minor bugs that do not impact gameplay
+	- list of players was not showing the proper character/brave new player mode
+  - when a player goes offline, I draw his name in the base, to aid me to see where players are
+    and rarely remove them if they stayed for 15 minutes, but quit and never came back.
+    When I restarted this player, the name of the player remained on the ground, even thought
+    everything else was removed. Now I remove that text.  
+---------------------------------------------------------------------------------------------------
 Version: 4.2.21
-- bug fix
+- bug fixes
+	- mostly crash on a second player joining due to an uninitialized array
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.20
 - completion of as much multiplayer testing as I was able to do with the Character checkbox gui.

@@ -400,6 +400,7 @@ log("on_event::on_player_left_game - " .. game.players[event.player_index].name)
                             color={0.9, 0.7, 0.3, 0.8},
                             scale=20,
                             font="compi",
+                            time_to_live=10000,
                             draw_on_ground=true,
                             orientation=0,
                             scale_with_zoom=false,
