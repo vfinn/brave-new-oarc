@@ -2,11 +2,12 @@
 Version: 4.2.22
 - Feature - Added support for SpaceBlock in Character mode
 - bug fix - all minor bugs that do not impact gameplay
-	- list of players was not showing the proper character/brave new player mode
-  - when a player goes offline, I draw his name in the base, to aid me to see where players are
+  - list of players was not showing the proper character/brave new player mode
+  - When a player goes offline, I draw his name in the base, to aid me to see where players are
     and rarely remove them if they stayed for 15 minutes, but quit and never came back.
     When I restarted this player, the name of the player remained on the ground, even thought
     everything else was removed. Now I remove that text.  
+  - CharacterMode checkbox was not set properly after a RESTART
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.21
 - bug fixes

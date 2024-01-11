@@ -261,6 +261,13 @@ end
 
 function DisplayCharacterSpawnOptions(player, soloSpawnFlow)
     local characterModeState = CharacterOptionChosenForThisPlayersForce(player, true) --0 not chosen, 1 char, 2 bno
+    if characterModeState == 0 then
+        if global.players[player.index].characterMode then
+            characterModeState = 1
+        else    
+            characterModeState = 2
+        end
+    end
     AddLabel(soloSpawnFlow, "bno-character-warning-lbl1", "Character Mode checkbox will be enforced by options that may have already been selected for this team", my_green_style)
     soloSpawnFlow.add{name = "character_mode_option_checkbox",
                 type = "checkbox",

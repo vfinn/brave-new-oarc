@@ -162,6 +162,12 @@ PLAYER_SPAWN_START_ITEMS = {["pistol"] = 1,["pistol"] = 1,
                             ["burner-mining-drill"] = 10
 }
 
+PLAYER_SPAWN_START_ITEMS_SPACE_BLOCK = {                            
+                            ["coal"] = 10,
+                            ["stone-furnace"] = 4                            
+}
+
+
 -- Items provided after EVERY respawn (disabled by default)
 PLAYER_RESPAWN_START_ITEMS = {
 }

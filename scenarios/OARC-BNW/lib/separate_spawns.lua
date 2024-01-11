@@ -535,7 +535,7 @@ log("Random oil - " .. xxx .. " : " .. yyy);
         -- 1.1 MW, 120 MJ storage - large roboport
         -- to make blueprint - be sure there is a roboport in it, and you should remove the 4 yellow chests or mod how they are handled
         -- global.spawn[player.index]
-    if global.players[player.index].characterMode then
+    if global.players[player.index].characterMode and not global.ocfg.space_block then
         -- Normal Oarc game - with a character
         blueprint = "0eNqVmluO2kAQRffibxi52/1kK9EoMjNWYglsZEyS0Yi9h0ciUNLluvcThA92+1S5i8tntd2dusPUD3O1+az6t3E4Vpsvn9Wx/za0u+t788ehqzZVP3f7alUN7f766jju2ml9aIduV51XVT+8d7+qjTmv1CPbt7fT/rRr53F6OtKeX1dVN8z93Hf3E7i9+Pg6nPbbbrqgH189j0O3/tnudhfoYTxeDhmH69ddMGtTv/hV9XH5vHnx5+vp/MOxGCcrmAbDJAXjMExUMB7DBAUTMIxXMBHDOAWTMEyjYDKGsQrG1KCAGgcUWfPYYCKrGExk9aowkdVFxkTWbrnBRNYENJjIWjkYTGStOA0mstYqLOax1rgsprHWRi1msd7VQY01jy3msdFEtpjIRjPZYiYbTWWLqWw0ly3mstFktpjMRrO5wWw2ms4Nvb1oBJBlQVYANcW91sIWQzojB4K8BvIgyGqggIHUtX5IPbXv7bTwoJAITzrvLzdqvWv3h4UOL92rjF1QVE7H1RhHtdAZEKQtkLMgKGighixUieNIjnDLnGfr1AugwIKcAIrFEakwmtwxoQhJICQuQTII8QsQX4OQZgkCevzYLQdhQHp4PI3b8TBOc2E/eEfEIgBsx0k7EYcty3VMkJfFg5DFtQ0gZPEug9KaJd98ImtaKEWfSY5QiaFmSzoKIHpXIVgTLNcbUhHScL2hDHFcbyhDnprvaXuc29uBYmtI58vHu/7b9+14mq4/DoXwWqIGiPq3sv6n+iI1crVWvuDE1VoZkrlaK0Iiu2EW1I6G5AhmR3q/nAVQw4KSAHJUrdm6CPFUrQmQQNWaAInUc1iAJPY5LN2lTD5GBU6qqcdo+aqSoUpbgFiqtAVIQ5W2AGG3xtLaepIjFFJid8ZW+iE4sqBaACVyprbC9JAyOVNLoFyTM7UIMtxMLXIsN8qKnIYcZUWQI0dZEeTJUVYEBa4+JK1zJDmC1Tmx5SHM1jmzICtlJWB7/tNYmzIEbM9+EWLJRW6kSyJ/wJDXxrGr7CSS57JMGRS4NFMGRS7PlEGJSzRlUOYyTRGE5n9OBRku15RBlks2ZVDDRZsyyHHZpgzyVLgpcwKVbsqcSMWbMidR+abMyVTAKXLAMFAtDjANVKsVjAPV9gHGgWo/A+NAtcGicaAqNJoHqkajgaCqNJoIqk6jkaAqNZoJqlaDoaBRtQZDQaN63bCbkBvodXX/C9bm6b9eq+pHNx1vh9hkXMw2JptjnfL5/Bug4jI/"
     else
@@ -603,13 +603,13 @@ log("Random oil - " .. xxx .. " : " .. yyy);
     -- storage chest
     local chest_inventory = chest.get_inventory(defines.inventory.chest)
 
+    local characterMode = global.players[player.index].characterMode
 
-    if global.players[player.index].characterMode then
+    if characterMode then
         player.insert{name="power-armor", count = 1}
-
-        chest_inventory.insert({name = "gun-turret", count = 2})
-
-        return
+        if not global.ocfg.space_block then
+            chest_inventory.insert({name = "gun-turret", count = 2})
+        end
     end
 
     -- add chests for Krastorio
@@ -618,38 +618,48 @@ log("Random oil - " .. xxx .. " : " .. yyy);
         chest_inventory.insert{name = "logistic-chest-passive-provider", count = 2} -- red chests 
     end
     if global.ocfg.space_block then      
-        chest_inventory.insert{name = "inserter", count = 10}
-        chest_inventory.insert{name = "transport-belt", count = 10}
-        chest_inventory.insert{name = "small-lamp", count = 10}
-        chest_inventory.insert{name = "filter-inserter", count = 1}
-        chest_inventory.insert{name = "fast-inserter", count = 2}
-        chest_inventory.insert{name = "burner-inserter", count = 2}
-        chest_inventory.insert{name = "copper-cable", count = 20}
+        local destination_for_inventory = chest_inventory
+        if characterMode then
+            destination_for_inventory = player
+            destination_for_inventory.insert{name="iron-ore", count=10}
+            destination_for_inventory.insert{name="copper-ore", count=10}
+            destination_for_inventory.insert{name="stone", count=10}
+            destination_for_inventory.insert{name="coal", count=10}
+        else
+            destination_for_inventory.insert{name = "inserter", count = 10}
+            destination_for_inventory.insert{name = "fast-inserter", count = 2}
+            destination_for_inventory.insert{name="iron-ore", count=50}
+            destination_for_inventory.insert{name="copper-ore", count=50}
+            destination_for_inventory.insert{name="stone", count=50}
+            destination_for_inventory.insert{name="coal", count=50}
+        end
+        destination_for_inventory.insert{name = "transport-belt", count = 10}
+        destination_for_inventory.insert{name = "small-lamp", count = 10}
+        destination_for_inventory.insert{name = "filter-inserter", count = 1}
+        destination_for_inventory.insert{name = "burner-inserter", count = 2}
+        destination_for_inventory.insert{name = "copper-cable", count = 20}
         
 
         -- now normal items from space block
---	    chest_inventory.insert{name="assembling-machine-2",count=1}
---	    chest_inventory.insert{name="assembling-machine-1",count=4}
---	    chest_inventory.insert{name="solar-panel",count=20}
---	    chest_inventory.insert{name="accumulator",count=10}
---	    chest_inventory.insert{name="small-electric-pole",count=5}
---	    chest_inventory.insert{name="offshore-pump",count=1}
-	    chest_inventory.insert{name="spaceblock-water",count=50}
-  	    chest_inventory.insert{name="landfill",count=800}
-        chest_inventory.insert{name="iron-ore", count=50}
-        chest_inventory.insert{name="copper-ore", count=50}
-        chest_inventory.insert{name="stone", count=50}
-        chest_inventory.insert{name="coal", count=50}
-    	chest_inventory.insert{name="crude-oil-barrel",count=5}
-        chest_inventory.insert{name="small-lamp", count = 10}
-        chest_inventory.insert{name="advanced-circuit", count=4}
-        chest_inventory.insert{name = "lab", count = 2}
+--	    destination_for_inventory.insert{name="assembling-machine-2",count=1}
+--	    destination_for_inventory.insert{name="assembling-machine-1",count=4}
+--	    destination_for_inventory.insert{name="solar-panel",count=20}
+--	    destination_for_inventory.insert{name="accumulator",count=10}
+--	    destination_for_inventory.insert{name="small-electric-pole",count=5}
+--	    destination_for_inventory.insert{name="offshore-pump",count=1}
+	    destination_for_inventory.insert{name="spaceblock-water",count=50}
+  	    destination_for_inventory.insert{name="landfill",count=800}
+    	destination_for_inventory.insert{name="crude-oil-barrel",count=5}
+        destination_for_inventory.insert{name="small-lamp", count = 10}
+        destination_for_inventory.insert{name="advanced-circuit", count=4}
+        destination_for_inventory.insert{name ="lab", count=2}
         if not global.ocfg.easyStart then
             -- these 5 are extra items in the easyStart bp, so give to normal mode
-            chest_inventory.insert{name = "inserter", count = 1}
-            chest_inventory.insert{name = "fast-inserter", count = 5}   
-            chest_inventory.insert{name = "filter-inserter", count = 3} 
-            chest_inventory.insert{name="spaceblock-matter-furnace", count = 3}
+            destination_for_inventory.insert{name = "logistic-chest-requester", count = 1}    -- blue chests
+            destination_for_inventory.insert{name = "inserter", count = 1}
+            destination_for_inventory.insert{name = "fast-inserter", count = 5}   
+            destination_for_inventory.insert{name = "filter-inserter", count = 3} 
+            destination_for_inventory.insert{name="spaceblock-matter-furnace", count = 3}
         end
     else
         chest_inventory.insert{name = "transport-belt", count = 400}

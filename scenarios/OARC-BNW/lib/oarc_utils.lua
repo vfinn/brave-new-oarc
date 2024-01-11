@@ -379,8 +379,14 @@ end
 
 -- Starter only items
 function GivePlayerStarterItems(player)
-log("GivePlayerStarterItems: CharacterMode - " .. tostring(global.players[player.index].characterMode))
-    for name,count in pairs(PLAYER_SPAWN_START_ITEMS) do
+    local starterItems
+    if global.ocfg.space_block then
+        starterItems = PLAYER_SPAWN_START_ITEMS_SPACE_BLOCK
+    else
+        starterItems = PLAYER_SPAWN_START_ITEMS
+    end
+    log("GivePlayerStarterItems: CharacterMode - " .. tostring(global.players[player.index].characterMode))
+    for name,count in pairs(starterItems) do
         player.insert({name=name, count=count})
     end
 
