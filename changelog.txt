@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.24
+- Bug Fixes - still working on a crash in Space Block on entry or exit of game
+  please report if you see issues preferrably in my discord: https://discord.gg/AeFhytZKXk
+  or with a slower response in the mod repository
+---------------------------------------------------------------------------------------------------
+Version: 4.2.23
+- Bug Fixes
+---------------------------------------------------------------------------------------------------
 Version: 4.2.22
 - Feature - Added support for SpaceBlock in Character mode
 - bug fix - all minor bugs that do not impact gameplay

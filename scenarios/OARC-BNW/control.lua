@@ -1,15 +1,26 @@
 -- control.lua
--- Mar 2019
+
 -- Dec 30, 2021 Mod by JustGoFly to merge OARC and Brave New World
 -- First issues that had to be dealt with were bugs in 1) Each of the mods, 2) in my merge of the mods
 -- BNW had some checks as if it were a single player game and crashes, all documented in the changelog.
--- The biggest issue was exploding bots, this took a many months of digging.
+-- The biggest issue was exploding bots, this took many months of digging.
 -- I added the larger roboport, which had to look different since it will show up in the list of items, 
 -- even if it's not placeable. It also doubles the logistics space and increases charging of bots from 
 -- 4 to 16 bots.  Eventually I'll make this researchable.
 -- After watching players get overrun with no warning, I added notification of swarms coming and tracking 
 -- of them by clicking on the notification.Also moved alot of the config settings into the mods settable
 -- UI.
+-- Update: 1/10/2024 - Many releases, much testing, I believe this to be the most stable version of Oarc.
+-- I just 4.2.21 added support for Character (legacy Factorio) mode, along with what I call Brave New player
+-- mode.  I've added many features, most are just enabling access to features provided by Oarcinea in 
+-- config.lua through the UI, which simplifies access to those many features.  I've added the warning for 
+-- each attack by biters, after watching players ignore defenses and being attacked before they really get 
+-- started. This supports a tracking mode, and monitoring of which location that group came from after that
+-- group died. This helps me to know where to engage even in late game.
+-- Speed of bots is displayed in an understandable mode of KPH.  JVMGuy helped by adding the support for 
+-- a square and diamond shaped base. Some players reported that they wanted the WHOLE base to be covered by
+-- the logistics network.
+
 -- Comments below are from Oarcinae. 
 
 -- Oarc's Separated Spawn Scenario
@@ -274,24 +285,16 @@ script.on_event(defines.events.on_player_joined_game, function(event)
     PlayerJoinedMessages(event)
     ServerWriteFile("player_events", joiningPlayer.name .. " joined the game." .. "\n")
     -- Remove player name from map while they are online_time
-    -- Render some welcoming text... but only if the player was previously on - this detected from the existance of the drawOnExit
+    -- Render some welcoming text...
 
     if (global.players[event.player_index].drawOnExit ~=nil) then
-        DisplayWelcomeBackGroundTextAtSpawn(joiningPlayer, global.spawn[joiningPlayer.index])
+        log("Destroying drawOnExit: " .. tostring(global.players[event.player_index].drawOnExit) .. " for player: " .. game.players[event.player_index].name)
+        rendering.destroy(global.players[event.player_index].drawOnExit)
+        global.players[event.player_index].drawOnExit=nil
     end
-
-    -- Transfer the items loaded by space block into a chesk, but store them globally until the players base is setup
-
-    -- SPACE BLOCK 
---    if global.ocfg.space_block then  
---       log("Space block: clear inventory")
---        local p=game.players[event.player_index]
---        local inv=p.get_main_inventory()        
-        -- clear inventory
---        for k,v in pairs(inv.get_contents())do
---            inv.remove({name=k, count=v})
---        end
---    end
+    if (global.spawn[event.player_index]) then
+        DisplayWelcomeBackGroundTextAtSpawn (joiningPlayer, global.spawn[event.player_index])
+    end
 end)
     
 ----------------------------------------
@@ -305,11 +308,12 @@ log("on_event::On Player created: " .. player.name)
         global.players = {}
     end
     if (#global.players < event.player_index) then
+        log("Zeroing out index :" .. event.player_index .. " drawOnExit to nil for " .. game.players[event.player_index].name)
         global.players[event.player_index] = {
             crafted = {},
             inventory_items = {},   
             previous_position = player.position,
-            drawOnExit = nil, 
+            drawOnExit = nil,
             characterMode = false
         }
     end
@@ -318,7 +322,7 @@ log("on_event::On Player created: " .. player.name)
     SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], {x=0,y=0})
     player.set_controller{type=defines.controllers.character,character=player.surface.create_entity{name='character',force=player.force,position=player.position}}
 
-log("Player teleported to 0:0");
+    log("Player teleported to 0:0")
     if global.ocfg.enable_long_reach then
         GivePlayerLongReach(player)
     end
@@ -391,21 +395,18 @@ log("on_event::on_player_left_game - " .. game.players[event.player_index].name)
         SendBroadcastMsg(player.name .. "'s base was marked for immediate clean up because they left within "..global.ocfg.minimum_online_time.." minutes of joining.")
         RemoveOrResetPlayer(player, true, true, true, true)
     else
-        if (global.players[player.index].drawOnExit) then
-            rendering.set_visible(global.players[player.index].drawOnExit, true)    -- previously draw, make it visible
-        else
-            global.players[player.index].drawOnExit = rendering.draw_text{text=player.name,
-                            surface=game.surfaces[GAME_SURFACE_NAME],
-                            target={x=global.spawn[player.index].x-21, y=global.spawn[player.index].y+5},
-                            color={0.9, 0.7, 0.3, 0.8},
-                            scale=20,
-                            font="compi",
-                            time_to_live=10000,
-                            draw_on_ground=true,
-                            orientation=0,
-                            scale_with_zoom=false,
-                            only_in_alt_mode=false}
-        end
+        global.players[event.player_index].drawOnExit = rendering.draw_text{text=player.name,
+                        surface=game.surfaces[GAME_SURFACE_NAME],
+                        target={x=global.spawn[player.index].x-21, y=global.spawn[player.index].y+5},
+                        color={0.9, 0.7, 0.3, 0.8},
+                        scale=20,
+                        font="compi",
+                        time_to_live=10000,
+                        draw_on_ground=true,
+                        orientation=0,
+                        scale_with_zoom=false,
+                        only_in_alt_mode=false}
+        log("Player player.name - drawOnExit created = " .. global.players[event.player_index].drawOnExit)
     end
 end)
 

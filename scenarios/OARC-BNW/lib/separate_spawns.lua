@@ -796,9 +796,6 @@ function DisplayWelcomeBackGroundTextAtSpawn(player, pos)
                         scale_with_zoom=false,
                         only_in_alt_mode=false}
    -- remove player name, not one from above, one drawn when player quit, above one is temporary. 
-    if (global.players[player.index].drawOnExit ~=nil) then
-        rendering.set_visible(global.players[player.index].drawOnExit, false)
-    end
     table.insert(global.oarc_renders_fadeout, rid1)
     table.insert(global.oarc_renders_fadeout, rid2)
 
