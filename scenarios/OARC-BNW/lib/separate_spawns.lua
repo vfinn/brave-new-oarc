@@ -197,11 +197,14 @@ function GenerateStartingResources(surface, pos)
     if global.ocfg.krastorio2 then
         kOffset=32
         GenerateResourcePatch(surface, "rare-metals", 16, {x=pos.x-62-kOffset, y=pos.y-38}, 10000)
-        for k,item in pairs(global.ocfg.spawn_config.resource_tiles) do
-            if (item ~= "") then
-                item.amount = item.amount*4
+        if not global.ocfg.krastorio2_resources_increased then
+            for k,item in pairs(global.ocfg.spawn_config.resource_tiles) do
+                if (item ~= "") then
+                    item.amount = item.amount*4
+                end
             end
         end
+        global.ocfg.krastorio2_resources_increased=true
     end
     -- Generate all resource tile patches
     if (not rand_settings.enabled) then
@@ -260,7 +263,17 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
         if not global.make_silos then
             GenerateRocketSiloAreas(game.surfaces[GAME_SURFACE_NAME])
             global.make_silos=true
-        end    
+        end
+        if global.players[player.index].characterMode then
+            for _,v in ipairs(SPACE_BLOCK_UNLOCKED_TECHNOLOGIES_CHAR) do
+                EnableTech(player.force, v.t)
+            end
+        else
+            -- remove more items from research if you are Space Block and BNO Player
+            for _,v in ipairs(SPACE_BLOCK_LOCKED_TECHNOLOGIES_BNO) do
+                DisableTech(player.force, v.t)
+            end
+        end
     else
         ClearNearbyEnemies(delayedSpawn.pos, global.ocfg.spawn_config.safe_area.safe_radius, game.surfaces[GAME_SURFACE_NAME])
 
@@ -281,7 +294,7 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
             GenerateStartingResources(game.surfaces[GAME_SURFACE_NAME], delayedSpawn.pos)
         end
         -- If krastorio - which requires the technology to make bio-matter, and is not collectable in BNO, so unlock that technology
-        if global.ocfg.krastorio2 then
+        if global.ocfg.krastorio2 and not global.players[player.index].characterMode then
            player.force.recipes["kr-biomass-growing"].enabled=true
         end
     end
@@ -291,7 +304,9 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
     -- Render Brave New World Items - vf
     global.spawn[player.index] = delayedSpawn.pos  -- save the starting position, this is how we determine who died when a starting roboport is killed
     setupBNWForce(player, delayedSpawn.pos.x, delayedSpawn.pos.y, game.active_mods["SeaBlock"])
-    GivePlayerStarterItems(player)
+    if global.players[player.index]. characterMode then
+        GivePlayerStarterItems(player)
+    end
     -- Chart the area.
     ChartArea(player.force, delayedSpawn.pos, math.ceil(global.ocfg.spawn_config.gen_settings.land_area_tiles/CHUNK_SIZE), player.surface)
 
@@ -605,22 +620,21 @@ log("Random oil - " .. xxx .. " : " .. yyy);
 
     local characterMode = global.players[player.index].characterMode
 
-    if characterMode then
-        player.insert{name="power-armor", count = 1}
-        if not global.ocfg.space_block then
-            chest_inventory.insert({name = "gun-turret", count = 2})
-        end
-    end
-
-    -- add chests for Krastorio
-    if global.ocfg.krastorio2 then
+    -- add chests for Krastorio unless if they are playing in character mode - the character is their crafting/requestor/storage device
+    if global.ocfg.krastorio2 and not global.players[player.index].characterMode then
         chest_inventory.insert{name = "logistic-chest-requester", count = 2}        -- blue chests
         chest_inventory.insert{name = "logistic-chest-passive-provider", count = 2} -- red chests 
     end
+    local destination_for_inventory = chest_inventory
+
+    if characterMode then
+        player.insert{name="power-armor", count = 1}
+        destination_for_inventory = player
+    end
+    -- everyone always gets 4 red circuits
+    destination_for_inventory.insert{name="advanced-circuit", count=4}
     if global.ocfg.space_block then      
-        local destination_for_inventory = chest_inventory
         if characterMode then
-            destination_for_inventory = player
             destination_for_inventory.insert{name="iron-ore", count=10}
             destination_for_inventory.insert{name="copper-ore", count=10}
             destination_for_inventory.insert{name="stone", count=10}
@@ -651,7 +665,6 @@ log("Random oil - " .. xxx .. " : " .. yyy);
   	    destination_for_inventory.insert{name="landfill",count=800}
     	destination_for_inventory.insert{name="crude-oil-barrel",count=5}
         destination_for_inventory.insert{name="small-lamp", count = 10}
-        destination_for_inventory.insert{name="advanced-circuit", count=4}
         destination_for_inventory.insert{name ="lab", count=2}
         if not global.ocfg.easyStart then
             -- these 5 are extra items in the easyStart bp, so give to normal mode
@@ -662,27 +675,35 @@ log("Random oil - " .. xxx .. " : " .. yyy);
             destination_for_inventory.insert{name="spaceblock-matter-furnace", count = 3}
         end
     else
-        chest_inventory.insert{name = "transport-belt", count = 400}
-        chest_inventory.insert{name = "underground-belt", count = 20}
-        chest_inventory.insert{name = "splitter", count = 10}
-        chest_inventory.insert{name = "pipe", count = 20}
-        chest_inventory.insert{name = "pipe-to-ground", count = 10}
-        chest_inventory.insert{name = "burner-inserter", count = 4}
-        chest_inventory.insert{name = "inserter", count = 20}
-        chest_inventory.insert{name = "medium-electric-pole", count = 50}
-        chest_inventory.insert{name = "small-lamp", count = 10}
-        chest_inventory.insert{name = "stone-furnace", count = 4}
-        chest_inventory.insert{name = "offshore-pump", count = 1}
-        chest_inventory.insert{name = "boiler", count = 1}
-        chest_inventory.insert{name = "steam-engine", count = 2}
-        chest_inventory.insert{name = "assembling-machine-1", count = 4}
-        chest_inventory.insert{name = "lab", count = 2}
-        chest_inventory.insert{name = "gun-turret", count = 2}
+        if not characterMode then   -- character does NOT get all of this stuff - make it within your character
+            chest_inventory.insert{name = "transport-belt", count = 400}
+            chest_inventory.insert{name = "underground-belt", count = 20}
+            chest_inventory.insert{name = "splitter", count = 10}
+            chest_inventory.insert{name = "pipe", count = 20}
+            chest_inventory.insert{name = "pipe-to-ground", count = 10}
+            chest_inventory.insert{name = "burner-inserter", count = 4}
+            chest_inventory.insert{name = "inserter", count = 20}
+            chest_inventory.insert{name = "medium-electric-pole", count = 50}
+            chest_inventory.insert{name = "small-lamp", count = 10}
+            chest_inventory.insert{name = "stone-furnace", count = 4}
+            chest_inventory.insert{name = "offshore-pump", count = 1}
+            chest_inventory.insert{name = "boiler", count = 1}
+            chest_inventory.insert{name = "steam-engine", count = 2}
+            chest_inventory.insert{name = "assembling-machine-1", count = 4}
+            chest_inventory.insert{name = "lab", count = 2}
+        end
+        destination_for_inventory.insert{name = "gun-turret", count = 2}
         if global.ocfg.krastorio2 then
-            chest_inventory.insert{name = "rifle-magazine", count = 20}         -- rifle ammo
-            chest_inventory.insert{name = "kr-bio-lab", count = 2}              -- bio labs
+            destination_for_inventory.insert{name = "rifle-magazine", count = 20}         -- rifle ammo
+            if characterMode then
+                destination_for_inventory.insert{name="submachine-gun", count = 1}
+                destination_for_inventory.insert{name="kr-wind-turbine", count=10}
+            end
+            if not characterMode then   -- character doesn't get labs
+                destination_for_inventory.insert{name = "kr-bio-lab", count = 2}              -- bio labs
+            end
         else
-            chest_inventory.insert{name = "firearm-magazine", count = 20}
+            destination_for_inventory.insert{name = "firearm-magazine", count = 20}
         end
         if seablock_enabled then
             -- need some stuff for SeaBlock so we won't get stuck (also slightly accelerate gameplay)
@@ -700,17 +721,21 @@ log("Random oil - " .. xxx .. " : " .. yyy);
             -- prevent error when looking for "rock-chest" later
             global.seablocked = true
             -- only give player this when we're not seablocking
-            chest_inventory.insert{name = "electric-mining-drill", count = 4}
-            chest_inventory.insert{name = "logistic-chest-buffer", count = 1}   -- no green in this bp, so add 1
+            if not characterMode then   -- character does not get electric drills or extra chests
+                chest_inventory.insert{name = "electric-mining-drill", count = 4}
+                chest_inventory.insert{name = "logistic-chest-buffer", count = 1}   -- no green in this bp, so add 1
+            end
         end
-        if (settings.startup["bno-main-area-design-boiler-n-steam-engines"].value == "solar only") then
-            chest_inventory.insert{name = "logistic-chest-requester", count = 3}    -- blue chests
-        else
-            chest_inventory.insert{name = "logistic-chest-requester", count = 2}    -- blue chests
+        if not characterMode then
+            if (settings.startup["bno-main-area-design-boiler-n-steam-engines"].value == "solar only") then
+                chest_inventory.insert{name = "logistic-chest-requester", count = 3}    -- blue chests
+            else
+                chest_inventory.insert{name = "logistic-chest-requester", count = 2}    -- blue chests
+            end
+            chest_inventory.insert{name = "logistic-chest-passive-provider", count = 4} -- red chests 
+            chest_inventory.insert{name = "logistic-chest-buffer", count = 3}           -- add to green chests based on blueprint
+            chest_inventory.insert{name = "logistic-chest-active-provider", count = 4}  -- purple chests
         end
-        chest_inventory.insert{name = "logistic-chest-passive-provider", count = 4} -- red chests 
-        chest_inventory.insert{name = "logistic-chest-buffer", count = 3}           -- add to green chests based on blueprint
-        chest_inventory.insert{name = "logistic-chest-active-provider", count = 4}  -- purple chests
     end
 end
 
@@ -1471,7 +1496,7 @@ function CreateForce(force_name)
             end
         end
         if global.ocfg.space_block then
-            for _,v in ipairs(SPACE_BLOCK_LOCKED_TECHNOLOGIES) do
+            for _,v in ipairs(SPACE_BLOCK_LOCKED_TECHNOLOGIES_COMMON) do
                 DisableTech(newForce, v.t)
             end
         end    

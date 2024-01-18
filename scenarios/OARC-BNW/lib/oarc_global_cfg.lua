@@ -128,7 +128,7 @@ function InitOarcConfig()
     global.ocfg.krastorio2          = game.active_mods["Krastorio2"]
     if (global.ocfg.krastorio2) then global.ocfg.spawn_config.gen_settings.land_area_tiles = global.ocfg.spawn_config.gen_settings.land_area_tiles + 32 end
     if global.ocfg.freight_forwarding then global.ocfg.frontier_rocket_silo=false end
-
+    global.ocfg.krastorio2_resources_increased = false
     -----------------------
     -- VALIDATION CHECKS --
     -----------------------

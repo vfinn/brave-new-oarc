@@ -273,7 +273,9 @@ function OarcRegrowthRemoveAllChunks()
             end
         else
             if c_remove.force then 
-                log("OarcRegrowthRemoveAllChunks: forced and not mapped " .. c_pos.y .. ", " .. c_pos.y)
+                if (global.enable_oe_debug) then
+                    log("OarcRegrowthRemoveAllChunks: forced and not mapped " .. c_pos.y .. ", " .. c_pos.y)
+                end
                 game.surfaces[GAME_SURFACE_NAME].delete_chunk(c_pos)
             end
         end

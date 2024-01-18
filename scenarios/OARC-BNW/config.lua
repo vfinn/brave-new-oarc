@@ -107,17 +107,29 @@ LOCK_GOODIES_UNTIL_ROCKET_LAUNCH = true
 LOCKED_TECHNOLOGIES = {
     {t="atomic-bomb"},{t="artillery"}
 }
-SPACE_BLOCK_LOCKED_TECHNOLOGIES = {
+-- remove all of these for bno characters
+SPACE_BLOCK_LOCKED_TECHNOLOGIES_BNO = {
     {t="military"},
-    {t="gun-turret"},
-    {t="landfill"},
     {t="car"},
-    {t="laser"},
-    {t="explosives"},
-    {t="repair-pack"},
-    {t="steel-axe"},
     {t="automobilism"}
 }
+
+-- enable all of these for character mode
+SPACE_BLOCK_UNLOCKED_TECHNOLOGIES_CHAR = {
+    {t="military"},
+    {t="car"},
+    {t="automobilism"}
+}
+
+-- disable all of these for both char and BNO players
+SPACE_BLOCK_LOCKED_TECHNOLOGIES_COMMON = {
+    {t="gun-turret"},
+    {t="explosives"},
+    {t="repair-pack"},
+    {t="laser"},
+    {t="steel-axe"},
+    {t="landfill"}
+ }
 
 LOCKED_RECIPES = {
     {r="speed-module-3"}
@@ -155,8 +167,7 @@ OARC_MODIFIED_ENEMY_SPAWNING = true
 -- Starting Items
 ------------------------------------------------------------------------------------------------------------------------
 -- Items provided to the player the first time they join
-PLAYER_SPAWN_START_ITEMS = {["pistol"] = 1,["pistol"] = 1,
-                            ["firearm-magazine"] = 10,
+PLAYER_SPAWN_START_ITEMS = {["pistol"] = 1,
                             ["coal"] = 10,
                             ["stone-furnace"] = 4,
                             ["burner-mining-drill"] = 10
