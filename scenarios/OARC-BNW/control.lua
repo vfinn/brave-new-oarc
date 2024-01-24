@@ -189,6 +189,7 @@ script.on_init(function(event)
     end
     OARC_CFG.safe_area.warn_radius = OARC_CFG.safe_area.warn_radius * starting_area
     OARC_CFG.safe_area.danger_radius = OARC_CFG.safe_area.danger_radius * starting_area
+
 end)
 
 
@@ -281,6 +282,11 @@ end)
 ----------------------------------------
 script.on_event(defines.events.on_player_joined_game, function(event)
     local joiningPlayer=game.players[event.player_index]
+    if global.ocfg.krastorio2 and not global.ocfg.creep_initialized then
+        remote.call("kr-creep", "set_creep_on_surface", game.surfaces["oarc"].index, true)      -- oarc
+        remote.call("kr-creep", "set_creep_on_surface", game.surfaces["nauvis"].index, false)     -- nauvis
+        global.ocfg.creep_initialized=true
+    end
     log("on_event::On Player Joined Game " .. joiningPlayer.name)
     PlayerJoinedMessages(event)
     ServerWriteFile("player_events", joiningPlayer.name .. " joined the game." .. "\n")
@@ -395,17 +401,19 @@ log("on_event::on_player_left_game - " .. game.players[event.player_index].name)
         SendBroadcastMsg(player.name .. "'s base was marked for immediate clean up because they left within "..global.ocfg.minimum_online_time.." minutes of joining.")
         RemoveOrResetPlayer(player, true, true, true, true)
     else
-        global.players[event.player_index].drawOnExit = rendering.draw_text{text=player.name,
-                        surface=game.surfaces[GAME_SURFACE_NAME],
-                        target={x=global.spawn[player.index].x-21, y=global.spawn[player.index].y+5},
-                        color={0.9, 0.7, 0.3, 0.8},
-                        scale=20,
-                        font="compi",
-                        draw_on_ground=true,
-                        orientation=0,
-                        scale_with_zoom=false,
-                        only_in_alt_mode=false}
-        log("Player player.name - drawOnExit created = " .. global.players[event.player_index].drawOnExit)
+        if global.spawn[player.index]~=nil then
+            global.players[event.player_index].drawOnExit = rendering.draw_text{text=player.name,
+                            surface=game.surfaces[GAME_SURFACE_NAME],
+                            target={x=global.spawn[player.index].x-21, y=global.spawn[player.index].y+5},
+                            color={0.9, 0.7, 0.3, 0.8},
+                            scale=20,
+                            font="compi",
+                            draw_on_ground=true,
+                            orientation=0,
+                            scale_with_zoom=false,
+                            only_in_alt_mode=false}
+            log("Player player.name - drawOnExit created = " .. global.players[event.player_index].drawOnExit)
+        end
     end
 end)
 

@@ -294,9 +294,9 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
             GenerateStartingResources(game.surfaces[GAME_SURFACE_NAME], delayedSpawn.pos)
         end
         -- If krastorio - which requires the technology to make bio-matter, and is not collectable in BNO, so unlock that technology
-        if global.ocfg.krastorio2 and not global.players[player.index].characterMode then
-           player.force.recipes["kr-biomass-growing"].enabled=true
-        end
+        -- if global.ocfg.krastorio2 and not global.players[player.index].characterMode then
+        --    player.force.recipes["kr-biomass-growing"].enabled=true
+        -- end
     end
     -- Render some welcoming text...
     DisplayWelcomeGroundTextAtSpawn(player, delayedSpawn.pos)	
@@ -699,9 +699,9 @@ log("Random oil - " .. xxx .. " : " .. yyy);
                 destination_for_inventory.insert{name="submachine-gun", count = 1}
                 destination_for_inventory.insert{name="kr-wind-turbine", count=10}
             end
-            if not characterMode then   -- character doesn't get labs
-                destination_for_inventory.insert{name = "kr-bio-lab", count = 2}              -- bio labs
-            end
+            -- if not characterMode then   -- character doesn't get labs
+            --     destination_for_inventory.insert{name = "kr-bio-lab", count = 2}              -- bio labs
+            -- end
         else
             destination_for_inventory.insert{name = "firearm-magazine", count = 20}
         end

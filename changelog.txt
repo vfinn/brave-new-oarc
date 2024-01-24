@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.26 Jan 23, 2024
+- bug fix of crash when player leaves game - typically crash is due to player losing their main roboport 
+to the biters. If you want to fix your SAVE file - unzip it, Replace the oarc_global.cfg, and control.lua files, 
+zip it back up - and use that to restart your game.
+- Fixed Krastorio2 creep ! So removed the free bio labs and free research of bio mass
+---------------------------------------------------------------------------------------------------
 Version: 4.2.25 Jan 18, 2024
 Modified BNO to support character and BNO mode for Krastorio2.  Each player has the choice.
 Bug Fixes:
