@@ -382,6 +382,8 @@ function GivePlayerStarterItems(player)
     local starterItems
     if global.ocfg.space_block then
         starterItems = PLAYER_SPAWN_START_ITEMS_SPACE_BLOCK
+    elseif global.ocfg.seablock then
+        starterItems = PLAYER_SPAWN_START_ITEMS_SEABLOCK
     else
         starterItems = PLAYER_SPAWN_START_ITEMS
     end

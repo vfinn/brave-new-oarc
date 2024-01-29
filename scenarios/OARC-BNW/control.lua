@@ -225,8 +225,9 @@ script.on_event(defines.events.on_chunk_generated, function(event)
     if global.ocfg.enable_undecorator then
         UndecorateOnChunkGenerate(event)
     end
-
-    SeparateSpawnsGenerateChunk(event)
+    if not global.ocfg.seablock then
+        SeparateSpawnsGenerateChunk(event)
+    end
 
     CreateHoldingPen(event.surface, event.area)
 end)
@@ -720,22 +721,22 @@ function inventoryChanged(event)
     local player = game.players[event.player_index]
     if global.seablocked ==nil then
     else
-    if not global.seablocked then
-        -- tiny hack to work around that SeaBlock sets up stuff after BNW on load
-        global.seablocked = true
-        -- move everything from the Home rock to the other chest
-        local home_rock = player.surface.find_entity("rock-chest", {0.5, 0.5})
-        if home_rock then
-            for name, count in pairs(home_rock.get_inventory(defines.inventory.chest).get_contents()) do
-                global.seablock_chest.insert{name = name, count = count}
+        if not global.seablocked then
+            -- tiny hack to work around that SeaBlock sets up stuff after BNW on load
+            global.seablocked = true
+            -- move everything from the Home rock to the other chest
+            local home_rock = player.surface.find_entity("rock-chest", {0.5, 0.5})
+            if home_rock then
+                for name, count in pairs(home_rock.get_inventory(defines.inventory.chest).get_contents()) do
+                    global.seablock_chest.insert{name = name, count = count}
+                end
             end
-        end
-        home_rock.destroy()
-        global.seablock_chest = nil
+            home_rock.destroy()
+            global.seablock_chest = nil
 
-        -- and clear the starting items from player inventory
-        player.clear_items_inside()
-    end
+            -- and clear the starting items from player inventory
+            player.clear_items_inside()
+        end
     end
     -- remove any crafted items (and possibly make ghost cursor of item)
     for _, item in pairs(global.players[event.player_index].crafted) do
@@ -970,7 +971,7 @@ script.on_event(defines.events.on_entity_died, function(event)
         for name,player in pairs(game.connected_players) do
             local SP=entity.position
             SP.y=SP.y+10        -- move them down 10 tiles, otherwise they spawn inside the walls, next to large roboport
-            
+
             if (GetGPStext(global.spawn[player.index]) == GetGPStext(SP)) then
                 log ("player: " .. player.name .. " at " ..GetGPStext(global.spawn[player.index]) .. " Died due to the starting roboport being destroyed.")
                 log ("and entity at " .. GetGPStext(SP))

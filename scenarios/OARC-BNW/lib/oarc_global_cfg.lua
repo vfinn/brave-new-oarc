@@ -126,6 +126,7 @@ function InitOarcConfig()
     global.ocfg.bzlead              = game.active_mods["bzlead"]
     global.ocfg.bztitanium          = game.active_mods["bztitanium"]
     global.ocfg.krastorio2          = game.active_mods["Krastorio2"]
+    global.ocfg.seablock            = game.active_mods["SeaBlock"]
     if (global.ocfg.krastorio2) then 
         global.ocfg.spawn_config.gen_settings.land_area_tiles = global.ocfg.spawn_config.gen_settings.land_area_tiles + 32 
         global.ocfg.creep_initialized=false

@@ -178,6 +178,12 @@ PLAYER_SPAWN_START_ITEMS_SPACE_BLOCK = {
                             ["stone-furnace"] = 4                            
 }
 
+PLAYER_SPAWN_START_ITEMS_SEABLOCK = {
+                            ["pistol"] = 1,
+                            ["coal"] = 10,
+                            ["stone-furnace"] = 4
+}
+
 
 -- Items provided after EVERY respawn (disabled by default)
 PLAYER_RESPAWN_START_ITEMS = {
