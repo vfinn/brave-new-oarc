@@ -131,6 +131,9 @@ function InitOarcConfig()
         global.ocfg.spawn_config.gen_settings.land_area_tiles = global.ocfg.spawn_config.gen_settings.land_area_tiles + 32 
         global.ocfg.creep_initialized=false
     end
+    if global.ocfg.seablock then
+        global.ocfg.spawn_config.gen_settings.moat_choice_enabled = false  -- moat makes no sense for seablock
+    end
     if global.ocfg.freight_forwarding then global.ocfg.frontier_rocket_silo=false end
     global.ocfg.krastorio2_resources_increased = false
     -----------------------

@@ -750,6 +750,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
                 chest_inventory.insert{name = "logistic-chest-buffer", count = 1}        -- green chests
             end     
             destination_for_inventory.insert{name = "angels-electrolyser", count = 10}     -- this to make copper and iron
+            destination_for_inventory.insert{name = "angels-flare-stack", count = 2}       -- helps make iron early
         else
             -- prevent error when looking for "rock-chest" later
             global.seablocked = true
