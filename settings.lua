@@ -83,6 +83,42 @@ data:extend({
         order="bnw-08"
     },
     {
+        type = "int-setting",
+        name = "bno-num-blue-boxes", -- logistic-chest-requester    
+        setting_type = "startup",
+        minimum_value = 4,
+        maximum_value = 10,
+        default_value = 4,
+        order="bnw-0804"
+    },
+    {
+        type = "int-setting",
+        name = "bno-num-red-boxes", -- logistic-chest-passive-provider   
+        setting_type = "startup",
+        minimum_value = 4,
+        maximum_value = 10,
+        default_value = 4,
+        order="bnw-0806"
+    },
+--    {
+--        type = "int-setting",
+--        name = "bno-num-green-boxes", -- logistic-chest-buffer   
+--        setting_type = "startup",
+--        minimum_value = 4,
+--        maximum_value = 10,
+--        default_value = 4,
+--        order="bnw-0805"
+--    },
+--    {
+--        type = "int-setting",
+--        name = "bno-num-purple-boxes", -- logistic-chest-active-provider  
+--        setting_type = "startup",
+--        minimum_value = 4,
+--        maximum_value = 10,
+--        default_value = 4,
+--        order="bnw-0807"
+--    },
+    {
         type = "string-setting",
         name = "bno-spawn-base-shape",     
         setting_type = "startup",

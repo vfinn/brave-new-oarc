@@ -691,6 +691,9 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
             chest_inventory.insert{name = "lab", count = 2}
         end
         destination_for_inventory.insert{name = "gun-turret", count = 2}
+        if (global.ocfg.lex_aircraft) then
+            destination_for_inventory.insert{name = "spidertron-remote", count = 2}
+        end
         if global.ocfg.krastorio2 then
             destination_for_inventory.insert{name = "rifle-magazine", count = 20}         -- rifle ammo
             if characterMode then
@@ -731,11 +734,11 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
             end
 
             local ignored_items = {
-                ["copper-pipe"] = true,
-                ["iron-gear-wheel"] = true,
-                ["iron-stick"] = true,
-                ["pipe"] = true,
-                ["pipe-to-ground"] = true,
+                ["copper-pipe"] = true
+--                ["iron-gear-wheel"] = true,
+--                ["iron-stick"] = true,
+--                ["pipe"] = true,
+--                ["pipe-to-ground"] = true,
             }
             log("moving " .. #seablock_items .. " items to player or chest")
             if seablock_items then
@@ -748,9 +751,17 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
             if not characterMode then
                 chest_inventory.insert{name = "logistic-chest-requester", count = 2}     -- blue chests
                 chest_inventory.insert{name = "logistic-chest-buffer", count = 1}        -- green chests
+                chest_inventory.insert{name = "wood-pellets", count = 300}               -- extra fuel for BNO player - they can't make wood
+                chest_inventory.insert{name = "assembling-machine-1", count = 2}
             end     
             destination_for_inventory.insert{name = "angels-electrolyser", count = 10}     -- this to make copper and iron
             destination_for_inventory.insert{name = "angels-flare-stack", count = 2}       -- helps make iron early
+            destination_for_inventory.insert{name = "offshore-pump", count = 1}
+            destination_for_inventory.insert{name = "wood-pellets", count = 100}
+            destination_for_inventory.insert{name = "burner-ore-crusher", count = 3}
+            destination_for_inventory.insert{name = "liquifier", count = 1}
+            destination_for_inventory.insert{name = "crystallizer", count = 1}
+            destination_for_inventory.insert{name = "algae-farm", count = 2}            
         else
             -- prevent error when looking for "rock-chest" later
             global.seablocked = true
@@ -769,6 +780,15 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
             chest_inventory.insert{name = "logistic-chest-passive-provider", count = 4} -- red chests 
             chest_inventory.insert{name = "logistic-chest-buffer", count = 3}           -- add to green chests based on blueprint
             chest_inventory.insert{name = "logistic-chest-active-provider", count = 4}  -- purple chests
+            local numRedChests = settings.startup["bno-num-red-boxes"].value
+            local numBlueChests = settings.startup["bno-num-blue-boxes"].value
+            if (numRedChests ~= 4) then 
+                chest_inventory.insert{name = "logistic-chest-passive-provider", count = numRedChests-4} 
+            end
+            if (numBlueChests ~= 4) then 
+                chest_inventory.insert{name = "logistic-chest-requester", count = numBlueChests-4} 
+            end
+
         end
     end
 end
@@ -1140,7 +1160,6 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
     --    player.create_character()
     --end
     player.teleport({x=0,y=0}, GAME_SURFACE_NAME)
-
     local player_old_force = player.force
     player.force = global.ocfg.main_force
 
@@ -1166,6 +1185,12 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
     -- this happens if player loses or they choose to reset themselves - reset them and show menu
     if (remove_base and not remove_player) then
         DisplaySpawnOptions(player)
+    end
+
+    -- clear main inventory
+    player.get_main_inventory().clear()
+    if (player.get_inventory(defines.inventory.character_armor)) then
+        player.get_inventory(defines.inventory.character_armor).clear()
     end
 end
 

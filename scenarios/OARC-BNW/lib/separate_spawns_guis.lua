@@ -313,10 +313,17 @@ function SpawnOptsRadioSelect(event)
     elseif (elemName == "isolated_spawn_new_team_radio") then
         event.element.parent.isolated_spawn_main_team_radio.state=false
     end
+    local mainTeamState=false
     if (elemName == "character_mode_option_checkbox") or (elemName == "isolated_spawn_main_team_radio") then
         -- If this returned 0 then nothing chosen yet, 1=char, 2=BNO mode
-        if event.element.parent.isolated_spawn_main_team_radio.state then
-            local c=CharacterOptionChosenForThisPlayersForce(game.players[event.player_index], event.element.parent.isolated_spawn_main_team_radio.state)
+        if (event.element.parent.isolated_spawn_main_team_radio and event.element.parent.isolated_spawn_main_team_radio.state) then
+            mainTeamState = event.element.parent.isolated_spawn_main_team_radio.state
+        end
+        if (event.element.parent.buddy_spawn_main_team_radio    and event.element.parent.buddy_spawn_main_team_radio.state) then
+            mainTeamState = event.element.parent.buddy_spawn_main_team_radio.state
+        end
+        if mainTeamState then
+            local c=CharacterOptionChosenForThisPlayersForce(game.players[event.player_index], mainTeamState)
             if c==0 then
                   -- nothing yet chosen, let checkbox change state
             elseif c==1 then

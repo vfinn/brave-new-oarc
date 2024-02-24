@@ -1,6 +1,6 @@
 {
   "name": "brave-new-oarc",
-  "version": "4.2.26",
+  "version": "4.2.31",
   "factorio_version": "1.1",
   "title": "Brave New OARC Scenario",
   "author": "JustGoFly + Oarcinae + canidae",
@@ -13,7 +13,7 @@
     "? spaceblock >= 0.3.9",
     "? SeaBlock >= 0.5.6",
     "? resource-islands >= 0.1.1",
-    "? alien-module >= 1.2.4",
+    "? alien-module >= 1.4.2",
     "? Transport_Drones >= 1.0.14",
     "? FreightForwarding >= 1.8.2",
     "? bzlead >= 1.2.18",

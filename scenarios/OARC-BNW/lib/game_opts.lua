@@ -39,12 +39,12 @@ function GameOptionsGuiClick(event)
                     rendering.destroy(global.players[idx].drawOnExit)
                 end
                 global.players[idx] = {
-                    crafted = {},
-                    inventory_items = {},
-                    previous_position = {x=0, y=0},
-                    drawOnExit = nil,   -- do NOT reset this - the player name rendered is still needed
-                    characterMode = false
-                }
+                                    crafted = {},
+                                    inventory_items = {},
+                                    previous_position = {x=0, y=0},
+                                    drawOnExit = nil,   -- do NOT reset this - the player name rendered is still needed
+                                    characterMode = false
+                                }
                 log("Resetting " .. resetPlayerName)
             end
         end
@@ -189,11 +189,16 @@ function CreateGameOptionsTab(tab_container, player)
             table.insert(player_list, p.name)
             if p.name == player.name then si = k end
         end
-        tab_container.add{name="restart_player", type="button", caption="Restart Player"}
+        -- If we have more than ME in the game - enable RESTART button
+        if #game.players>1 or not (player.position.x==0 and player.position.y==0) then 
+            tab_container.add{name="restart_player", type="button", caption="Restart Player"}
+        end
         tab_container.add{name="ban_player", type="button", caption="Ban Player"}
         tab_container.add{name="ban_players_dropdown",type = "drop-down",items = player_list, selected_index = si}
     else
-        tab_container.add{name="restart_player", type="button", caption="Restart Player"}
+        if not (player.position.x==0 and player.position.y==0) then 
+            tab_container.add{name="restart_player", type="button", caption="Restart Player"}
+        end
         player_list = {}
         table.insert(player_list, player.name)
         tab_container.add{name = "ban_players_dropdown",type = "drop-down",items = player_list, selected_index = 1}

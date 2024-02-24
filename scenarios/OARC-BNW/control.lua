@@ -176,7 +176,11 @@ script.on_init(function(event)
     -- Display starting point text as a display of dominance.
     RenderPermanentGroundText(game.surfaces[GAME_SURFACE_NAME], {x=-34,y=-25}, 12, "Brave New OARC", {0.9, 0.7, 0.3, 0.8})
     if global.ocfg.space_block then -- Space block
-        RenderPermanentGroundText(game.surfaces[GAME_SURFACE_NAME], {x=-24,y=-17}, 8, "Space Block", {0.9, 0.7, 0.3, 0.8})        
+        RenderPermanentGroundText(game.surfaces[GAME_SURFACE_NAME], {x=-24,y=-17}, 8, "Space Block", {0.9, 0.7, 0.3, 0.8})  
+    elseif global.ocfg.seablock then -- Sea Block
+        RenderPermanentGroundText(game.surfaces[GAME_SURFACE_NAME], {x=-24,y=-17}, 8, "Sea Block", {0.9, 0.7, 0.3, 0.8})  
+    elseif global.ocfg.krastorio2 then -- Krastorio2
+        RenderPermanentGroundText(game.surfaces[GAME_SURFACE_NAME], {x=-24,y=-17}, 8, "Krastorio2", {0.9, 0.7, 0.3, 0.8})  
     end
     BNOSwarmGroupInit()
     log("Applying new values for Starting Area: " .. game.surfaces.oarc.map_gen_settings.starting_area *100 .. "%")
@@ -403,7 +407,7 @@ log("on_event::on_player_left_game - " .. game.players[event.player_index].name)
         RemoveOrResetPlayer(player, true, true, true, true)
     else
         if global.spawn[player.index]~=nil then
-            global.players[event.player_index].drawOnExit = rendering.draw_text{text=player.name,
+            global.players[player.index].drawOnExit = rendering.draw_text{text=player.name,
                             surface=game.surfaces[GAME_SURFACE_NAME],
                             target={x=global.spawn[player.index].x-21, y=global.spawn[player.index].y+5},
                             color={0.9, 0.7, 0.3, 0.8},
@@ -413,7 +417,7 @@ log("on_event::on_player_left_game - " .. game.players[event.player_index].name)
                             orientation=0,
                             scale_with_zoom=false,
                             only_in_alt_mode=false}
-            log("Player player.name - drawOnExit created = " .. global.players[event.player_index].drawOnExit)
+            log("Player player.name - drawOnExit created = " .. global.players[player.index].drawOnExit)
         end
     end
 end)
@@ -453,7 +457,7 @@ script.on_event(defines.events.on_tick, function(event)
         global.swarmCheckTick = global.swarmCheckTick or game.tick
         if (game.tick >= global.swarmCheckTick) then
             BNOCleanGPSStack()
-            global.swarmCheckTick = game.tick + TICKS_PER_SECOND    -- check again in 1 second
+            global.swarmCheckTick = game.tick + TICKS_PER_SECOND*2    -- check again in 1 second
         end
     end
 end)
@@ -877,10 +881,12 @@ end
 function preventMining(player)
     if global.players[player.index].characterMode then 
         player.force.manual_mining_speed_modifier = 0  -- allow mining
+        AddRecipe(player.force, "steel-axe")
         return
     else
     -- prevent mining (this appeared to be reset when loading a 0.16.26 save in 0.16.27)
         player.force.manual_mining_speed_modifier = -0.99999999 -- allows removing ghosts with right-click
+        RemoveRecipe(player.force, "steel-axe") -- researching this upgrades the above manual_mining_speed_modifier by 1 - not good !
     end
 end
 

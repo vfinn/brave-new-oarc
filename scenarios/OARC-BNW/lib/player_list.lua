@@ -14,7 +14,7 @@ function CreatePlayerListGuiTab(tab_container, player)
 
     AddLabel(scrollFrame, "online_title_msg", "Online Players:", my_label_header_style)
     for indx,player in pairs(game.connected_players) do
-        if global.players[indx].characterMode then 
+        if global.players[player.index].characterMode then 
             charMode = "Character" 
         else
             charMode = "Brave New Player"
