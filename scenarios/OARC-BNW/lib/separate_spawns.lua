@@ -619,7 +619,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
 
 
     -- add chests for Krastorio unless if they are playing in character mode - the character is their crafting/requestor/storage device
-    if global.ocfg.krastorio2 and not global.players[player.index].characterMode then
+    if global.ocfg.krastorio2 then
         chest_inventory.insert{name = "logistic-chest-requester", count = 2}        -- blue chests
         chest_inventory.insert{name = "logistic-chest-passive-provider", count = 2} -- red chests 
     end
@@ -673,6 +673,9 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
             destination_for_inventory.insert{name="spaceblock-matter-furnace", count = 3}
         end
     else
+        if global.ocfg.LootChestPlus then
+            destination_for_inventory.insert{name="artifact-loot-chest", count = 1}
+        end
         if not characterMode then   -- character does NOT get all of this stuff - make it within your character
             chest_inventory.insert{name = "transport-belt", count = 400}
             chest_inventory.insert{name = "underground-belt", count = 20}
@@ -788,7 +791,6 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
             if (numBlueChests ~= 4) then 
                 chest_inventory.insert{name = "logistic-chest-requester", count = numBlueChests-4} 
             end
-
         end
     end
 end

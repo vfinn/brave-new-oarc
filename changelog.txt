@@ -1,8 +1,14 @@
 Version: 4.2.31
 - updated list of supported mods to limit to Alien Modules (1.4.2) mod that I recently modified to 
   support teams.
-- After death of a players main roboport - terminating his game, I now remove the items in his inventory.
+- After death of a players main roboport - terminating his game, the items in the players inventory are removed.
   This is more meaningful to character players and removes a potential cheat.
+- Removed requirement to launch before getting level 3 modules.
+- Removed recipe for Steel Axe for BNO players. This screws up the ability for you to pick up buildings 
+  or mine - from outter space.
+- Added support for LootChestPlus mod - to collect items on the ground, ideal for use with Alien-Modules.
+- Krastorio Character player gets 2 addition red/blue chests - same as BNO player.
+- Removed the dependancy on launching a rocket to make speed 3 modules.
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.30
 - Removed Restart button for players in spawn location

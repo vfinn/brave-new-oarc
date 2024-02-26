@@ -128,6 +128,9 @@ function InitOarcConfig()
     global.ocfg.krastorio2          = game.active_mods["Krastorio2"]
     global.ocfg.seablock            = game.active_mods["SeaBlock"]
     global.ocfg.lex_aircraft        = game.active_mods["lex-aircraft"]
+    global.ocfg.alien_module        = game.active_mods["alien-module"]
+    global.ocfg.LootChestPlus       = game.active_mods["LootChestPlus"]
+
     if (global.ocfg.krastorio2) then 
         global.ocfg.spawn_config.gen_settings.land_area_tiles = global.ocfg.spawn_config.gen_settings.land_area_tiles + 32 
         global.ocfg.creep_initialized=false

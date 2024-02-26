@@ -132,7 +132,6 @@ SPACE_BLOCK_LOCKED_TECHNOLOGIES_COMMON = {
  }
 
 LOCKED_RECIPES = {
-    {r="speed-module-3"}
 }
 
 -- Give cheaty items on start.

@@ -20,6 +20,7 @@
     "? bztitanium >= 1.2.12",
     "? cargo-ships >= 0.2.6",
     "? lex-aircraft >= 1.1.1",
+    "? LootChestPlus >= 1.4.9",
     "! Braver_New_World",
     "! brave-new-world"
   ]
