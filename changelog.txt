@@ -1,3 +1,20 @@
+---------------------------------------------------------------------------------------------------
+Version: 4.2.33
+- Changed warning sound to be different and more subtle when biters are attacking
+- Added option to enable player to turn on/off attacks by biters while offline. The default is 
+  set in the config.lua - ENABLE_OFFLINE_PROTECTION - defaulting to true.
+- protection against a crash caused when two players in buddy mode joined as BNO + Character. The UI
+  attempts to make this impossible, but obviously one got through.
+- Character player gets 4/4/4/4 logistic chests of R/G/B/P
+---------------------------------------------------------------------------------------------------
+Version: 4.2.33
+
+- Fixed disabling of Steel-axe. This was stated as disabled in 4.2.31 - fixed here.
+- Modified starting items for BNO Player on Space Block - adding logistic chests.
+---------------------------------------------------------------------------------------------------
+Version: 4.2.32
+- Bug fix in code that clears inventory - only shows up in multiplayer mode
+---------------------------------------------------------------------------------------------------
 Version: 4.2.31
 - updated list of supported mods to limit to Alien Modules (1.4.2) mod that I recently modified to 
   support teams.

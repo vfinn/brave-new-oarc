@@ -152,7 +152,8 @@ function BNOCleanGPSStack()
                         -- the groups that attack will eventually go to group_state.attacking_target, but first moving
                         if (global.swarmGroup[k].group.state == defines.group_state.moving) then
                             if (not global.swarmGroup[k].gpsSent) then
-                                global.swarmGroup[k].target_player.print(global.swarmGroup[k].target_player.name .. ": Wave of " .. #global.swarmGroup[k].group.members .. " biters incoming :" .. GetGPStext(global.swarmGroup[k].startPosition))
+                                global.swarmGroup[k].target_player.print(global.swarmGroup[k].target_player.name .. ": Wave of " .. #global.swarmGroup[k].group.members .. " biters incoming :" .. GetGPStext(global.swarmGroup[k].startPosition), {sound=defines.print_sound.never})
+                                global.swarmGroup[k].target_player.play_sound { path = 'wave-coming' }
                                 global.swarmGroup[k].gpsSent=true   -- only send this ping once
                             end
                         end
@@ -220,6 +221,7 @@ end
 function SendMsg(playerName, msg)
     if ((game.players[playerName] ~= nil) and (game.players[playerName].connected)) then
         game.players[playerName].print(msg)
+        log("msg: " .. msg)
     end
 end
 
@@ -227,6 +229,7 @@ function SendForceMsg(forceName, msg)
     for name,player in pairs(game.connected_players) do
         if (player.force == forceName) then
             player.print(msg)
+           log("msg: " .. msg)
         end
     end
 end

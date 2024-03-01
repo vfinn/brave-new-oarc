@@ -59,6 +59,12 @@ function GameOptionsGuiClick(event)
         if global.ocfg.warn_biter_setting[event.player_index] then onOff = " ON" end
         player.print(player.name .. " changed the 'warn of biter attacking' option to " .. onOff)
     end
+    if (name == "offline_protect") then
+        if (not global.ocfg.offline_protect[player.index]) then
+            global.ocfg.offline_protect [player.index] = ENABLE_OFFLINE_PROTECTION;
+        end
+        global.ocfg.offline_protect [player.index] = not global.ocfg.offline_protect [player.index];
+   end  
     if (name == "share_chart_checkbox") then
         if (global.ocfg.share_chart[event.player_index] == nil) then
             global.ocfg.share_chart[event.player_index] = true
@@ -136,7 +142,7 @@ function CreateGameOptionsTab(tab_container, player)
     if (global.ocfg.enable_magic_factories) then
         soft_mods_string = soft_mods_string .. ", Special Map Chunks"
     end
-    if (global.ocfg.enable_offline_protect) then
+    if (global.ocfg.offline_protect[player.index]) then
         soft_mods_string = soft_mods_string .. ", Offline Attack Inhibitor"
     end
 
@@ -212,8 +218,13 @@ function CreateGameOptionsTab(tab_container, player)
                         type = "checkbox",
                         caption={"warn-biter-attack-option"},
                         state=(global.ocfg.warn_biter_setting[player.index])}
-    end
-    if (player.index) then
+        if (global.ocfg.offline_protect[player.index] == nil) then
+            global.ocfg.offline_protect [player.index] = ENABLE_OFFLINE_PROTECTION;
+        end
+        tab_container.add{name = "offline_protect",
+                        type = "checkbox",
+                        caption={"offline-biter-attack-protect"},
+                        state=(global.ocfg.offline_protect[player.index])}
         tab_container.add{name = "share_chart_checkbox",
                         type = "checkbox",
                         caption={"bno-share-chart"},

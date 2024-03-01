@@ -20,6 +20,7 @@
 -- Generic Utility Includes
 require("lib/oarc_utils")
 
+-- called on_unit_group_finished_gathering
 function OarcModifyEnemyGroup(group)
 
     -- Check validity
@@ -115,8 +116,8 @@ function OarcModifyEnemyGroup(group)
             return
         end
 
-        -- Is the target player online? Then the attack can go through.
-        if (target_player.connected) then
+        -- Is the target player online or opted in for attacks while offline ? Then the attack can go through.
+        if (target_player.connected or not global.ocfg.offline_protect[target_player.index]) then
             if (global.enable_oe_debug) then
                 SendBroadcastMsg("Enemy group released (player): " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position) .. " " .. target_player.name)
                 log("OarcModifyEnemyGroup RELEASING enemy group since player " .. target_player.name .. " is ONLINE, " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
@@ -144,12 +145,12 @@ function OarcModifyEnemyGroup(group)
         -- Is there a buddy spawn and is the buddy online?
         local buddyName = global.ocore.buddyPairs[sharedSpawnOwnerName]
         if (buddyName ~= nil) and (game.players[buddyName] ~= nil) then
-            if (game.players[buddyName].connected or (GetOnlinePlayersAtSharedSpawn(buddyName) > 0)) then
+            -- buddy online, or team mater online or buddy opted for offline attacks
+            if (game.players[buddyName].connected or (GetOnlinePlayersAtSharedSpawn(buddyName) > 0) or not global.ocfg.offline_protect[target_player.index]) then
                 if (global.enable_oe_debug) then
                     SendBroadcastMsg("Enemy group released (buddy): " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position) .. " " .. target_player.name)
                     log("OarcModifyEnemyGroup RELEASING enemy group since someone in the BUDDY PAIR " .. target_player.name .. " is ONLINE, " .. GetGPStext(group.position) .. " Target: " .. GetGPStext(target_entity.position))
                 end
---                target_player.print(target_player.name .. " incoming biter group!:" .. GetGPStext(group.position))
                 configureSwarmPing(target_player, group)
                 return
             end
@@ -184,8 +185,13 @@ end
 --	on_player_clicked_gps_tag				- previously sent GPS tag is clicked on
 function configureSwarmPing(target_player, group)
         -- Is the target player online? Then the attack can go through.
+        if (global.ocfg.offline_protect == nil) then
+            global.ocfg.offline_protect = {}
+            global.ocfg.offline_protect [target_player.index] = ENABLE_OFFLINE_PROTECTION; -- set to default from config.lua
+        end
         if (global.ocfg.warn_biter_setting == nil) then
             global.ocfg.warn_biter_setting = {}
+            
             global.ocfg.warn_biter_setting[target_player.index] = global.ocfg.warn_biter_attack; -- init individual setting to default
         end
         if (global.ocfg.warn_biter_setting[target_player.index]) then

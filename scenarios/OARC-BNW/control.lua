@@ -187,7 +187,7 @@ script.on_init(function(event)
     -- Apply the value set in game UI of Starting Area Size to the starting area radius's
     local starting_area = game.surfaces.oarc.map_gen_settings.starting_area
     if (starting_area<.5) then
-        OARC_CFG.safe_area.safe_radius = OARC_CFG.safe_area.safe_radius * 0.6
+        OARC_CFG.safe_area.safe_radius = OARC_CFG.safe_area.safe_radius * 0.5
     else
         OARC_CFG.safe_area.safe_radius = OARC_CFG.safe_area.safe_radius * starting_area
     end
@@ -881,12 +881,12 @@ end
 function preventMining(player)
     if global.players[player.index].characterMode then 
         player.force.manual_mining_speed_modifier = 0  -- allow mining
-        AddRecipe(player.force, "steel-axe")
+        EnableTech(player.force, "steel-axe")
         return
     else
     -- prevent mining (this appeared to be reset when loading a 0.16.26 save in 0.16.27)
         player.force.manual_mining_speed_modifier = -0.99999999 -- allows removing ghosts with right-click
-        RemoveRecipe(player.force, "steel-axe") -- researching this upgrades the above manual_mining_speed_modifier by 1 - not good !
+        DisableTech(player.force, "steel-axe") -- researching this upgrades the above manual_mining_speed_modifier by 1 - not good !
     end
 end
 
@@ -960,8 +960,10 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function(event)
             end
         end
     end
+    
     if out_of_storage then
-        player.print({"out-of-storage"})
+        player.print({"out-of-storage", player.name})
+        log("Sending out of storage message to: " .. player.name)
     end
 end)
 
@@ -973,8 +975,9 @@ script.on_event(defines.events.on_entity_died, function(event)
     -- check if roboport was destroyed
     if entity.name=="roboport-main" then
         log("Force DIED: " .. entity.force.name)
-        SendBroadcastMsg("Oh No someone on '" .. entity.force.name ..  "'' Gone like a fart in the wind")        
+        SendBroadcastMsg("Oh No someone on '" .. entity.force.name ..  "'' Gone like a fart in the wind")
         for name,player in pairs(game.connected_players) do
+            -- player.play_sound { path = 'you-lost' }
             local SP=entity.position
             SP.y=SP.y+10        -- move them down 10 tiles, otherwise they spawn inside the walls, next to large roboport
 

@@ -644,7 +644,12 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
             destination_for_inventory.insert{name="copper-ore", count=50}
             destination_for_inventory.insert{name="stone", count=50}
             destination_for_inventory.insert{name="coal", count=50}
+            destination_for_inventory.insert{name = "logistic-chest-requester", count = 1}        -- blue chests
+            destination_for_inventory.insert{name = "logistic-chest-passive-provider", count = 4} -- red chests 
+            destination_for_inventory.insert{name = "logistic-chest-buffer", count = 3}           -- add to green chests based on blueprint
+            destination_for_inventory.insert{name = "logistic-chest-active-provider", count = 4}  -- purple chests
         end
+
         destination_for_inventory.insert{name = "transport-belt", count = 10}
         destination_for_inventory.insert{name = "small-lamp", count = 10}
         destination_for_inventory.insert{name = "filter-inserter", count = 1}
@@ -1155,7 +1160,7 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
 
     -- If this player is staying in the game, lets make sure we don't delete them along with the map chunks being
     -- cleared.
-    log("RemoveOrResetPlayer:: " .. player.name .. "teleport to 0,0")
+    log("RemoveOrResetPlayer:: " .. player.name .. " teleport to 0,0. Remove_player: " .. tostring(remove_player) .. ", remove_force: " .. tostring(remove_force) .. ", remove_base: " .. tostring(remove_base) .. ", immediate: " .. tostring(immediate))
     -- this causing crash
     --if player.character == nil then
     --    log("RemoveOrResetPlayer::Character created")
@@ -1190,9 +1195,20 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
     end
 
     -- clear main inventory
-    player.get_main_inventory().clear()
-    if (player.get_inventory(defines.inventory.character_armor)) then
-        player.get_inventory(defines.inventory.character_armor).clear()
+--    log("player valid: " .. tostring(player.valid))
+--    log("player index: " .. tostring(player.index))
+--    log("player global.player[player.index]: " .. tostring(global.player[player.index]))
+--    log("global.players[player.index].characterMode: " .. tostring(global.players[player.index].characterMode))
+
+    
+    if  player.valid then       -- this can occur when joining a game where you previous quit and timed out after 15 minutes
+        if player.index and global.players[player.index] and global.players[player.index].characterMode then
+            local inv = player.get_main_inventory()
+            if inv then inv.clear() end
+            if (player.get_inventory(defines.inventory.character_armor)) then
+                player.get_inventory(defines.inventory.character_armor).clear()
+            end
+        end
     end
 end
 

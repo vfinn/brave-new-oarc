@@ -843,8 +843,20 @@ function SpawnCtrlGuiClick(event)
                     game.players[joinQueuePlayerChoice].gui.screen.join_shared_spawn_wait_menu.destroy()
                 end
 
+
                 -- Spawn the player
                 local joiningPlayer = game.players[joinQueuePlayerChoice]
+
+                -- Patch in case - rarely someone can change to BNO player while joining a Character player - or vice-versa
+                if global.players[joiningPlayer.index].characterMode ~= global.players[global.ocore.sharedSpawns[player.name]].characterMode then
+                    if global.players[joiningPlayer.index].characterMode then
+                        joiningPlayer.print("You chose character mode - Sorry to say this team has already chosen BRAVE NEW PLAYER mode of player - switching you to that mode. Feel free to start your own team as a Character.")
+                    else
+                        joiningPlayer.print("You chose brave new player - Sorry to say this team has already chosen 'CHARACTER' mode of player - switching you to that mode. Feel free to start your own team as a Brave New Player.")
+                    end                    
+                    global.players[joiningPlayer.index].characterMode = global.players[global.ocore.sharedSpawns[player.name]].characterMode 
+                end
+
                 ChangePlayerSpawn(joiningPlayer, global.ocore.sharedSpawns[player.name].position)
                 SendPlayerToSpawn(joiningPlayer)
                 GivePlayerStarterItems(joiningPlayer)
