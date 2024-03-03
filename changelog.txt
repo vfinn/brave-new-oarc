@@ -1,5 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.34
+- Fix bug in SpaceBlock where I made resources around the player.
+---------------------------------------------------------------------------------------------------
+Version: 4.2.34
 - Distant Rocket Silo removed - this should save on memory and be a bit easier to play.
   Players can build rocket silo anywhere.
 - Additional sounds added - for lose scenario

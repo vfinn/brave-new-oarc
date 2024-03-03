@@ -261,19 +261,21 @@ function SendPlayerToNewSpawnAndCreateIt(delayedSpawn)
     -- DOUBLE CHECK and make sure the area is super safe.
     local player = game.players[delayedSpawn.playerName]
 log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
-    if (global.ocfg.space_block  and global.ocfg.frontier_rocket_silo and not global.ocfg.enable_magic_factories) then
-        if not global.make_silos then
-            GenerateRocketSiloAreas(game.surfaces[GAME_SURFACE_NAME])
-            global.make_silos=true
-        end
-        if global.players[player.index].characterMode then
-            for _,v in ipairs(SPACE_BLOCK_UNLOCKED_TECHNOLOGIES_CHAR) do
-                EnableTech(player.force, v.t)
+    if global.ocfg.space_block then
+        if (global.ocfg.frontier_rocket_silo and not global.ocfg.enable_magic_factories) then
+            if not global.make_silos then
+                GenerateRocketSiloAreas(game.surfaces[GAME_SURFACE_NAME])
+                global.make_silos=true
             end
-        else
-            -- remove more items from research if you are Space Block and BNO Player
-            for _,v in ipairs(SPACE_BLOCK_LOCKED_TECHNOLOGIES_BNO) do
-                DisableTech(player.force, v.t)
+            if global.players[player.index].characterMode then
+                for _,v in ipairs(SPACE_BLOCK_UNLOCKED_TECHNOLOGIES_CHAR) do
+                    EnableTech(player.force, v.t)
+                end
+            else
+                -- remove more items from research if you are Space Block and BNO Player
+                for _,v in ipairs(SPACE_BLOCK_LOCKED_TECHNOLOGIES_BNO) do
+                    DisableTech(player.force, v.t)
+                end
             end
         end
     else
