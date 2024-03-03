@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.34
+- Distant Rocket Silo removed - this should save on memory and be a bit easier to play.
+  Players can build rocket silo anywhere.
+- Additional sounds added - for lose scenario
+---------------------------------------------------------------------------------------------------
 Version: 4.2.33
 - Changed warning sound to be different and more subtle when biters are attacking
 - Added option to enable player to turn on/off attacks by biters while offline. The default is 

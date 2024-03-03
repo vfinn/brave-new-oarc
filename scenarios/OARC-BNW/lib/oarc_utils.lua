@@ -140,6 +140,9 @@ function BNOCleanGPSStack()
 --        for k,swarm in pairs(global.swarmGroup) do    -- can't do this or we skip items
         for k=#global.swarmGroup, 1, -1 do
             if (not global.swarmGroup[k]) or (not global.swarmGroup[k].group.valid) then
+                if (global.enable_oe_debug) then
+                    log("REMOVING swarm tracking " .. k .. " they be dead")
+                end
                 table.remove(global.swarmGroup,k)   -- end of swarm tracking
             else
                 if (global.swarmGroup[k]~=nil) then

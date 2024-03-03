@@ -261,7 +261,7 @@ function SendPlayerToNewSpawnAndCreateIt(delayedSpawn)
     -- DOUBLE CHECK and make sure the area is super safe.
     local player = game.players[delayedSpawn.playerName]
 log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
-    if global.ocfg.space_block then
+    if (global.ocfg.space_block  and global.ocfg.frontier_rocket_silo and not global.ocfg.enable_magic_factories) then
         if not global.make_silos then
             GenerateRocketSiloAreas(game.surfaces[GAME_SURFACE_NAME])
             global.make_silos=true

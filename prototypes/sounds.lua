@@ -4,7 +4,7 @@ data:extend{
 		name = "wave-coming",
 		category = "alert",
 		filename = "__brave-new-oarc__/sounds/drumpapappa.ogg",
-		volume = 2
+		volume = 5
 	},
 	{
 		type = "sound",
