@@ -977,7 +977,7 @@ script.on_event(defines.events.on_entity_died, function(event)
         log("Force DIED: " .. entity.force.name)
         SendBroadcastMsg("Oh No someone on '" .. entity.force.name ..  "'' Gone like a fart in the wind")
         for name,player in pairs(game.connected_players) do
-            -- player.play_sound { path = 'you-lost' }
+            player.play_sound { path = 'you-lost' }
             local SP=entity.position
             SP.y=SP.y+10        -- move them down 10 tiles, otherwise they spawn inside the walls, next to large roboport
 
