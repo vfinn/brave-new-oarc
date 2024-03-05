@@ -116,9 +116,6 @@ SPACE_BLOCK_LOCKED_TECHNOLOGIES_BNO = {
 
 -- enable all of these for character mode
 SPACE_BLOCK_UNLOCKED_TECHNOLOGIES_CHAR = {
-    {t="military"},
-    {t="car"},
-    {t="automobilism"}
 }
 
 -- disable all of these for both char and BNO players
@@ -129,6 +126,12 @@ SPACE_BLOCK_LOCKED_TECHNOLOGIES_COMMON = {
     {t="laser"},
     {t="steel-axe"},
     {t="landfill"}
+ }
+
+ SPACE_BLOCK_RECIPES_REMOVE_ALL_PLAYERS = {
+    {r="electric-mining-drill"},
+    {r="burner-mining-drill"},
+    {r="light-armor"}
  }
 
 LOCKED_RECIPES = {

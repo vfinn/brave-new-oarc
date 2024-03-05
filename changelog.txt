@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.36
+- Made the slider in the single/multiplayer game to generate a map for hosting, work in game for RICHNESS.
+Results:  17% - 600%
+   Iron:    90K - 3.2MB   - 100% is 541K
+   Copper:	72K - 2.5 MB  - 100% is 433K
+   Stone:   57K - 2 MB    - 100% is 346K
+   Coal:    57K - 2 MB    - 100% is 346K
+   These are independently settable in the Factorio UI to configure a game.
+- If Space Block is running removed : electric-mining-drill, burner-mining-drill, light-armor from research
+---------------------------------------------------------------------------------------------------
 Version: 4.2.35
 - Fix bug in SpaceBlock where I made resources around the player.
 ---------------------------------------------------------------------------------------------------

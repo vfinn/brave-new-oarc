@@ -298,7 +298,7 @@ function CharacterOptionChosenForThisPlayersForce(thisPlayer, bMainTeam)
             end            
         end
     end
-    log("char option choose any - no one started this team: " .. thisPlayer.force.name)
+    log("No Character option selected for this team and no one else on this team: " .. thisPlayer.force.name .. ". Either option available")
     return 0
 end
 

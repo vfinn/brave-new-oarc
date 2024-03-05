@@ -211,7 +211,7 @@ function GenerateStartingResources(surface, pos)
         if (not rand_settings.enabled) then
             for t_name,t_data in pairs (global.ocfg.spawn_config.resource_tiles) do
                 local pos = {x=pos.x+t_data.x_offset - kOffset, y=pos.y+t_data.y_offset}
-                GenerateResourcePatch(surface, t_name, t_data.size, pos, t_data.amount)
+                GenerateResourcePatch(surface, t_name, t_data.size, pos, t_data.amount * game.surfaces.oarc.map_gen_settings.autoplace_controls[t_name].richness) 
             end
         else
 
@@ -267,15 +267,19 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
                 GenerateRocketSiloAreas(game.surfaces[GAME_SURFACE_NAME])
                 global.make_silos=true
             end
-            if global.players[player.index].characterMode then
-                for _,v in ipairs(SPACE_BLOCK_UNLOCKED_TECHNOLOGIES_CHAR) do
-                    EnableTech(player.force, v.t)
-                end
-            else
-                -- remove more items from research if you are Space Block and BNO Player
-                for _,v in ipairs(SPACE_BLOCK_LOCKED_TECHNOLOGIES_BNO) do
-                    DisableTech(player.force, v.t)
-                end
+        end
+
+        for _,v in ipairs(SPACE_BLOCK_RECIPES_REMOVE_ALL_PLAYERS) do
+            RemoveRecipe(player.force, v.r)
+        end           
+
+        -- remove more items from research if you are Space Block and BNO Player
+        for _,v in ipairs(SPACE_BLOCK_LOCKED_TECHNOLOGIES_BNO) do
+            DisableTech(player.force, v.t)
+        end
+        if global.players[player.index].characterMode then
+            for _,v in ipairs(SPACE_BLOCK_UNLOCKED_TECHNOLOGIES_CHAR) do
+                EnableTech(player.force, v.t)
             end
         end
     else
@@ -433,13 +437,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     local surface = player.surface
     local characterMode = global.players[player.index].characterMode
 
---    if global.forces[force.name] then
-        -- force already existss
---log("force already exists, exiting")		
---        return
---    end
     global.forces[force.name] = {}
-
 
     -- setup event listeners for creative mode
     if remote.interfaces["creative-mode"] then
@@ -543,6 +541,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
         end
     end
     surface.set_tiles(dirtTiles)
+
     -- Blueprint rules:
     --      make sure a roboport is captured at center !
     --      make sure there are NO yellow chests in this blueprint
@@ -619,7 +618,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     -- storage chest
     local chest_inventory = chest.get_inventory(defines.inventory.chest)
 
-
+    -- K R A S T O R I O 2
     -- add chests for Krastorio unless if they are playing in character mode - the character is their crafting/requestor/storage device
     if global.ocfg.krastorio2 then
         chest_inventory.insert{name = "logistic-chest-requester", count = 2}        -- blue chests
@@ -633,12 +632,17 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     end
     -- everyone always gets 4 red circuits
     destination_for_inventory.insert{name="advanced-circuit", count=4}
+    -- S P A C E   B L O C K
     if global.ocfg.space_block then      
         if characterMode then
             destination_for_inventory.insert{name="iron-ore", count=10}
             destination_for_inventory.insert{name="copper-ore", count=10}
             destination_for_inventory.insert{name="stone", count=10}
             destination_for_inventory.insert{name="coal", count=10}
+            -- Character gets half the logistic chests
+            destination_for_inventory.insert{name = "logistic-chest-passive-provider", count = 2} -- red chests 
+            destination_for_inventory.insert{name = "logistic-chest-buffer", count = 1}           -- add to green chests based on blueprint
+            destination_for_inventory.insert{name = "logistic-chest-active-provider", count = 2}  -- purple chests
         else
             destination_for_inventory.insert{name = "inserter", count = 10}
             destination_for_inventory.insert{name = "fast-inserter", count = 2}
@@ -716,6 +720,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
         else
             destination_for_inventory.insert{name = "firearm-magazine", count = 20}
         end
+        -- S E A   B L O C K
         local seablock_items = {}
         if global.ocfg.seablock then
             -- research some techs that require manual labour
