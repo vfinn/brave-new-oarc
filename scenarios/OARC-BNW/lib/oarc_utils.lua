@@ -39,6 +39,9 @@ end
 
 -- Get a printable GPS string
 function GetGPStext(pos)
+    if pos==nil then 
+        return "unknown"
+    end
     return "[gps=" .. pos.x .. "," .. pos.y .. "]"
 end
 
@@ -473,12 +476,13 @@ function SafeTeleport(player, surface, target_pos)
     player_index    = player.index
     log("Teleporting : " .. player.name .. " to " .. target_pos.x .. "," .. target_pos.y)
     -- if spawning at 0,0 create character, if spawning in base with characterMode
-    if (not (target_pos.x==0 and target_pos.y ==0) and not global.players[player.index].characterMode and player.character ~= nil) then
-        log("destroying character before teleporting")
-        player.character.destroy()
-        player.character = nil
+    if (target_pos.x==0 and target_pos.y ==0) then
+        log("SafeTeleport char edit: destroying character before teleporting to 0,0 for BNO Mode player")
+        if player.character == nil then
+            player.create_character()
+        end
     end
---     player.create_character()
+   
      if (not safe_pos) then
         log("NOT SafeTeleport: 	" .. player.name .. " location: " .. target_pos.x .. ", " .. target_pos.y);
         player.teleport(target_pos, surface)
@@ -487,9 +491,6 @@ function SafeTeleport(player, surface, target_pos)
         player.teleport(safe_pos, surface)
     end
     log("Actual Player position: " .. player.position.x .. "," .. player.position.y)
---    log("SafeTeleport::Character destroyed")
---    player.character.destroy()
---    player.character = nil
 end
 
 -- Create area given point and radius-distance

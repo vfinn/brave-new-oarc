@@ -52,25 +52,26 @@ function GameOptionsGuiClick(event)
     if (name == "warn_biter_attack_option_checkbox") then
         if (global.ocfg.warn_biter_setting[event.player_index] == nil) then
             global.ocfg.warn_biter_setting[event.player_index] = true
-        else
-            global.ocfg.warn_biter_setting[event.player_index] = not global.ocfg.warn_biter_setting[event.player_index]
         end
+        global.ocfg.warn_biter_setting[event.player_index] = not global.ocfg.warn_biter_setting[event.player_index]
         local onOff = " OFF"
         if global.ocfg.warn_biter_setting[event.player_index] then onOff = " ON" end
-        player.print(player.name .. " changed the 'warn of biter attacking' option to " .. onOff)
+        player.print(player.name .. " changed the 'Warn of biter attacking' option to " .. onOff)
     end
     if (name == "offline_protect") then
-        if (not global.ocfg.offline_protect[player.index]) then
-            global.ocfg.offline_protect [player.index] = ENABLE_OFFLINE_PROTECTION;
+        if (global.ocfg.offline_protect[event.player_index] == nil) then 
+            global.ocfg.offline_protect[event.player_index] = ENABLE_OFFLINE_PROTECTION 
         end
-        global.ocfg.offline_protect [player.index] = not global.ocfg.offline_protect [player.index];
+        global.ocfg.offline_protect [event.player_index] = not global.ocfg.offline_protect [event.player_index];
+        local onOff = " OFF"
+        if global.ocfg.offline_protect[event.player_index] then onOff = " ON" end
+        player.print(player.name .. " changed the 'Protect base from biter attacks while offline' option to " .. onOff)
    end  
     if (name == "share_chart_checkbox") then
         if (global.ocfg.share_chart[event.player_index] == nil) then
             global.ocfg.share_chart[event.player_index] = true
-        else
-            global.ocfg.share_chart[event.player_index] = not global.ocfg.share_chart[event.player_index]
         end
+        global.ocfg.share_chart[event.player_index] = not global.ocfg.share_chart[event.player_index]
         local onOff = " OFF"
         if global.ocfg.share_chart[event.player_index] then 
             onOff = " ON" 
@@ -214,6 +215,9 @@ function CreateGameOptionsTab(tab_container, player)
     if (player.index) then
         AddSpacerLine(tab_container)
         AddLabel(tab_container, "individual_user_settings2", "Individual User Settings:", my_label_header_style)
+        if (global.ocfg.warn_biter_setting[player.index] == nil) then
+            global.ocfg.warn_biter_setting[player.index] = true;
+        end
         tab_container.add{name = "warn_biter_attack_option_checkbox",
                         type = "checkbox",
                         caption={"warn-biter-attack-option"},
@@ -225,6 +229,9 @@ function CreateGameOptionsTab(tab_container, player)
                         type = "checkbox",
                         caption={"offline-biter-attack-protect"},
                         state=(global.ocfg.offline_protect[player.index])}
+        if (global.ocfg.share_chart[player.index] == nil) then
+            global.ocfg.share_chart[player.index] = true;
+        end
         tab_container.add{name = "share_chart_checkbox",
                         type = "checkbox",
                         caption={"bno-share-chart"},

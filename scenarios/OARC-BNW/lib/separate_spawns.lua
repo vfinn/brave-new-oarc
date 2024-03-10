@@ -376,7 +376,9 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
         end
         game.surfaces[GAME_SURFACE_NAME].set_tiles(tiles)
 
-        if not player.character then player.create_character() end
+        if not player.character then 
+            player.create_character() 
+         end
         SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], SP)
     else
         SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], SP)
@@ -676,8 +678,10 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
         destination_for_inventory.insert{name="small-lamp", count = 10}
         destination_for_inventory.insert{name ="lab", count=2}
         if not global.ocfg.easyStart then
-            -- these 5 are extra items in the easyStart bp, so give to normal mode
-            destination_for_inventory.insert{name = "logistic-chest-requester", count = 1}    -- blue chests
+            -- these 5 are extra items in the easyStart bp, so give to normal 
+            if not characterMode then
+                destination_for_inventory.insert{name = "logistic-chest-requester", count = 1}    -- blue chests
+            end
             destination_for_inventory.insert{name = "inserter", count = 1}
             destination_for_inventory.insert{name = "fast-inserter", count = 5}   
             destination_for_inventory.insert{name = "filter-inserter", count = 3} 
@@ -1168,12 +1172,8 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
     -- If this player is staying in the game, lets make sure we don't delete them along with the map chunks being
     -- cleared.
     log("RemoveOrResetPlayer:: " .. player.name .. " teleport to 0,0. Remove_player: " .. tostring(remove_player) .. ", remove_force: " .. tostring(remove_force) .. ", remove_base: " .. tostring(remove_base) .. ", immediate: " .. tostring(immediate))
-    -- this causing crash
-    --if player.character == nil then
-    --    log("RemoveOrResetPlayer::Character created")
-    --    player.create_character()
-    --end
-    player.teleport({x=0,y=0}, GAME_SURFACE_NAME)
+
+    SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], {x=0,y=0})
     local player_old_force = player.force
     player.force = global.ocfg.main_force
 

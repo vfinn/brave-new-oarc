@@ -328,9 +328,9 @@ log("on_event::On Player created: " .. player.name)
             characterMode = false
         }
     end
-    -- Move the player to the game surface immediately.
-    --    player.teleport({x=0,y=0},  game.surfaces[GAME_SURFACE_NAME]) -- could cause crash - SafeTeleport bypasses safeguards
-    SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], {x=0,y=0})
+    -- Move the player to the game surface immediately.  First time spawning - character has to be deleted
+    player.character.destroy()
+    player.teleport({x=0,y=0},  game.surfaces[GAME_SURFACE_NAME])   -- don't use SafeTeleport or double characters show up
     player.set_controller{type=defines.controllers.character,character=player.surface.create_entity{name='character',force=player.force,position=player.position}}
 
     log("Player teleported to 0:0")
@@ -976,8 +976,7 @@ script.on_event(defines.events.on_entity_died, function(event)
     if entity.name=="roboport-main" then
         log("Force DIED: " .. entity.force.name)
         SendBroadcastMsg("Oh No someone on '" .. entity.force.name ..  "'' Gone like a fart in the wind")
-        for name,player in pairs(game.connected_players) do
-            player.play_sound { path = 'you-lost' }
+        for name,player in pairs(game.players) do
             local SP=entity.position
             SP.y=SP.y+10        -- move them down 10 tiles, otherwise they spawn inside the walls, next to large roboport
 
@@ -987,14 +986,17 @@ script.on_event(defines.events.on_entity_died, function(event)
                 SendBroadcastMsg("Our buddy " .. player.name .. " on force: '" .. entity.force.name .. "' Died due to the starting roboport being destroyed.")        
                 SendMsg(player.name, "Sorry '" .. player.name .. "' you LOSE! Rejoin if you like, and give it another try")
                 RemoveOrResetPlayer(player, false, true, true, true)
+                player.play_sound { path = 'you-lost' }
             end
-
 --            if (player.force.name == entity.force.name) then
 --                
 --                SendMsg(player.name, "Sorry " .. player.name .. " you lose - rejoin if you like")
 --    		    log("Kicking Player: " .. player.name .. " force: " .. player.force.name)
 --                RemoveOrResetPlayer(player, false, true, true, true)
 --            end
+        end
+        for name, player in pairs(game.connected_players) do 
+            player.play_sound { path = 'player-lost' }
         end
         
 --        game.set_game_state{game_finished = false, player_won = false, can_continue = true, }

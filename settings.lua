@@ -168,5 +168,5 @@ data:extend({
         setting_type = "startup",
         default_value = false,
         order="bnw-93"
-    }    
+    }   
 })

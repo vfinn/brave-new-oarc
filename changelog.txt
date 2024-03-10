@@ -1,4 +1,22 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.37
+
+- There was a scenario where spawning character players would get 2X resources - fixed
+
+Minor Bug Fix's:
+- Fix to Offline Protect checkbox not staying checked
+- Some of the other checkbox's in Server Info did not toggle properly, fixed
+- Changes to when sound it played - each player will hear the "you lose" sound, the loser will hear
+  one of two random lose sounds and the "you lose" sound. But more importantly this is done after 
+  the player is removed from the game, sent to 0,0.  This caused a race condition that in one case
+  resulted in a crash - fixed.
+- Modified start items for character - was supposed to get 2/2/2/2 logistic chests with 4 yellow, 
+  was getting an extra blue chest - removed.
+- Initial jailing of players at 0,0 showed many players waiting to spawn, some unable to move - this is fixed
+None of above impact game play, and is intended to move towards a stable release with no bugs
+Not Fixed Bug:
+   There is still a bug that occur when one player trys to join a team 
+---------------------------------------------------------------------------------------------------
 Version: 4.2.36
 - Made the slider in the single/multiplayer game to generate a map for hosting, work in game for RICHNESS.
 Results:  17% - 600%
