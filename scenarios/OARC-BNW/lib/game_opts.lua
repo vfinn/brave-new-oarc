@@ -52,8 +52,9 @@ function GameOptionsGuiClick(event)
     if (name == "warn_biter_attack_option_checkbox") then
         if (global.ocfg.warn_biter_setting[event.player_index] == nil) then
             global.ocfg.warn_biter_setting[event.player_index] = true
+        else
+            global.ocfg.warn_biter_setting[event.player_index] = not global.ocfg.warn_biter_setting[event.player_index]
         end
-        global.ocfg.warn_biter_setting[event.player_index] = not global.ocfg.warn_biter_setting[event.player_index]
         local onOff = " OFF"
         if global.ocfg.warn_biter_setting[event.player_index] then onOff = " ON" end
         player.print(player.name .. " changed the 'Warn of biter attacking' option to " .. onOff)
@@ -67,7 +68,22 @@ function GameOptionsGuiClick(event)
         if global.ocfg.offline_protect[event.player_index] then onOff = " ON" end
         player.print(player.name .. " changed the 'Protect base from biter attacks while offline' option to " .. onOff)
    end  
-    if (name == "share_chart_checkbox") then
+   if (name == "decon_miners") then
+
+        local hostSettingForDeconMiners = settings.startup["bno-auto-deconstruct-miners-allowed"].value
+
+        if global.ocfg.enable_miner_decon[player.force.name] ==nil then
+            global.ocfg.enable_miner_decon[player.force.name] = ENABLE_MINER_AUTODECON
+        end 
+        -- Slight change pace here using force.name as index instead of event.player_index - I recommend prosecution and persecution
+        global.ocfg.enable_miner_decon [player.force.name] = not  global.ocfg.enable_miner_decon [player.force.name]
+        local onOff = " OFF"
+        if global.ocfg.enable_miner_decon [player.force.name] then onOff = " ON" end
+        player.print(player.name .. " changed the 'Auto Miner Deconstruct' option to " .. onOff)
+   end  
+  
+   
+   if (name == "share_chart_checkbox") then
         if (global.ocfg.share_chart[event.player_index] == nil) then
             global.ocfg.share_chart[event.player_index] = true
         end
@@ -223,7 +239,7 @@ function CreateGameOptionsTab(tab_container, player)
                         caption={"warn-biter-attack-option"},
                         state=(global.ocfg.warn_biter_setting[player.index])}
         if (global.ocfg.offline_protect[player.index] == nil) then
-            global.ocfg.offline_protect [player.index] = ENABLE_OFFLINE_PROTECTION;
+            global.ocfg.offline_protect [player.index] = ENABLE_OFFLINE_PROTECTION
         end
         tab_container.add{name = "offline_protect",
                         type = "checkbox",
@@ -236,5 +252,15 @@ function CreateGameOptionsTab(tab_container, player)
                         type = "checkbox",
                         caption={"bno-share-chart"},
                         state=(global.ocfg.share_chart[player.index])}
+
+        if global.ocfg.enable_miner_decon[player.force.name] == nil then
+            global.ocfg.enable_miner_decon[player.force.name] = ENABLE_MINER_AUTODECON
+        end
+        if (settings.startup["bno-auto-deconstruct-miners-allowed"].value) then
+            tab_container.add{name = "decon_miners",
+                            type = "checkbox",
+                            caption={"decon-empty-miners"},
+                            state=(global.ocfg.enable_miner_decon[player.force.name])}
+        end
     end
 end

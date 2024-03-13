@@ -188,7 +188,7 @@ function GenerateStartingResources(surface, pos)
     local rand_settings = global.ocfg.spawn_config.resource_rand_pos_settings
 
     if global.ocfg.bzlead then
-        GenerateResourcePatch(surface, "lead-ore", 15, {x=pos.x-64, y=pos.y+29}, 80000)
+        GenerateResourcePatch(surface, "lead-ore", 15, {x=pos.x-64, y=pos.y+29}, 20000)
     end
     if global.ocfg.bztitanium then
         GenerateResourcePatch(surface, "titanium-ore", 8, {x=pos.x-61, y=pos.y-34}, 10000)
@@ -1173,7 +1173,9 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
     -- cleared.
     log("RemoveOrResetPlayer:: " .. player.name .. " teleport to 0,0. Remove_player: " .. tostring(remove_player) .. ", remove_force: " .. tostring(remove_force) .. ", remove_base: " .. tostring(remove_base) .. ", immediate: " .. tostring(immediate))
 
-    SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], {x=0,y=0})
+    if (not remove_player) then
+        SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], {x=0,y=0})    -- tell SafeTeleport NOT to remove the character or crash city
+    end
     local player_old_force = player.force
     player.force = global.ocfg.main_force
 

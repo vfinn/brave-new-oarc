@@ -52,9 +52,6 @@ ENABLE_LONGREACH = true
 -- Enable Autofill (My autofill is very simplistic, if you are using a similar mod disable this!)
 ENABLE_AUTOFILL = true
 
--- Enable auto decon of miners (My miner decon is very simplistic, if you are using a similar mod disable this!)
-ENABLE_MINER_AUTODECON = true
-
 -- Enable Playerlist
 ENABLE_PLAYER_LIST = true
 PLAYER_LIST_OFFLINE_PLAYERS = true -- List offline players as well.

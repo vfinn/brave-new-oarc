@@ -192,7 +192,7 @@ function configureSwarmPing(target_player, group)
         if (global.ocfg.warn_biter_setting == nil) then
             global.ocfg.warn_biter_setting = {}
             
-            global.ocfg.warn_biter_setting[target_player.index] = global.ocfg.warn_biter_attack; -- init individual setting to default
+            global.ocfg.warn_biter_setting[target_player.index] = global.ocfg.warn_biter_attack -- init individual setting to default
         end
         if (global.ocfg.warn_biter_setting[target_player.index]) then
             local groupWithStartPosition = {}

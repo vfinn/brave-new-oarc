@@ -34,7 +34,7 @@ function InitOarcConfig()
     global.ocfg.enable_tags = ENABLE_TAGS
     global.ocfg.enable_long_reach = ENABLE_LONGREACH
     global.ocfg.enable_autofill = ENABLE_AUTOFILL
-    global.ocfg.enable_miner_decon = ENABLE_MINER_AUTODECON
+
     global.ocfg.enable_player_list = ENABLE_PLAYER_LIST
     global.ocfg.list_offline_players = PLAYER_LIST_OFFLINE_PLAYERS
     global.ocfg.enable_shared_team_vision = ENABLE_SHARED_TEAM_VISION
@@ -50,6 +50,8 @@ function InitOarcConfig()
     -- We support a global option to turn on/off protection - host may choose always off, always on, or option based on player choice
     global.ocfg.enable_offline_protect = ENABLE_OFFLINE_PROTECTION  
     global.ocfg.offline_protect = {}
+    global.ocfg.enable_miner_decon = {} -- forces
+    global.oarc_decon_miners = {}       -- table of miners to decon on_nth_tick
     global.ocfg.enable_power_armor_start = ENABLE_POWER_ARMOR_QUICK_START
     global.ocfg.enable_modular_armor_start = ENABLE_MODULAR_ARMOR_QUICK_START
     global.ocfg.lock_goodies_rocket_launch = LOCK_GOODIES_UNTIL_ROCKET_LAUNCH
@@ -111,6 +113,7 @@ function InitOarcConfig()
 
     global.ocfg.enable_server_write_files = ENABLE_SERVER_WRITE_FILES
     global.ocfg.warn_biter_attack = setGlobalSetting("bno-biter-swarm-attack", true, false)
+    
     global.ocfg.warn_biter_setting = {}
     global.ocfg.share_chart = {}
 
@@ -164,18 +167,18 @@ function InitOarcConfig()
 end
 
 -- Set a value either based on MOD settings or config.lua
--- only use isBool true if field returns "yes" and needs conversion to boolean
-function setGlobalSetting(settings_startup_name, default_val, isBool)
-    isBool = isBool or false    -- set default to false
+-- only use isYesNo true if field returns "yes" and needs conversion to boolean
+function setGlobalSetting(settings_startup_name, default_val, isYesNo)
+    isYesNo = isYesNo or false    -- set default to false
     local tmpVal = default_val
     local settingVal = settings.startup[settings_startup_name].value
     if ((settingVal ~= "use config.lua setting")) then
-        if (isBool) then
+        if (isYesNo) then
             tmpVal = settingVal=="yes"      -- convert Yes/No into boolean
         else
             tmpVal = settingVal
         end
     end   
-    log("setGlobalSetting: " .. settings_startup_name .. ", isBool? " .. tostring(isBool) .. ", input value: " .. tostring(default_val) .. ", output value: " .. tostring(tmpVal))
+    log("setGlobalSetting: " .. settings_startup_name .. ", isYesNo? " .. tostring(isYesNo) .. ", input value: " .. tostring(default_val) .. ", output value: " .. tostring(tmpVal))
     return tmpVal
 end

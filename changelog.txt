@@ -1,20 +1,28 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.38
+    - Sound for chat is now more noticeable, but hopefully not irratating.
+    - Auto Deconstruction of miners.  Host can turn this option OFF, if they decide to load a different mod.
+      Players can turn this off/on if the host has enabled it. See Server Info menu.
+    - Reduced lead ore in maps using bzlead mod from 17 million, which was a bit crazy large amount
+    - Fixed the multitude of jail spawn players, that couldn't move at that small jail site
+---------------------------------------------------------------------------------------------------
 Version: 4.2.37
 
-- There was a scenario where spawning character players would get 2X resources - fixed
+    - There was a scenario where spawning character players would get 2X resources - fixed
 
-Minor Bug Fix's:
-- Fix to Offline Protect checkbox not staying checked
-- Some of the other checkbox's in Server Info did not toggle properly, fixed
-- Changes to when sound it played - each player will hear the "you lose" sound, the loser will hear
-  one of two random lose sounds and the "you lose" sound. But more importantly this is done after 
-  the player is removed from the game, sent to 0,0.  This caused a race condition that in one case
-  resulted in a crash - fixed.
-- Modified start items for character - was supposed to get 2/2/2/2 logistic chests with 4 yellow, 
-  was getting an extra blue chest - removed.
-- Initial jailing of players at 0,0 showed many players waiting to spawn, some unable to move - this is fixed
+  Minor Bug Fix's:
+    - Fix to Offline Protect checkbox not staying checked
+    - Some of the other checkbox's in Server Info did not toggle properly, fixed
+    - Changes to when sound it played - each player will hear the "you lose" sound, the loser will hear
+      one of two random lose sounds and the "you lose" sound. But more importantly this is done after 
+      the player is removed from the game, sent to 0,0.  This caused a race condition that in one case
+      resulted in a crash - fixed.
+    - Modified start items for character - was supposed to get 2/2/2/2 logistic chests with 4 yellow, 
+      was getting an extra blue chest - removed.
+    - Initial jailing of players at 0,0 showed many players waiting to spawn, some unable to move - this is fixed
 None of above impact game play, and is intended to move towards a stable release with no bugs
-Not Fixed Bug:
+
+  Not Fixed Bug:
    There is still a bug that occur when one player trys to join a team 
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.36
@@ -25,90 +33,90 @@ Results:  17% - 600%
    Stone:   57K - 2 MB    - 100% is 346K
    Coal:    57K - 2 MB    - 100% is 346K
    These are independently settable in the Factorio UI to configure a game.
-- If Space Block is running removed : electric-mining-drill, burner-mining-drill, light-armor from research
+    - If Space Block is running removed : electric-mining-drill, burner-mining-drill, light-armor from research
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.35
-- Fix bug in SpaceBlock where I made resources around the player.
+    - Fix bug in SpaceBlock where I made resources around the player.
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.34
-- Distant Rocket Silo removed - this should save on memory and be a bit easier to play.
-  Players can build rocket silo anywhere.
-- Additional sounds added - for lose scenario
+    - Distant Rocket Silo removed - this should save on memory and be a bit easier to play.
+      Players can build rocket silo anywhere.
+    - Additional sounds added - for lose scenario
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.33
-- Changed warning sound to be different and more subtle when biters are attacking
-- Added option to enable player to turn on/off attacks by biters while offline. The default is 
-  set in the config.lua - ENABLE_OFFLINE_PROTECTION - defaulting to true.
-- protection against a crash caused when two players in buddy mode joined as BNO + Character. The UI
-  attempts to make this impossible, but obviously one got through.
-- Character player gets 4/4/4/4 logistic chests of R/G/B/P
-- Fixed disabling of Steel-axe. This was stated as disabled in 4.2.31 - fixed here.
-- Modified starting items for BNO Player on Space Block - adding logistic chests.
+    - Changed warning sound to be different and more subtle when biters are attacking
+    - Added option to enable player to turn on/off attacks by biters while offline. The default is 
+      set in the config.lua - ENABLE_OFFLINE_PROTECTION - defaulting to true.
+    - protection against a crash caused when two players in buddy mode joined as BNO + Character. The UI
+      attempts to make this impossible, but obviously one got through.
+    - Character player gets 4/4/4/4 logistic chests of R/G/B/P
+    - Fixed disabling of Steel-axe. This was stated as disabled in 4.2.31 - fixed here.
+    - Modified starting items for BNO Player on Space Block - adding logistic chests.
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.32
-- Bug fix in code that clears inventory - only shows up in multiplayer mode
+    - Bug fix in code that clears inventory - only shows up in multiplayer mode
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.31
-- updated list of supported mods to limit to Alien Modules (1.4.2) mod that I recently modified to 
-  support teams.
-- After death of a players main roboport - terminating his game, the items in the players inventory are removed.
-  This is more meaningful to character players and removes a potential cheat.
-- Removed requirement to launch before getting level 3 modules.
-- Removed recipe for Steel Axe for BNO players. This screws up the ability for you to pick up buildings 
-  or mine - from outter space.
-- Added support for LootChestPlus mod - to collect items on the ground, ideal for use with Alien-Modules.
-- Krastorio Character player gets 2 addition red/blue chests - same as BNO player.
-- Removed the dependancy on launching a rocket to make speed 3 modules.
+    - updated list of supported mods to limit to Alien Modules (1.4.2) mod that I recently modified to 
+      support teams.
+    - After death of a players main roboport - terminating his game, the items in the players inventory are removed.
+      This is more meaningful to character players and removes a potential cheat.
+    - Removed requirement to launch before getting level 3 modules.
+    - Removed recipe for Steel Axe for BNO players. This screws up the ability for you to pick up buildings 
+      or mine - from outter space.
+    - Added support for LootChestPlus mod - to collect items on the ground, ideal for use with Alien-Modules.
+    - Krastorio Character player gets 2 addition red/blue chests - same as BNO player.
+    - Removed the dependancy on launching a rocket to make speed 3 modules.
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.30
-- Removed Restart button for players in spawn location
-- Minor Fix: player menu, which was not showing character/brave new player correctly
-- Added items for SeaBlock for both character and BNO player
-- Added option chooseable by host to modify starting chests from 4 upto 10 total red/blue chests for BNO player
-  no change to green/purple chests.  This to help remove starting grind.
-- SeaBlock and Krastorio text on ground at spawn if those mods are loaded
-- Fixed bug on exit that could occasionally cause a crash when a player left the game
+    - Removed Restart button for players in spawn location
+    - Minor Fix: player menu, which was not showing character/brave new player correctly
+    - Added items for SeaBlock for both character and BNO player
+    - Added option chooseable by host to modify starting chests from 4 upto 10 total red/blue chests for BNO player
+      no change to green/purple chests.  This to help remove starting grind.
+    - SeaBlock and Krastorio text on ground at spawn if those mods are loaded
+    - Fixed bug on exit that could occasionally cause a crash when a player left the game
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.29 Feb 12, 2024
-- Fixed Buddy Spawn mode - this previous caused a crash
+    - Fixed Buddy Spawn mode - this previous caused a crash
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.28 Feb 5, 2024
-- Labelled on ground Sea Block, Krastorio2 when you join with those mods running
-
-Bug fixes 
-- One due to someone exiting the game.
-- Other bug was the labelling of Character/Brave New Player in player list was wrong
-- SeaBlock - addition of 300 wood pellets and 2 assemblers to Brave New Player - otherwise could be deadlock getting to wood stage.
+    - Labelled on ground Sea Block, Krastorio2 when you join with those mods running
+    
+      Bug fixes 
+    - One due to someone exiting the game.
+    - Other bug was the labelling of Character/Brave New Player in player list was wrong
+    - SeaBlock - addition of 300 wood pellets and 2 assemblers to Brave New Player - otherwise could be deadlock getting to wood stage.
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.27 Jan 29, 2024
-- Added support for SeaBlock in both character and BNO modes
+    - Added support for SeaBlock in both character and BNO modes
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.26 Jan 23, 2024
-- bug fix of crash when player leaves game - typically crash is due to player losing their main roboport 
-to the biters. If you want to fix your SAVE file - unzip it, Replace the oarc_global.cfg, and control.lua files, 
-zip it back up - and use that to restart your game.
-- Fixed Krastorio2 creep ! So removed the free bio labs and free research of bio mass
+    - bug fix of crash when player leaves game - typically crash is due to player losing their main roboport 
+    to the biters. If you want to fix your SAVE file - unzip it, Replace the oarc_global.cfg, and control.lua files, 
+    zip it back up - and use that to restart your game.
+    - Fixed Krastorio2 creep ! So removed the free bio labs and free research of bio mass
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.25 Jan 18, 2024
 Modified BNO to support character and BNO mode for Krastorio2.  Each player has the choice.
-Bug Fixes:
-- Previous versions would increase the richness of the patches 4X every time a new player joined.
-  The normal coal patch is around 1.3 million, so that quickly would grow to 4.2.26
-
-- Previous version fixed the crash when a player joined/exit, which was due to my insistance of 
-  stamping every base with the name of the player. This feature makes it much easier for hosts
-  to maintain a map. Although now with the ability to hide your base, the host may need to go
-  into editor mode to see other bases.  But I left TTL on - which would make it disappear after 10
-  seconds - this is fixed.
-- Rebalanced the items provided in each mode: BNO, Krastorio2, Space Block for Character & Brave New Player 
+  Bug Fixes:
+    - Previous versions would increase the richness of the patches 4X every time a new player joined.
+      The normal coal patch is around 1.3 million, so that quickly would grow to 4.2.26
+    
+    - Previous version fixed the crash when a player joined/exit, which was due to my insistance of 
+      stamping every base with the name of the player. This feature makes it much easier for hosts
+      to maintain a map. Although now with the ability to hide your base, the host may need to go
+      into editor mode to see other bases.  But I left TTL on - which would make it disappear after 10
+      seconds - this is fixed.
+    - Rebalanced the items provided in each mode: BNO, Krastorio2, Space Block for Character & Brave New Player 
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.24 Jan 14, 2024
-- Bug Fixes - still working on a crash in Space Block on entry or exit of game
-  please report if you see issues preferrably in my discord: https://discord.gg/AeFhytZKXk
-  or with a slower response in the mod repository
+    - Bug Fixes - still working on a crash in Space Block on entry or exit of game
+      please report if you see issues preferrably in my discord: https://discord.gg/AeFhytZKXk
+      or with a slower response in the mod repository
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.23
-- Bug Fixes
+    - Bug Fixes
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.22
 - Feature - Added support for SpaceBlock in Character mode
@@ -148,7 +156,7 @@ Date: 12/31/2023 -  Happy New Year !
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.18
 Date: 12/19/2023 -  Merry Christmas !
-Changes:
+  Changes:
 Modified settings for Krastorio
 - support square and diamond bases - Thx JVM !
 - fixed Restart for Krastorio2
@@ -160,12 +168,12 @@ Modified settings for Krastorio
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.17
 Date: 12/3/2023 
-Changes to support Freight Forward
+  Changes to support Freight Forward
 -Added titanium if bztitanium mod loaded
 -Added lead if bzlead mod loaded
 -removed all silo's if Freight Forwading loaded
 
-Changes to support Krastorio 2
+  Changes to support Krastorio 2
 -Move bot speed to keep Krastorio from over riding with slower bots
 -Enabled picking up any "fuel-cell" and "dt-cell"
 -Provide Rifle Ammo - instead of pistol ammo

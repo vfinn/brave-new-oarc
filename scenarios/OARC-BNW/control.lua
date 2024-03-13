@@ -44,6 +44,29 @@
 --      4. Put all other files into lib folder
 --      5. Provided an examples folder for example/recommended map gen settings
 
+-- 
+    
+--local console = {
+--    name = 'Console',
+--    admin = true,
+----    print = function(...) rcon.print(...) end,
+--    print = function (...)
+--      for i,v in ipairs(arg) do
+--        printResult = printResult .. tostring(v) .. "\t"
+--      end
+--      printResult = printResult .. "\n"
+--      rcon.print(printResult, {sound=defines.print_sound.never})
+--    end,
+--    color = {1, 1, 1, 1}
+--}
+
+local console = {
+    name = 'Console',
+    admin = true,
+    print = function(...) rcon.print(...) end,
+    color = {1, 1, 1, 1}
+}
+
 -- Generic Utility Includes
 require("lib/oarc_utils")
 
@@ -130,7 +153,6 @@ commands.add_command("trigger-map-cleanup",
 --   time the game starts
 ----------------------------------------
 script.on_init(function(event)
-
     -- FIRST
     InitOarcConfig()
 
@@ -292,6 +314,7 @@ script.on_event(defines.events.on_player_joined_game, function(event)
         remote.call("kr-creep", "set_creep_on_surface", game.surfaces["nauvis"].index, false)     -- nauvis
         global.ocfg.creep_initialized=true
     end
+
     log("on_event::On Player Joined Game " .. joiningPlayer.name)
     PlayerJoinedMessages(event)
     ServerWriteFile("player_events", joiningPlayer.name .. " joined the game." .. "\n")
@@ -329,7 +352,9 @@ log("on_event::On Player created: " .. player.name)
         }
     end
     -- Move the player to the game surface immediately.  First time spawning - character has to be deleted
-    player.character.destroy()
+    if player.character then 
+        player.character.destroy()
+    end
     player.teleport({x=0,y=0},  game.surfaces[GAME_SURFACE_NAME])   -- don't use SafeTeleport or double characters show up
     player.set_controller{type=defines.controllers.character,character=player.surface.create_entity{name='character',force=player.force,position=player.position}}
 
@@ -449,7 +474,7 @@ script.on_event(defines.events.on_tick, function(event)
     TimeoutSpeechBubblesOnTick()
     FadeoutRenderOnTick()
 
-    if global.ocfg.enable_miner_decon then
+    if #global.oarc_decon_miners>0 then
         OarcAutoDeconOnTick()
     end
 
@@ -546,6 +571,13 @@ script.on_event(defines.events.on_console_chat, function(event)
         end
     end
 end)
+
+--script.on_event(defines.events.on_console_command, function(event)
+--    if (event.player_index and event.message) then
+--        ServerWriteFile("server_console_command", game.players[event.player_index].name .. ": " .. event.message .. "\n")
+--    end
+--end)
+
 
 ----------------------------------------
 -- On Research Finished
@@ -699,9 +731,7 @@ end,
 -- Scripted auto decon for miners...
 ----------------------------------------
 script.on_event(defines.events.on_resource_depleted, function(event)
-    if global.ocfg.enable_miner_decon then
-        OarcAutoDeconOnResourceDepleted(event)
-    end
+    OarcAutoDeconOnResourceDepleted(event)
 end)
 
 -- Addition of functions to track bots dying vf

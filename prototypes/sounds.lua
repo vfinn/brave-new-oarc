@@ -17,8 +17,14 @@ data:extend{
 		type = "sound",
 		name = "you-lost",
 		category = "alert",
-		allow_random_repeat = true,
 		filename = "__brave-new-oarc__/sounds/075578_laugh2ogg-37527.ogg",
+		volume = 2
+    },
+	{
+		type = "sound",
+		name = "team-chat",
+		category = "alert",
+		filename = "__brave-new-oarc__/sounds/ping-82822.ogg",
 		volume = 2
     },
 	{
@@ -34,5 +40,5 @@ data:extend{
 				volume = 2
 			}
 		}
-    }
+    },
 }

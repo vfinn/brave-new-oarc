@@ -139,7 +139,14 @@ data:extend({
         name = "bno-biter-swarm-attack",     
         setting_type = "startup",
         default_value = true,
-        order="bnw-85"
+        order="bnw-86"
+    },
+    {
+        type = "bool-setting",
+        name = "bno-auto-deconstruct-miners-allowed",     
+        setting_type = "startup",
+        default_value = true,
+        order="bnw-87"
     },
     {
         type = "bool-setting",

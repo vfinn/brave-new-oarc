@@ -234,7 +234,7 @@ function SendForceMsg(forceName, msg)
     for name,player in pairs(game.connected_players) do
         if (player.force == forceName) then
             player.print(msg)
-           log("msg: " .. msg)
+            log("msg: " .. msg.. ", " .. forceName)
         end
     end
 end
@@ -475,13 +475,6 @@ function SafeTeleport(player, surface, target_pos)
     end
     player_index    = player.index
     log("Teleporting : " .. player.name .. " to " .. target_pos.x .. "," .. target_pos.y)
-    -- if spawning at 0,0 create character, if spawning in base with characterMode
-    if (target_pos.x==0 and target_pos.y ==0) then
-        log("SafeTeleport char edit: destroying character before teleporting to 0,0 for BNO Mode player")
-        if player.character == nil then
-            player.create_character()
-        end
-    end
    
      if (not safe_pos) then
         log("NOT SafeTeleport: 	" .. player.name .. " location: " .. target_pos.x .. ", " .. target_pos.y);
@@ -491,6 +484,13 @@ function SafeTeleport(player, surface, target_pos)
         player.teleport(safe_pos, surface)
     end
     log("Actual Player position: " .. player.position.x .. "," .. player.position.y)
+    -- if spawning at 0,0 create character, if spawning in base with characterMode
+    if (target_pos.x==0 and target_pos.y ==0) then
+        if player.character == nil then
+            log("SafeTeleport char edit: creating character before teleporting to 0,0")
+            player.create_character()
+        end
+    end
 end
 
 -- Create area given point and radius-distance
@@ -544,11 +544,27 @@ end
 function ShareChatBetweenForces(player, msg)
     for _,force in pairs(game.forces) do
         if (force ~= nil) then
-            if ((force.name ~= enemy) and
-                (force.name ~= neutral) and
-                (force.name ~= player) and
-                (force ~= player.force)) then
-                force.print(player.name..": "..msg)
+            if ((force.name ~= "enemy") 
+            and (force.name ~= "neutral") 
+            and (force.name ~= "player") 
+            and (force.name ~= "_ABANDONED_")
+            and (force.name ~= "_DESTROYED_") 
+--          and (force ~= player.force)
+            ) then
+                if (force == player.force) then     -- send to your team - see if this is redumbdant
+                    for  _,p in pairs(player.force.players) do
+                        if player~=p then
+                            p.print(player.name..": "..msg, {color={r=0, g=1, b=1, a=1}, sound=defines.print_sound.never})
+                            p.play_sound { path = 'team-chat' }
+--                        else REDUMBDANT
+--                            p.print(player.name..": Sending your msg of {"..msg.."}", {color={r=0, g=1, b=1, a=1}, sound=defines.print_sound.never})
+--                            p.play_sound { path = 'team-chat' }
+                        end
+                    end
+                else
+                    force.print(player.name..": "..msg, {color={r=1, g=0, b=0, a=1}, sound=defines.print_sound.never})
+                    force.play_sound { path = 'team-chat' }
+                end
             end
         end
     end
