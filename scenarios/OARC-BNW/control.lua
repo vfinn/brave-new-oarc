@@ -64,9 +64,8 @@ local console = {
     name = 'Console',
     admin = true,
     print = function(...) rcon.print(...) end,
-    color = {1, 1, 1, 1}
+    color = {0, 1, 1, 1}    -- cyan
 }
-
 -- Generic Utility Includes
 require("lib/oarc_utils")
 
@@ -1085,6 +1084,7 @@ script.on_event(defines.events.on_player_changed_position, function(event)
     global.players[event.player_index].previous_position = player.position
 end)
 
+
 --script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
 --    log("events.on_runtime_mod_setting_changed: setting " .. event.setting .. " for: " .. game.players[event.player_index].name .. "type: " .. event.setting_type)
 --    log("Physical setting changed to: " .. settings.get_player_settings(event.player_index)["bno-share-chart"])
@@ -1112,3 +1112,53 @@ local myLogiBot
     myLogiBot.destructible = false
     data:extend({myLogiBot})
 end
+
+  
+--=================================================================================================
+
+-- @ tableIn: Table
+-- @ element: any
+local function tableContains(tableIn, element)
+  for ___, value in pairs(tableIn) do
+    if value == element then
+      return true
+    end
+  end
+  return false
+end
+
+--=================================================================================================
+-- @ event: CustomInputEvent
+-- Docs: https://lua-api.factorio.com/latest/events.html#CustomInputEvent
+local function removeCorpses(event)
+  local blacklist = {
+      'character-corpse',
+      'transport-caution-corpse'  -- Transport Drones
+    }
+      local player = game.players[event.player_index]
+  if not player then return end
+  local radius = 32
+  -- settings.get_player_settings(event.player_index)['rbc-radius'].value
+  
+  local bodyCount = 0
+  for ___, entity in pairs(player.surface.find_entities_filtered{
+    position = player.position,
+    radius = radius,
+    type = 'corpse'}
+  ) do 
+    if not tableContains(blacklist, entity.name) then 
+      entity.destroy()
+      bodyCount = bodyCount + 1
+    end
+  end
+  if bodyCount > 0 then 
+    player.print('Removed ' .. tostring(bodyCount) .. ' corpses', {r=254/255, g=255/255, b=10/255, a=1})
+  else 
+    player.print('Already Clear', {r=49/255, g=190/255, b=48/255, a=1})
+  end
+end
+  
+--=================================================================================================
+script.on_event("remove-corpses", removeCorpses)
+
+--=================================================================================================
