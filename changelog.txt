@@ -1,8 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.39
+    - Fix for a dumb bug I put in 4.2.38 which caused a crash on every rocket launch
     - Removal of corpses now linked to backspace key.  This taken directly from 'Remove Biter Corpses'
       mod. I would have instead included that mod, but it spams everyone that corpses are removed
       when anyone does it. Most mods still think this is a single team game.
+    - Chat sound change - thx bits-orio
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.38
     - Sound for chat is now more noticeable, but hopefully not irratating.

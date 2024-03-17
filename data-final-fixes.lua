@@ -2,6 +2,7 @@
 
 -- entities
 require("prototypes.entity.roboport-main")
+require("prototypes.entity.loader")
 
 -- items
 require("prototypes.item")
@@ -12,7 +13,7 @@ local myLogiBotItem
 local myLogiBot
 
 
-local speedBotsDbl=settings.startup["bno-starting-bots_speed"].value / 216
+local speedBotsDbl=settings.startup["bno-starting-bots_speed"].value / 216	-- multiply by 0.621371 to get to mph
 log("Bot speed: " .. speedBotsDbl .. " which is " .. speedBotsDbl*216 .. " km/hr")
 -- energy usage: {"normal", "increase storage", "increase range", "increase movement", "increase storage, range & movement"}
 local energyBotStr=settings.startup["bno-bots_energy"].value
@@ -45,16 +46,12 @@ myLogiBot.energy_per_tick	= energyBotsMovement
 myLogiBot.energy_per_move	= energyBotsRange
 data:extend({myLogiBot})
 
---mySpecialRoboport = util.table.deepcopy(data.raw["roboport"]["roboport"])
---mySpecialRoboport.name = "roboport-main"
---mySpecialRoboport.is_military_target=true
---data:extend({mySpecialRoboport})
-
 myLogiRoboportItem = util.table.deepcopy(data.raw["item"]["roboport"])
 myLogiRoboportItem.name="roboport-main"
 myLogiRoboportItem.place_result = "roboport-main"
 myLogiRoboportItem.icon = "__brave-new-oarc__/graphics/icons/roboport-main.png"
 data:extend({myLogiRoboportItem})
+
 
 
 -- Bots explode for no good reason(update Jan 2023 JGF - found it we were killing them if they had no owner - FIXED), in a mod that requires you to use ONLY bots to survive, them spontaneous exploding is bad

@@ -1,4 +1,4 @@
--- Taken from Robot_and_Radar_MK2  module !
+-- Some of this taken from Robot_and_Radar_MK2  module !
 -- This is settings for new roboport called roboport-main
 ---------------------------------
 -- Roboport changes

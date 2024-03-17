@@ -24,7 +24,7 @@ data:extend{
 		type = "sound",
 		name = "team-chat",
 		category = "alert",
-		filename = "__brave-new-oarc__/sounds/ping-82822.ogg",
+		filename = "__brave-new-oarc__/sounds/stop-13692.ogg",
 		volume = 2
     },
 	{

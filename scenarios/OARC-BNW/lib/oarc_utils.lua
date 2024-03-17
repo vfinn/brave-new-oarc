@@ -230,14 +230,14 @@ function SendMsg(playerName, msg)
     end
 end
 
-function SendForceMsg(forceName, msg)
+function SendForceMsg(force, msg)
     for name,player in pairs(game.connected_players) do
-        if (player.force == forceName) then
+        if (player.force == force) then
             player.print(msg)
-            log("msg: " .. msg.. ", " .. forceName)
+            log("msg: " .. msg .. ", " .. force.name)
         end
     end
-end
+end 
 
 -- Simple way to write to a file. Always appends. Only server.
 -- Has a global setting for enable/disable
@@ -1460,7 +1460,7 @@ end
 -- Holding pen for new players joining the map
 --------------------------------------------------------------------------------
 function CreateWall(surface, pos)
-    local wall = surface.create_entity({name="stone-wall", position=pos, force=MAIN_TEAM})
+    local wall = surface.create_entity({name="stone-wall", position=pos, force="Main Force"})
     if wall then
         wall.destructible = false
         wall.minable = false

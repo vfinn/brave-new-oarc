@@ -143,6 +143,14 @@ commands.add_command("trigger-map-cleanup",
     RegrowthForceRemoveChunksCmd)
 
 
+local function update_loaders()
+    for _, force in pairs(game.forces) do
+        force.recipes["loader"].enabled = force.technologies["logistics"].researched
+        force.recipes["fast-loader"].enabled = force.technologies["logistics-2"].researched
+        force.recipes["express-loader"].enabled = force.technologies["logistics-3"].researched
+    end
+end
+
 --------------------------------------------------------------------------------
 -- ALL EVENT HANLDERS ARE HERE IN ONE PLACE!
 --------------------------------------------------------------------------------
@@ -215,6 +223,7 @@ script.on_init(function(event)
     OARC_CFG.safe_area.warn_radius = OARC_CFG.safe_area.warn_radius * starting_area
     OARC_CFG.safe_area.danger_radius = OARC_CFG.safe_area.danger_radius * starting_area
 
+    update_loaders()   -- loaders
 end)
 
 
@@ -929,6 +938,7 @@ log("on_configuration_changed")
             global.bnw_scenario_version = new
         end
     end
+    update_tech()
 end)
 
 script.on_event(defines.events.on_player_pipette, function(event)
