@@ -592,16 +592,24 @@ end)
 -- This is where you can permanently remove researched techs
 ----------------------------------------
 script.on_event(defines.events.on_research_finished, function(event)
+    local force = event.research.force
 
     -- Never allows players to build rocket-silos in "frontier" mode.
     if global.ocfg.frontier_rocket_silo and not global.ocfg.frontier_allow_build then
-        RemoveRecipe(event.research.force, "rocket-silo")
+        RemoveRecipe(force, "rocket-silo")
     end
 
     if global.ocfg.lock_goodies_rocket_launch and
-        (not global.ocore.satellite_sent or not global.ocore.satellite_sent[event.research.force.name]) then
+        (not global.ocore.satellite_sent or not global.ocore.satellite_sent[force.name]) then
         for _,v in ipairs(LOCKED_RECIPES) do
-            RemoveRecipe(event.research.force, v.r)
+            RemoveRecipe(force, v.r)
+        end
+    end
+
+    for indx,player in pairs(game.connected_players) do
+        if (player.force.name == force.name) then
+            player.print("Your team completed researching [technology=" .. event.research.name .. "]", {r=0, g=102/255, b=0, a=1}) -- green
+            log("Team " .. force.name .. " completed researching [technology=" .. event.research.name .. "]")
         end
     end
 end)

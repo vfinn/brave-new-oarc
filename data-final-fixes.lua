@@ -2,7 +2,7 @@
 
 -- entities
 require("prototypes.entity.roboport-main")
-require("prototypes.entity.loader")
+-- require("prototypes.entity.loader")
 
 -- items
 require("prototypes.item")

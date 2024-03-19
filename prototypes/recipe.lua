@@ -2,6 +2,18 @@ data:extend(
 {
     {
         type = "recipe",
+        name = "loader-1x1",
+        enabled = true,
+        hidden = true,
+        energy_required = 0,
+        ingredients =
+        {
+          {"iron-plate", 4}
+        },
+        result = "loader-1x1"
+      },
+    {
+        type = "recipe",
         name = "loader",
         enabled = false,
         hidden = true,
