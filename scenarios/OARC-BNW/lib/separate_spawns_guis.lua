@@ -832,7 +832,7 @@ function SpawnCtrlGuiClick(event)
                     global.ocore.sharedSpawns[player.name].joinQueue[index] = nil
                 end
             end
-
+ 
             -- If player exists, then do stuff.
             if (game.players[joinQueuePlayerChoice]) then
                 -- Send an announcement
@@ -848,16 +848,13 @@ function SpawnCtrlGuiClick(event)
                 local joiningPlayer = game.players[joinQueuePlayerChoice]
 
                 -- Patch in case - rarely someone can change to BNO player while joining a Character player - or vice-versa
-                if global.players[joiningPlayer.index].characterMode ~= global.players[global.ocore.sharedSpawns[player.name]].characterMode then
-                    if global.players[joiningPlayer.index].characterMode then
-                        joiningPlayer.print("You chose character mode - Sorry to say this team has already chosen BRAVE NEW PLAYER mode of player - switching you to that mode. Feel free to start your own team as a Character.")
-                    else
-                        joiningPlayer.print("You chose brave new player - Sorry to say this team has already chosen 'CHARACTER' mode of player - switching you to that mode. Feel free to start your own team as a Brave New Player.")
-                    end                    
-                    global.players[joiningPlayer.index].characterMode = global.players[global.ocore.sharedSpawns[player.name]].characterMode 
-                end
+                VerifySameForce(player, joiningPlayer)
 
                 ChangePlayerSpawn(joiningPlayer, global.ocore.sharedSpawns[player.name].position)
+                if global.players[joiningPlayer.index].characterMode then
+                    joiningPlayer.insert{name="power-armor", count = 1}
+                    joiningPlayer.insert{name = "firearm-magazine", count = 20}
+                end
                 SendPlayerToSpawn(joiningPlayer)
                 GivePlayerStarterItems(joiningPlayer)
                 table.insert(global.ocore.sharedSpawns[player.name].players, joiningPlayer.name)
@@ -1274,12 +1271,15 @@ function BuddySpawnRequestMenuClick(event)
         -- Create that spawn in the global vars
         local buddySpawn = {x=0,y=0}
         if (requesterOptions.moatChoice) then
-            buddySpawn = {x=newSpawn.x+(global.ocfg.spawn_config.gen_settings.land_area_tiles*3)+10, y=newSpawn.y}
+            buddySpawn = {x=newSpawn.x+(global.ocfg.spawn_config.gen_settings.land_area_tiles*6)+10, y=newSpawn.y}
         else
-            buddySpawn = {x=newSpawn.x+(global.ocfg.spawn_config.gen_settings.land_area_tiles*3), y=newSpawn.y}
+            buddySpawn = {x=newSpawn.x+(global.ocfg.spawn_config.gen_settings.land_area_tiles*6), y=newSpawn.y}
         end
         ChangePlayerSpawn(player, newSpawn)
         ChangePlayerSpawn(game.players[requesterName], buddySpawn)
+
+        -- Patch in case - rarely someone can change to BNO player while joining a Character player - or vice-versa
+        VerifySameForce(player, game.players[requesterName])
 
         -- Send the player there
         QueuePlayerForDelayedSpawn(player.name, newSpawn, requesterOptions.moatChoice, false)
@@ -1337,4 +1337,20 @@ function DisplayPleaseWaitForSpawnDialog(player, delay_seconds)
     local wait_warning_text = {"oarc-wait-text", delay_seconds}
 
     AddLabel(pleaseWaitGui, "warning_lbl1", wait_warning_text, my_warning_style)
+end
+
+
+-- Patch in case - rarely someone can change to BNO player while joining a Character player - or vice-versa
+function VerifySameForce(player, joiningPlayer)
+    if global.players[joiningPlayer.index].characterMode ~= global.players[player.index].characterMode then
+        log("Verifying Forces: Buddies not of same mode " )
+        if global.players[joiningPlayer.index].characterMode then
+            log("Forcing ".. joiningPlayer.name .. " to join as BNP" )
+            joiningPlayer.print("You chose character mode - Sorry to say this team has already chosen BRAVE NEW PLAYER mode of player - switching you to that mode. Feel free to start your own team as a Character.")
+        else
+            log("Forcing ".. joiningPlayer.name .. " to join as Character" )
+            joiningPlayer.print("You chose brave new player - Sorry to say this team has already chosen 'CHARACTER' mode of player - switching you to that mode. Feel free to start your own team as a Brave New Player.")
+        end                    
+        global.players[joiningPlayer.index].characterMode = global.players[player.index].characterMode 
+    end
 end

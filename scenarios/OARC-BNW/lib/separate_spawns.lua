@@ -359,29 +359,29 @@ log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
                                     global.ocfg.spawn_config.gen_settings.crashed_ship_resources,
                                     global.ocfg.spawn_config.gen_settings.crashed_ship_wreakage)
     end
+
     -- Send the player to that position
     local SP=delayedSpawn.pos
     SP.y=SP.y+10        -- move them down 10 tiles, otherwise they spawn inside the walls, next to large roboport
+    tiles = {}
+    for x = SP.x-1,SP.x+1 do
+        for y = SP.y-1,SP.y+1 do
+            table.insert(tiles, {name = "landfill", position = {x=x, y=y}})
+        end
+    end
+    game.surfaces[GAME_SURFACE_NAME].set_tiles(tiles)
+
+    SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], SP)
+    SetupCharacterOrBNOPlayer(player)
+end
+
+function SetupCharacterOrBNOPlayer(player)
     preventMining(player)   -- enables or prevents based on character mode
     if global.players[player.index].characterMode then 
-        -- put soil under character
---        local tiles = {}
---        tiles[1] = {name = "landfill", position = {SP.x, SP.y}}
-
-        tiles = {}
-        for x = SP.x-1,SP.x+1 do
-            for y = SP.y-1,SP.y+1 do
-                table.insert(tiles, {name = "landfill", position = {x=x, y=y}})
-            end
-        end
-        game.surfaces[GAME_SURFACE_NAME].set_tiles(tiles)
-
         if not player.character then 
             player.create_character() 
          end
-        SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], SP)
     else
-        SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], SP)
         if not global.players[player.index].characterMode and player.character then
             log("on_event::On Player created: destroy character")
             player.character.destroy()
@@ -1512,6 +1512,7 @@ function DelayedSpawnOnTick()
 end
 
 function SendPlayerToSpawn(player)
+    SetupCharacterOrBNOPlayer(player)
     if (DoesPlayerHaveCustomSpawn(player)) then
         SafeTeleport(player, game.surfaces[GAME_SURFACE_NAME], global.ocore.playerSpawns[player.name])
     else
@@ -1524,6 +1525,7 @@ function SendPlayerToRandomSpawn(player)
     local rndSpawn = math.random(0,numSpawns)
     local counter = 0
 
+    SetupCharacterOrBNOPlayer(player)
     if (rndSpawn == 0) then
         player.teleport(game.forces[global.ocfg.main_force].get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME)
         log("Player teleport to " .. game.forces[global.ocfg.main_force].get_spawn_position(GAME_SURFACE_NAME));

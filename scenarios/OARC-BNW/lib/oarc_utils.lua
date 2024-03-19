@@ -226,7 +226,7 @@ end
 function SendMsg(playerName, msg)
     if ((game.players[playerName] ~= nil) and (game.players[playerName].connected)) then
         game.players[playerName].print(msg)
-        log("msg: " .. msg)
+        log(msg)
     end
 end
 
@@ -486,7 +486,7 @@ function SafeTeleport(player, surface, target_pos)
     log("Actual Player position: " .. player.position.x .. "," .. player.position.y)
     -- if spawning at 0,0 create character, if spawning in base with characterMode
     if (target_pos.x==0 and target_pos.y ==0) then
-        if player.character == nil then
+        if player.character == nil and global.spawn[player.index] then
             log("SafeTeleport char edit: creating character before teleporting to 0,0")
             player.create_character()
         end

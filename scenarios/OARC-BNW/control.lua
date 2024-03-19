@@ -946,8 +946,7 @@ log("on_configuration_changed")
             global.bnw_scenario_version = new
         end
     end
-    update_tech()
-end)
+ end)
 
 script.on_event(defines.events.on_player_pipette, function(event)
     if global.creative or global.players[event.player_index].characterMode then
@@ -1028,6 +1027,7 @@ script.on_event(defines.events.on_entity_died, function(event)
             SP.y=SP.y+10        -- move them down 10 tiles, otherwise they spawn inside the walls, next to large roboport
 
             if (GetGPStext(global.spawn[player.index]) == GetGPStext(SP)) then
+                global.spawn[player.index]=nil  -- solves a race condition - player dies, then roboport dies, on respawn - crash without this in SafeTeleport
                 log ("player: " .. player.name .. " at " ..GetGPStext(global.spawn[player.index]) .. " Died due to the starting roboport being destroyed.")
                 log ("and entity at " .. GetGPStext(SP))
                 SendBroadcastMsg("Our buddy " .. player.name .. " on force: '" .. entity.force.name .. "' Died due to the starting roboport being destroyed.")        
