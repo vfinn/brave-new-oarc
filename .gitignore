@@ -2,3 +2,8 @@
 *.swp
 .vs*
 /sounds/drumpapappa2.ogg
+/graphics/entity/Arrow.psd
+/graphics/loader-structure.psd
+/graphics/Arrow.psd
+/graphics/empty.png
+/graphics/work
