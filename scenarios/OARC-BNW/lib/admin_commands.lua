@@ -151,3 +151,139 @@ commands.add_command("load-quickbar", "Pre-load quickbar shortcuts", function(co
     p.set_quick_bar_slot(70, nil);
 
 end)
+
+
+-- later move into oarc_utils.lua
+local function format_number(num)
+    num = math.ceil(num)
+    if num >= 1000000 then
+        return string.format("%dM", num / 1000000)
+    elseif num >= 1000 then
+        return string.format("%dk", num / 1000)
+    else
+        return tostring(num)
+    end
+end
+
+-- merge with oarc_gui_tabs.lua
+local function create_gui(player, stats_table, item)
+    if player.gui.screen.stats_gui then
+        player.gui.screen.stats_gui.destroy()
+    end
+
+    local frame = player.gui.screen.add{
+        type = "frame",
+        name = "stats_gui",
+        caption = "Production statistics for: [img=item/" .. item .. "] " .. item,
+        direction = "vertical"
+    }
+    frame.auto_center = true
+
+    local scroll_pane = frame.add{
+        type = "scroll-pane",
+        vertical_scroll_policy = "auto",
+        horizontal_scroll_policy = "auto"
+    }
+    scroll_pane.style.maximal_height = 400
+
+    local table = scroll_pane.add{
+        type = "table",
+        column_count = 5
+    }
+
+
+    local headers = {"Force", "1min", "1hr", "1day", "All time"}
+    for _, header in ipairs(headers) do
+        local label = table.add{type = "label", caption = header}
+        label.style.font = "default-bold"
+        label.style.font_color = {r = 0, g = 1, b = 0}
+        label.style.minimal_width = 120
+    end
+
+
+    for _, stat in ipairs(stats_table) do
+        local force_label = table.add{type = "label", caption = stat.force}
+        force_label.style.minimal_width = 120
+        local minute_label = table.add{type = "label", caption = format_number(stat.last_minute)}
+        minute_label.style.minimal_width = 120
+        local hour_label = table.add{type = "label", caption = format_number(stat.last_hour)}
+        hour_label.style.minimal_width = 120
+        local day_label = table.add{type = "label", caption = format_number(stat.last_day)}
+        day_label.style.minimal_width = 120
+        local all_time_label = table.add{type = "label", caption = format_number(stat.all_time)}
+        all_time_label.style.minimal_width = 120
+    end
+
+    local button = frame.add{
+        type = "button",
+        name = "close_stats_gui",
+        caption = "Close"
+    }
+    button.style.font_color = {r = 1, g = 0, b = 0}
+
+    frame.force_auto_center()
+end
+
+-- Function to handle the /stats command
+-- author: bits-orio 
+commands.add_command("stats", "Statistics for players", function(command)
+    local player = game.players[command.player_index]
+
+    local input = command.parameter
+    local items = {}
+    local itemPattern = '"[^"]+"|[^%s]+'  -- Matches items within quotes or separated by spaces
+
+--    if input==nil then
+--        player.print("use: /stat landfill.  For internal names see: https://wiki.factorio.com/Landfill")
+--        return
+--    end
+    
+
+    local search_term = "iron-plate"
+    local player = game.player
+    if player then
+        local best_match = nil
+        local shortest_distance = math.huge
+        local escaped_search_term = search_term:gsub("([^%w])", "%%%1")
+        for name, _ in pairs(game.item_prototypes) do
+            if name:find(escaped_search_term) then
+                local distance = math.abs(#name - #search_term)
+                if not best_match or distance < shortest_distance then
+                    best_match = name
+                    shortest_distance = distance
+                end
+            end
+        end
+
+        if best_match then
+            local item = best_match
+            local stats_table = {}
+            for _, force in pairs(game.forces) do
+                local ignoredalienmodulefactions = { enemy=true, neutral=true, _ABANDONED_=true, _DESTROYED_=true, player=true} 
+                if not ignoredalienmodulefactions[force.name] then
+                    local stats = force.item_production_statistics
+                    local last_minute = stats.get_flow_count{type="input", name=item, precision_index=defines.flow_precision_index.one_minute}
+                    local last_hour = stats.get_flow_count{type="input", name=item, precision_index=defines.flow_precision_index.one_hour}
+                    local last_day = stats.get_flow_count{type="input", name=item, precision_index=defines.flow_precision_index.one_hour} * 24
+                    local all_time = stats.input_counts[item] or 0
+
+                    table.insert(stats_table, {
+                        force = force.name,
+                        last_minute = last_minute,
+                        last_hour = last_hour,
+                        last_day = last_day,
+                        all_time = all_time
+                    })
+                end
+            end
+
+            table.sort(stats_table, function(a, b) return a.all_time > b.all_time end)
+
+            create_gui(player, stats_table, item)
+        else
+            player.print("No item found matching '" .. search_term .. "'")
+        end
+    end
+
+end)
+
