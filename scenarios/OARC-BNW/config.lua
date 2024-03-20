@@ -200,15 +200,19 @@ PLAYER_RESPAWN_START_ITEMS = {
 -- generated map area (even if it is not visible on the map!).
 CHECK_SPAWN_UNGENERATED_CHUNKS_RADIUS = 20  -- 10 vf
 
+-- How many chunks away from the center of the map should the silo be spawned
+SILO_CHUNK_DISTANCE = 300
+
 -- Near Distance in chunks
 -- When a player selects "near" spawn, they will be in or as close to this range as possible.
-NEAR_MIN_DIST = 150     -- 50
-NEAR_MAX_DIST = 200     -- 100
+NEAR_MIN_DIST = SILO_CHUNK_DISTANCE - 100     --this 200 previously  150
+NEAR_MAX_DIST = SILO_CHUNK_DISTANCE - 50     -- this 250 previously 200
 
+-- SILO_CHUNK_DISTANCE at 200
 -- Far Distance in chunks
 -- When a player selects "far" spawn, they will be at least this distance away.
-FAR_MIN_DIST = 200        -- 200
-FAR_MAX_DIST = 250        -- 300
+FAR_MIN_DIST = SILO_CHUNK_DISTANCE + 50        -- 200
+FAR_MAX_DIST = SILO_CHUNK_DISTANCE + 100        -- 300
 
 
 
@@ -421,9 +425,6 @@ MIN_ONLINE_TIME_IN_MINUTES = 15
 -- These will spawn in a circle at given distance from the center of the map
 -- If you set this number too high, you'll have a lot of delay at the start of the game.
 SILO_NUM_SPAWNS = 6
-
--- How many chunks away from the center of the map should the silo be spawned
-SILO_CHUNK_DISTANCE = 200
 
 -- If this is enabled, you get silos at the positions specified below.
 -- (The other settings above are ignored in this case.)

@@ -37,7 +37,7 @@ function OarcAutoDeconOnResourceDepleted(event)
                                                                           name = {"burner-mining-drill", "electric-mining-drill"}}
         local fmt = "Auto Deconstruct event on resource depleted: " .. event.entity.name
         for i,v in pairs(nearby_miners) do
-            fmt = string.format("%s, Allow deconstruction: %s", fmt, tostring(settings.startup["bno-auto-deconstruct-miners-allowed"].value))
+            --fmt = string.format("%s, Allow deconstruction: %s", fmt, tostring(settings.startup["bno-auto-deconstruct-miners-allowed"].value))
             if settings.startup["bno-auto-deconstruct-miners-allowed"].value then
                 if global.ocfg.enable_miner_decon[v.force.name] == nil then
                     global.ocfg.enable_miner_decon[v.force.name] = ENABLE_MINER_AUTODECON

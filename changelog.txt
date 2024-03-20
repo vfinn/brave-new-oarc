@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.40
+    - /stats command hard coded - bits-orio adding game statistics, this currently hard coded for 
+      iron and not yet integrated into the game menu tabs.  I like the pop up though.
+    - on death - player that died used to hear 2 sounds, now 1 random, everyone else gets 1 too
+    - anti-grief measure to draw attention to a player that is teleporting more than 10 chunks away
+      into a vehicle - EVERYONE but that player is notified of this with gps ping.
+---------------------------------------------------------------------------------------------------
 Version: 4.2.39
     - Fix for a bug I put in 4.2.38 which caused a crash on every rocket launch
     - Removal of corpses now linked to backspace key.  This taken directly from 'Remove Biter Corpses'

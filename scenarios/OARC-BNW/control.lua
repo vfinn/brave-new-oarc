@@ -271,9 +271,13 @@ end)
 -- Gui Click
 ----------------------------------------
 script.on_event(defines.events.on_gui_click, function(event)
-
+    
     -- Don't interfere with other mod related stuff.
     if (event.element.get_mod() ~= nil) then return end
+
+    if event.element and event.element.valid and event.element.name == "close_stats_gui" then
+        event.element.parent.destroy() -- Closes the GUI
+    end
 
     if global.ocfg.enable_tags then
         TagGuiClick(event)
@@ -1014,6 +1018,7 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function(event)
 end)
 
 script.on_event(defines.events.on_entity_died, function(event)
+    local playerThatDied=nil
     if global.creative then
         return
     end
@@ -1027,26 +1032,45 @@ script.on_event(defines.events.on_entity_died, function(event)
             SP.y=SP.y+10        -- move them down 10 tiles, otherwise they spawn inside the walls, next to large roboport
 
             if (GetGPStext(global.spawn[player.index]) == GetGPStext(SP)) then
+<<<<<<< HEAD
+                playerThatDied=global.spawn[player.index]   -- capture the player that died
+=======
+>>>>>>> e6954350104a0c02295cf4c98dbddac6493a2479
                 global.spawn[player.index]=nil  -- solves a race condition - player dies, then roboport dies, on respawn - crash without this in SafeTeleport
                 log ("player: " .. player.name .. " at " ..GetGPStext(global.spawn[player.index]) .. " Died due to the starting roboport being destroyed.")
                 log ("and entity at " .. GetGPStext(SP))
                 SendBroadcastMsg("Our buddy " .. player.name .. " on force: '" .. entity.force.name .. "' Died due to the starting roboport being destroyed.")        
                 SendMsg(player.name, "Sorry '" .. player.name .. "' you LOSE! Rejoin if you like, and give it another try")
                 RemoveOrResetPlayer(player, false, true, true, true)
-                player.play_sound { path = 'you-lost' }
             end
---            if (player.force.name == entity.force.name) then
---                
---                SendMsg(player.name, "Sorry " .. player.name .. " you lose - rejoin if you like")
---    		    log("Kicking Player: " .. player.name .. " force: " .. player.force.name)
---                RemoveOrResetPlayer(player, false, true, true, true)
---            end
         end
-        for name, player in pairs(game.connected_players) do 
-            player.play_sound { path = 'player-lost' }
+        for name, player in pairs(game.connected_players) do
+            if player.index ~= playerThatDied.index then 
+                player.play_sound { path = 'player-lost' }
+            else
+                player.play_sound { path = 'you-lost' }  -- if the player that died is still online - play random sound
+            end
         end
         
 --        game.set_game_state{game_finished = false, player_won = false, can_continue = true, }
+    end
+end)
+
+
+script.on_event(defines.events.on_player_driving_changed_state, function(event)
+    local player=game.players[event.player_index]
+    log("Changed driver state: " .. event.entity.name)
+    -- distance between two points √((x2 – x1)² + (y2 – y1)²)
+    if (getDistance(event.entity.position, global.players[event.player_index].previous_position) > 320) then
+        log(string.format("msg: %s, sent to %d players", msg, #game.connected_players-1))
+        for idx,p in pairs(game.connected_players) do
+            if (p.index ~= player.index) then
+                p.print("WTF is this guy doing teleporting so far :" .. player.name ..  GetGPStext(event.entity.position))
+            end
+        end        
+        log("Player : " .. player.name .. " entered a vehicle too far at x: " .. event.entity.position.x .. ", y: " .. event.entity.position.y)
+    else
+        log("Player : " .. player.name .. " entered a vehicle at x: " .. event.entity.position.x .. ", y: " .. event.entity.position.y)
     end
 end)
 
@@ -1096,6 +1120,8 @@ script.on_event(defines.events.on_player_changed_position, function(event)
                 -- teleport player to (possibly modified) prev_pos
                 player.teleport(prev_pos)
             end
+        else
+            log("Player : " .. player.name .. " entered a vehicle at x: " .. player.vehicle.position.x .. ", y: " .. player.vehicle.position.y)
         end
     end
     -- save new player position
