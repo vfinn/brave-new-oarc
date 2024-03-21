@@ -41,4 +41,11 @@ data:extend{
 			}
 		}
     },
+	{
+		type = "sound",
+		name = "wtf",
+		category = "alert",
+		filename = "__brave-new-oarc__/sounds/what-a-fuck-120320.ogg",
+		volume = 2
+	}
 }

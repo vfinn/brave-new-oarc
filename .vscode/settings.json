@@ -2,7 +2,11 @@
     "factorio.versions": [
         {
             "name": "D_Factorio",
-            "factorioPath": "d:\\SteamLibrary\\steamapps\\common\\Factorio\\bin\\x64\\factorio.exe",
+            "factorioPath": "d:\\SteamLibrary\\steamapps\\common\\Factorio\\bin\\x64\\factorio.exe"
+        },
+        {
+            "name": "Steam",
+            "factorioPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Factorio\\bin\\x64\\factorio.exe",
             "active": true
         }
     ],
@@ -46,7 +50,8 @@
         "c:\\Users\\Vinnie\\AppData\\Roaming\\Code\\User\\workspaceStorage\\4b32ade4c3a6595f8e9be35b05f1a2a1\\justarandomgeek.factoriomod-debug\\sumneko-3rd",
         "c:\\Users\\Vinnie\\AppData\\Roaming\\Code\\User\\workspaceStorage\\1948279f8e3d232bf2de33767e49146c\\justarandomgeek.factoriomod-debug\\sumneko-3rd",
         "c:\\Users\\Vinnie\\AppData\\Roaming\\Code\\User\\workspaceStorage\\84a71b147e45431e654bd7c967108e31\\justarandomgeek.factoriomod-debug\\sumneko-3rd",
-        "c:\\Users\\Acer\\AppData\\Roaming\\Code\\User\\workspaceStorage\\caa9bfc83f8291a38674dc49a84aa8f3\\justarandomgeek.factoriomod-debug\\sumneko-3rd"
+        "c:\\Users\\Acer\\AppData\\Roaming\\Code\\User\\workspaceStorage\\caa9bfc83f8291a38674dc49a84aa8f3\\justarandomgeek.factoriomod-debug\\sumneko-3rd",
+        "c:\\Users\\Vinnie\\AppData\\Roaming\\Code\\User\\workspaceStorage\\8fcee3cf1cc1ae95da4ac9c97cfa4815\\justarandomgeek.factoriomod-debug\\sumneko-3rd"
     ],
     "Lua.diagnostics.globals": [
         "__DebugAdapter",

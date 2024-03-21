@@ -275,8 +275,8 @@ script.on_event(defines.events.on_gui_click, function(event)
     -- Don't interfere with other mod related stuff.
     if (event.element.get_mod() ~= nil) then return end
 
-    if event.element and event.element.valid and event.element.name == "close_stats_gui" then
-        event.element.parent.destroy() -- Closes the GUI
+    if event.element and event.element.valid and event.element.name == "stats_close_stats_gui" then
+        event.element.parent.destroy() -- Closes the stats GUI
     end
 
     if global.ocfg.enable_tags then
@@ -341,6 +341,11 @@ script.on_event(defines.events.on_player_joined_game, function(event)
     if (global.spawn[event.player_index]) then
         DisplayWelcomeBackGroundTextAtSpawn (joiningPlayer, global.spawn[event.player_index])
     end
+    if (global.players[event.player_index].emptyInventory)  then    -- this has to be done here since Space Block on_created
+        empty_players_inventory(joiningPlayer) -- Space Block and potentially other mods add inventory
+        global.players[event.player_index].emptyInventory=nil
+    end
+
 end)
     
 ----------------------------------------
@@ -364,6 +369,7 @@ log("on_event::On Player created: " .. player.name)
         }
     end
     -- Move the player to the game surface immediately.  First time spawning - character has to be deleted
+    global.players[event.player_index].emptyInventory = true    -- postpone until on_player_joined, since space block fills inventory in their on_player_created, which is done AFTER ours.
     if player.character then 
         player.character.destroy()
     end
@@ -836,6 +842,15 @@ function inventoryChanged(event)
             player.remove_item{name = name, count = to_remove}
         end
     end
+    if (entity and entity.last_user and entity.last_user.force.name ~= player.force.name) then   -- taking something from someone on another force's box ?
+        for idx,p in pairs(game.connected_players) do
+            if (p.force.name ~= player.force.name) then
+                p.print("WTF " .. player.name .. " just took something from " .. game.players[event.player_index].selected.last_user.name .. " chest! " ..  GetGPStext(event.entity.position))
+                p.play_sound { path = 'wtf' }
+            end
+        end                
+        log("WTF " .. player.name .. " just took something from " .. game.players[event.player_index].selected.last_user.name .. " chest! " ..  GetGPStext(event.entity.position))
+    end
 end
 
 function dropItems(entity, player, name, count)
@@ -1032,10 +1047,7 @@ script.on_event(defines.events.on_entity_died, function(event)
             SP.y=SP.y+10        -- move them down 10 tiles, otherwise they spawn inside the walls, next to large roboport
 
             if (GetGPStext(global.spawn[player.index]) == GetGPStext(SP)) then
-<<<<<<< HEAD
                 playerThatDied=global.spawn[player.index]   -- capture the player that died
-=======
->>>>>>> e6954350104a0c02295cf4c98dbddac6493a2479
                 global.spawn[player.index]=nil  -- solves a race condition - player dies, then roboport dies, on respawn - crash without this in SafeTeleport
                 log ("player: " .. player.name .. " at " ..GetGPStext(global.spawn[player.index]) .. " Died due to the starting roboport being destroyed.")
                 log ("and entity at " .. GetGPStext(SP))
@@ -1066,11 +1078,12 @@ script.on_event(defines.events.on_player_driving_changed_state, function(event)
         for idx,p in pairs(game.connected_players) do
             if (p.index ~= player.index) then
                 p.print("WTF is this guy doing teleporting so far :" .. player.name ..  GetGPStext(event.entity.position))
+                p.play_sound { path = 'wtf' }
             end
         end        
-        log("Player : " .. player.name .. " entered a vehicle too far at x: " .. event.entity.position.x .. ", y: " .. event.entity.position.y)
+        log("WTF Player : " .. player.name .. " entered a vehicle too far at x: " .. event.entity.position.x .. ", y: " .. event.entity.position.y)
     else
-        log("Player : " .. player.name .. " entered a vehicle at x: " .. event.entity.position.x .. ", y: " .. event.entity.position.y)
+        log("Player : " .. player.name .. " entered a close vehicle at x: " .. event.entity.position.x .. ", y: " .. event.entity.position.y)
     end
 end)
 

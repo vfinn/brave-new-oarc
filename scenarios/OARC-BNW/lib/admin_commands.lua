@@ -171,15 +171,15 @@ local function create_gui(player, stats_table, item)
         player.gui.screen.stats_gui.destroy()
     end
 
-    local frame = player.gui.screen.add{
+    local dialog = player.gui.screen.add{
         type = "frame",
         name = "stats_gui",
         caption = "Production statistics for: [img=item/" .. item .. "] " .. item,
         direction = "vertical"
     }
-    frame.auto_center = true
+    dialog.auto_center = true
 
-    local scroll_pane = frame.add{
+    local scroll_pane = dialog.add{
         type = "scroll-pane",
         vertical_scroll_policy = "auto",
         horizontal_scroll_policy = "auto"
@@ -214,14 +214,30 @@ local function create_gui(player, stats_table, item)
         all_time_label.style.minimal_width = 120
     end
 
-    local button = frame.add{
-        type = "button",
-        name = "close_stats_gui",
-        caption = "Close"
+    local sciencePacks = {
+        ["automation-science-pack"] = "[tool=automation-science-pack]",
+        ["logistic-science-pack"] = "[tool=logistic-science-pack]",
+        -- Add more science packs here...
     }
-    button.style.font_color = {r = 1, g = 0, b = 0}
+    
 
-    frame.force_auto_center()
+    local button = dialog.add{ type= "button", name="stats_close_stats_gui", caption = "Close"}
+    for packName, iconPath in pairs(sciencePacks) do
+        local button = dialog.add{
+            type = "button",
+            parent= "button_style",
+            name = packName,
+            caption = textName,
+--            style = "icon_button",
+            font_color = {r = 1, g = 0, b = 0},
+            sprite = iconPath
+        }
+        button.style.width = 64
+        button.style.height = 32
+    end    
+--    button.style.font_color = {r = 1, g = 0, b = 0}
+
+    dialog.force_auto_center()
 end
 
 -- Function to handle the /stats command

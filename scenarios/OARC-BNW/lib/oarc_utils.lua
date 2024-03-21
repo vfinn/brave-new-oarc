@@ -1549,3 +1549,17 @@ end
 function string.contains(s, ends)
     return s and string.find(s, ends) ~= nil
 end
+
+-- empty inventory and armor
+function empty_players_inventory(player)
+    if player then
+        local inv = player.get_main_inventory()
+        if inv then 
+            inv.clear() 
+        end
+        if (player.get_inventory(defines.inventory.character_armor)) then
+            player.get_inventory(defines.inventory.character_armor).clear()
+        end
+    end
+end
+

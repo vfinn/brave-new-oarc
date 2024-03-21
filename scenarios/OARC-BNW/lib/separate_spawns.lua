@@ -260,7 +260,7 @@ end
 function SendPlayerToNewSpawnAndCreateIt(delayedSpawn)
     -- DOUBLE CHECK and make sure the area is super safe.
     local player = game.players[delayedSpawn.playerName]
-log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
+    log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
     if global.ocfg.space_block then
         if (global.ocfg.frontier_rocket_silo and not global.ocfg.enable_magic_factories) then
             if not global.make_silos then
@@ -1212,11 +1212,7 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
     
     if  player.valid then       -- this can occur when joining a game where you previous quit and timed out after 15 minutes
         if player.index and global.players[player.index] and global.players[player.index].characterMode then
-            local inv = player.get_main_inventory()
-            if inv then inv.clear() end
-            if (player.get_inventory(defines.inventory.character_armor)) then
-                player.get_inventory(defines.inventory.character_armor).clear()
-            end
+            empty_players_inventory(player)
         end
     end
 end

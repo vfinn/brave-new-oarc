@@ -1,10 +1,17 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.41
+    - bug fix crash on control.lua 845
+---------------------------------------------------------------------------------------------------
 Version: 4.2.40
     - /stats command hard coded - bits-orio adding game statistics, this currently hard coded for 
       iron and not yet integrated into the game menu tabs.  I like the pop up though.
+      stats is work in progress - not fully integrated or completed.
     - on death - player that died used to hear 2 sounds, now 1 random, everyone else gets 1 too
     - anti-grief measure to draw attention to a player that is teleporting more than 10 chunks away
-      into a vehicle - EVERYONE but that player is notified of this with gps ping.
+      into a vehicle,and taking items from chests - EVERYONE but that player is notified of this with gps ping.
+    - Since Space Block provided inventory items and BNO did as well, and I only clear on death or 
+      restart, everyone that didn't hit the restart button got double resources.  FIXED !
+    - One more sound added - only heard when someone does something bad. 
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.39
     - Fix for a bug I put in 4.2.38 which caused a crash on every rocket launch
