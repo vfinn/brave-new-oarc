@@ -42,8 +42,8 @@ function GameOptionsGuiClick(event)
                                     crafted = {},
                                     inventory_items = {},
                                     previous_position = {x=0, y=0},
-                                    drawOnExit = nil,   -- do NOT reset this - the player name rendered is still needed
-                                    characterMode = false
+                                    drawOnExit = nil   -- do NOT reset this - the player name rendered is still needed
+                                    -- ,characterMode = false   -- leave this uncleared so ui can display their last choice after a restart
                                 }
                 log("Resetting " .. resetPlayerName)
             end

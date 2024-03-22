@@ -488,7 +488,9 @@ function SafeTeleport(player, surface, target_pos)
     if (target_pos.x==0 and target_pos.y ==0) then
         if player.character == nil and global.spawn[player.index] then
             log("SafeTeleport char edit: creating character before teleporting to 0,0")
-            player.create_character()
+            if player.connected then
+                player.create_character()
+            end
         end
     end
 end

@@ -1195,7 +1195,9 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
 
     -- Remove the character completely
     if (remove_player) then
-        game.remove_offline_players({player})        
+        game.remove_offline_players({player})
+    else
+        player.force = player_old_force     -- let player spawn with same force as before      
     end
 
     -- this happens if player loses or they choose to reset themselves - reset them and show menu

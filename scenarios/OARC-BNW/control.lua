@@ -845,11 +845,11 @@ function inventoryChanged(event)
     if (entity and entity.last_user and entity.last_user.force.name ~= player.force.name) then   -- taking something from someone on another force's box ?
         for idx,p in pairs(game.connected_players) do
             if (p.force.name ~= player.force.name) then
-                p.print("WTF " .. player.name .. " just took something from " .. game.players[event.player_index].selected.last_user.name .. " chest! " ..  GetGPStext(event.entity.position))
+                p.print("WTF " .. player.name .. " just took something from " .. game.players[event.player_index].selected.last_user.name .. " chest! " ..  GetGPStext(entity.position))
                 p.play_sound { path = 'wtf' }
             end
         end                
-        log("WTF " .. player.name .. " just took something from " .. game.players[event.player_index].selected.last_user.name .. " chest! " ..  GetGPStext(event.entity.position))
+        log("WTF " .. player.name .. " just took something from " .. game.players[event.player_index].selected.last_user.name .. " chest! " ..  GetGPStext(entity.position))
     end
 end
 
