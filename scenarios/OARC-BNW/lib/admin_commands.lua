@@ -214,12 +214,12 @@ local function create_gui(player, stats_table, item)
         all_time_label.style.minimal_width = 120
     end
 
-    local sciencePacks = {
-        ["automation-science-pack"] = "[tool=automation-science-pack]",
-        ["logistic-science-pack"] = "[tool=logistic-science-pack]",
-        -- Add more science packs here...
-    }
     
+    local sciencePacks = {
+        ["automation-science-pack"] = "[recipe=automation-science-pack]",
+        ["logistic-science-pack"] = "[recipe=logistic-science-pack]",
+        -- Add more science packs here...
+    }    
 
     local button = dialog.add{ type= "button", name="stats_close_stats_gui", caption = "Close"}
     for packName, iconPath in pairs(sciencePacks) do
@@ -227,10 +227,8 @@ local function create_gui(player, stats_table, item)
             type = "button",
             parent= "button_style",
             name = packName,
-            caption = textName,
---            style = "icon_button",
-            font_color = {r = 1, g = 0, b = 0},
-            sprite = iconPath
+            caption = iconPath,
+            font_color = {r = 1, g = 0, b = 0}
         }
         button.style.width = 64
         button.style.height = 32
