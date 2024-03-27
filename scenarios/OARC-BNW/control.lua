@@ -319,7 +319,7 @@ end)
 
 script.on_event(defines.events.on_gui_selection_state_changed, function (event)
 
-    buildStatsTable(game.players[event.player_index], global.statItems[event.element.selected_index].item)
+    buildStatsTable(game.players[event.player_index], event.element.selected_index)
 --    event.element.items[event.element.selected_index]
 end)
 

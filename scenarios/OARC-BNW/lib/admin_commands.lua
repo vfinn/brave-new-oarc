@@ -156,66 +156,10 @@ end)
 -- Function to handle the /stats command
 -- author: bits-orio 
 commands.add_command("stats", "Statistics for players", function(command)
-    local player = game.players[command.player_index]
-
-    local input = command.parameter
-    local items = {}
-    local itemPattern = '"[^"]+"|[^%s]+'  -- Matches items within quotes or separated by spaces
-
---    if input==nil then
---        player.print("use: /stat landfill.  For internal names see: https://wiki.factorio.com/Landfill")
---        return
---    end
-    
-
-    local search_term = "iron-plate"
-    local player = game.player
+    local player = game.players[command.player_index]   
     if player then
-        local best_match = nil
-        local shortest_distance = math.huge
-        local escaped_search_term = search_term:gsub("([^%w])", "%%%1")
-        for name, _ in pairs(game.item_prototypes) do
-            if name:find(escaped_search_term) then
-                local distance = math.abs(#name - #search_term)
-                if not best_match or distance < shortest_distance then
-                    best_match = name
-                    shortest_distance = distance
-                end
-            end
-        end
-
-        buildStatsTable(player, best_match)
+        buildStatsTable(player, 1)
     end
-
 end)
-
--- Thanks to Bits-Orio for getting me started on Stats table!
-function buildStatsTable(player, item)
-    if item then
-        local stats_table = {}
-        log("Stats selection by <" .. player.name .. "> : " .. item)
-
-        for _, force in pairs(game.forces) do
-            local ignoredalienmodulefactions = { enemy=true, neutral=true, _ABANDONED_=true, _DESTROYED_=true, player=true} 
-            if not ignoredalienmodulefactions[force.name] then
-                local stats = force.item_production_statistics
-                local last_minute = stats.get_flow_count{type="input", name=item, precision_index=defines.flow_precision_index.one_minute}
-                local last_hour = stats.get_flow_count{type="input", name=item, precision_index=defines.flow_precision_index.one_hour}
-                local all_time = stats.input_counts[item] or 0
-
-                table.insert(stats_table, {
-                    force = force.name,
-                    last_minute = last_minute,
-                    last_hour = last_hour,
-                    all_time = all_time
-                })
-            end
-        end
-        table.sort(stats_table, function(a, b) return a.all_time > b.all_time end)
-        create_gui(player, stats_table, item)
-    else
-        player.print("No item found matching '" .. search_term .. "'")
-    end
-end
 
 
