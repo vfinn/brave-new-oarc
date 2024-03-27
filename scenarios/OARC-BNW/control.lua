@@ -99,6 +99,8 @@ require("lib/separate_spawns")
 require("lib/separate_spawns_guis")
 require("lib/oarc_enemies")
 require("lib/oarc_gui_tabs")
+require("lib/stats_gui")
+
 
 -- compatibility with mods
 require("compat/factoriomaps")
@@ -315,6 +317,11 @@ script.on_event(defines.events.on_gui_selected_tab_changed, function (event)
     end
 end)
 
+script.on_event(defines.events.on_gui_selection_state_changed, function (event)
+
+    buildStatsTable(game.players[event.player_index], global.statItems[event.element.selected_index].item)
+--    event.element.items[event.element.selected_index]
+end)
 
 ----------------------------------------
 -- Player Events

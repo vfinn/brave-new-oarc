@@ -445,6 +445,7 @@ function GiveQuickStartPowerArmor(player)
                 end
             end
         player.insert{name="construction-robot", count = 100}
+        player.insert{name="logistic-robot", count = 50}
         player.insert{name="belt-immunity-equipment", count = 1}
     end
 end

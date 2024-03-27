@@ -1189,7 +1189,9 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
     if (remove_force) then
         if ((#player_old_force.players == 0) and (player_old_force.name ~= global.ocfg.main_force)) then
             log("RemoveOrResetPlayer - FORCE REMOVED: " .. player_old_force.name)
-            game.merge_forces(player_old_force, "neutral")           
+            if (player_old_force.name ~= "neutral") then 
+                game.merge_forces(player_old_force, "neutral")           
+            end
         end
     end
 
@@ -1197,7 +1199,7 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
     if (remove_player) then
         game.remove_offline_players({player})
     else
-        player.force = player_old_force     -- let player spawn with same force as before      
+        player.force.name = player_old_force.name     -- let player spawn with same force as before      
     end
 
     -- this happens if player loses or they choose to reset themselves - reset them and show menu

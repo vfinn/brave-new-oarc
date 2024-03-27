@@ -1,38 +1,38 @@
 data:extend(
 {
-    {
-        type = "recipe",
-        name = "loader-1x1",
-        enabled = true,
-        hidden = true,
-        energy_required = 0,
-        ingredients =
-        {
-          {"iron-plate", 4}
-        },
-        result = "loader-1x1"
-      },
+--    {
+--        type = "recipe",
+--        name = "loader-1x1",
+--        enabled = true,
+--        hidden = true,
+--        energy_required = 1,
+--        ingredients =
+--        {
+--          {"iron-plate", 4}
+--        },
+--        result = "loader-1x1"
+--      },
     {
         type = "recipe",
         name = "loader",
-        enabled = false,
-        hidden = true,
+        enabled = true,
+        hidden = false,
         energy_required = 1,
         ingredients =
         {
           {"inserter", 5},
-          {"electronic-circuit", 5},
-          {"iron-gear-wheel", 5},
-          {"iron-plate", 5},
-          {"transport-belt", 5}
+          {"iron-plate", 20}
+--          {"electronic-circuit", 5},
+--          {"iron-gear-wheel", 5},
+--          {"transport-belt", 5}
         },
         result = "loader"
       },
       {
         type = "recipe",
         name = "fast-loader",
-        enabled = false,
-        hidden = true,
+        enabled = true,
+        hidden = false,
         energy_required = 3,
         ingredients =
         {
@@ -44,8 +44,8 @@ data:extend(
       {
         type = "recipe",
         name = "express-loader",
-        enabled = false,
-        hidden = true,
+        enabled = true,
+        hidden = false,
         energy_required = 10,
         ingredients =
         {
