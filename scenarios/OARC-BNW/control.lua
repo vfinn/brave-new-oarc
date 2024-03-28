@@ -277,8 +277,13 @@ script.on_event(defines.events.on_gui_click, function(event)
     -- Don't interfere with other mod related stuff.
     if (event.element.get_mod() ~= nil) then return end
 
-    if event.element and event.element.valid and event.element.name == "stats_close_stats_gui" then
-        event.element.parent.destroy() -- Closes the stats GUI
+    if event.element and event.element.valid then
+        if event.element.name == "stats_close_stats_gui" then
+            closeStatsGui(game.players[event.player_index])
+        elseif event.element.name == "stats_dialog" then
+            buildStatsTable(game.players[event.player_index], 1)
+            HideOarcGui(game.players[event.player_index])
+        end
     end
 
     if global.ocfg.enable_tags then
@@ -318,9 +323,9 @@ script.on_event(defines.events.on_gui_selected_tab_changed, function (event)
 end)
 
 script.on_event(defines.events.on_gui_selection_state_changed, function (event)
-
-    buildStatsTable(game.players[event.player_index], event.element.selected_index)
---    event.element.items[event.element.selected_index]
+    if (event.element.name == "stats_dropdown") then
+        buildStatsTable(game.players[event.player_index], event.element.selected_index)
+    end
 end)
 
 ----------------------------------------

@@ -1,6 +1,7 @@
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.42
     - bug fix crash on control.lua 845
+    - Reconfigured /stats functionality, added button to server info tab in ui
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.40
     - /stats command hard coded - bits-orio adding game statistics, this currently hard coded for 

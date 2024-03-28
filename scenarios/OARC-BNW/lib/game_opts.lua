@@ -204,7 +204,10 @@ function CreateGameOptionsTab(tab_container, player)
     -- Ending Spacer
     AddSpacerLine(tab_container)
 
-    -- ADMIN CONTROLS
+    local buttonTable = tab_container.add{ type = "table", column_count = 5 }
+    buttonTable.style.minimal_width = 120
+
+-- ADMIN CONTROLS
     if (player.admin) then
         local si=1
         player_list = {}
@@ -214,19 +217,26 @@ function CreateGameOptionsTab(tab_container, player)
         end
         -- If we have more than ME in the game - enable RESTART button
         if #game.players>1 or not (player.position.x==0 and player.position.y==0) then 
-            tab_container.add{name="restart_player", type="button", caption="Restart Player"}
+            buttonTable.add{name="restart_player", type="button", caption="Restart Player"}
         end
-        tab_container.add{name="ban_player", type="button", caption="Ban Player"}
-        tab_container.add{name="ban_players_dropdown",type = "drop-down",items = player_list, selected_index = si}
+        buttonTable.add{name="ban_player", type="button", caption="Ban Player"}
+        buttonTable.add{name="ban_players_dropdown",type = "drop-down",items = player_list, selected_index = si}
     else
         if not (player.position.x==0 and player.position.y==0) then 
-            tab_container.add{name="restart_player", type="button", caption="Restart Player"}
+            buttonTable.add{name="restart_player", type="button", caption="Restart Player"}
         end
         player_list = {}
         table.insert(player_list, player.name)
-        tab_container.add{name = "ban_players_dropdown",type = "drop-down",items = player_list, selected_index = 1}
+        buttonTable.add{name = "ban_players_dropdown",type = "drop-down",items = player_list, selected_index = 1}
 --        tab_container.selected_index(1)
     end
+    local buttonTable2 = tab_container.add{ type = "table", column_count = 5 }
+    buttonTable.style.minimal_width = 120
+    local spacer = buttonTable.add{type = "label", caption = ""}
+    spacer.style.minimal_width = 120
+    local button = buttonTable.add{ type= "button", name="stats_dialog", caption = "Stats"}
+
+
     -- Ending Spacer
     if (player.index) then
         AddSpacerLine(tab_container)
