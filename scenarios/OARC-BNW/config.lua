@@ -13,11 +13,18 @@
 -- This stuff is shown in the welcome GUI and Info panel. Make sure it's valid.
 WELCOME_MSG_TITLE = "Welcome to Brave New Oarc"
 WELCOME_MSG = "This game provides the OARC multiplayer capability, and the Brave New World" -- Printed to player on join as well.
-SERVER_MSG = "Character Mode is same as normal factorio, but with less starting items, and 1/5 the number of robots as in non-char mode.\n" ..
-             "RESTART is available in the menu choices, and will automatically occur if your main large roboport is destroyed.\n" ..
+SERVER_MSG = "Character Mode is same as normal factorio, but with fewer starting items than non char mode, and 1/5 the number of robots.\n" ..
+	         "Features:\n" .. 
+             "   Backspace key clears the area of biter corpses\n" ..
+             "   Server Info menu tab enables various in game options like: Hide your base from other players,\n" ..
+             "   Warn of biters attacks - the constant attack warnings can be stopped\n" ..
+             "   Enable offline attacks - useful in Alien Modules game or competition.\n" ..
+             "   Auto Deconstruction of miners (BETA!)\n" ..
+             "   RESTART is available in the menu choices, and will automatically occur if your main large roboport is destroyed.\n" ..
+             " Most Asked Questions: " ..
              "Q: Why can't I move outside the area that my main base is located?\n" ..
              "A: Fog of war that limits your movement, but is intended as an antigrief. Use a Radars to claim more area.\n" ..
-             "Q: Why can't I make level 3 speed modules and Artillery?\n" ..
+             "Q: Why can't I make Artillery?\n" ..
              "A: These are available after you launch one rocket.\n" ..
              "Non-Character Mode:\n" ..
              "Q: Why do I have no man?\n" ..
