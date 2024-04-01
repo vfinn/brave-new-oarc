@@ -28,21 +28,15 @@ function OarcAutoDeconOnResourceDepleted(event)
         local nearby_miners = event.entity.surface.find_entities_filtered{area = {{event.entity.position.x-1, event.entity.position.y-1},
                                                                                         {event.entity.position.x+1, event.entity.position.y+1}},
                                                                           name = {"burner-mining-drill", "electric-mining-drill"}}
-        local fmt = "Auto Deconstruct event on resource depleted: " .. event.entity.name
         for i,v in pairs(nearby_miners) do
-            --fmt = string.format("%s, Allow deconstruction: %s", fmt, tostring(settings.startup["bno-auto-deconstruct-miners-allowed"].value))
             if settings.startup["bno-auto-deconstruct-miners-allowed"].value then
                 if global.ocfg.enable_miner_decon[v.force.name] == nil then
                     global.ocfg.enable_miner_decon[v.force.name] = ENABLE_MINER_AUTODECON
                 end 
                 if (global.ocfg.enable_miner_decon[v.force.name]) then
                     table.insert(global.oarc_decon_miners, v)
-                    fmt = string.format("%s%s%s%s%s", fmt, ", force: ", v.force.name, ", Adding miner for decon ", v.gps_tag)
                 end
             end
         end
-        log(fmt)
-    else
-        log("Auto Deconstruct event- but no entity")
     end
 end
