@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.43
+    - Fixed Auto Deconstruct, and highlight the area where the miner was for 20 seconds
+    - added support for scrap-resource and redefined the items provided from those resources
+---------------------------------------------------------------------------------------------------
 Version: 4.2.42
     - bug fix crash on control.lua 845
     - Reconfigured /stats functionality, added button to server info tab in ui
@@ -30,7 +34,6 @@ Version: 4.2.38
     - Fixed the multitude of jail spawn players, that couldn't move at that small jail site
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.37
-
     - There was a scenario where spawning character players would get 2X resources - fixed
 
   Minor Bug Fix's:

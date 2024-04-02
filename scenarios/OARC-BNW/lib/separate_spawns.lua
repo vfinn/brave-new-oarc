@@ -188,10 +188,13 @@ function GenerateStartingResources(surface, pos)
     local rand_settings = global.ocfg.spawn_config.resource_rand_pos_settings
 
     if global.ocfg.bzlead then
-        GenerateResourcePatch(surface, "lead-ore", 15, {x=pos.x-64, y=pos.y+29}, 20000)
+        GenerateResourcePatch(surface, "lead-ore", 15, {x=pos.x-94, y=pos.y+29}, 20000)
     end
     if global.ocfg.bztitanium then
         GenerateResourcePatch(surface, "titanium-ore", 8, {x=pos.x-61, y=pos.y-34}, 10000)
+    end
+    if game.active_mods["scrap-resource"] then
+        GenerateResourcePatch(surface, "scrap", 8, {x=pos.x-72, y=pos.y-53}, 10000)
     end
     local kOffset=0
     if global.ocfg.krastorio2 then
@@ -1198,8 +1201,6 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
     -- Remove the character completely
     if (remove_player) then
         game.remove_offline_players({player})
-    else
-        player.force.name = player_old_force.name     -- let player spawn with same force as before      
     end
 
     -- this happens if player loses or they choose to reset themselves - reset them and show menu

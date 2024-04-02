@@ -21,6 +21,7 @@
     "? cargo-ships >= 0.2.6",
     "? lex-aircraft >= 1.1.1",
     "? spaceblock-memory-fix >= 0.3.9",
+    "? scrap-resource",
     "! LootChestPlus",
     "! Braver_New_World",
     "! brave-new-world"
