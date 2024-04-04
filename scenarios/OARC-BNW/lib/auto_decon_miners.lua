@@ -14,8 +14,9 @@ function OarcAutoDeconOnTick()
             if (miner and miner.valid and miner.mining_target == nil) then
                 miner.order_deconstruction(miner.force)
                 if miner.last_user then 
-                    rendering.draw_rectangle{color={1,0.1,0.1,1}, left_top=miner.selection_box.left_top, right_bottom=miner.selection_box.right_bottom, surface="oarc", time_to_live=60*15, miner.last_user.force, draw_on_ground=false}
+                    rendering.draw_rectangle{color={1,0.1,0.1,1}, left_top=miner.selection_box.left_top, right_bottom=miner.selection_box.right_bottom, surface="oarc", time_to_live=60*30, miner.last_user.force, draw_on_ground=false}
 --                    game.players[miner.last_user.index].print("Removing miner: " .. miner.gps_tag)
+                    log("Removing miner from " .. miner.last_user.name .. miner.gps.tag)
                 end
             end
             table.remove(global.oarc_decon_miners, i)

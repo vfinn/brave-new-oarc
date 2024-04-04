@@ -193,12 +193,12 @@ function GenerateStartingResources(surface, pos)
     if global.ocfg.bztitanium then
         GenerateResourcePatch(surface, "titanium-ore", 8, {x=pos.x-61, y=pos.y-34}, 10000)
     end
-    if game.active_mods["scrap-resource"] then
-        GenerateResourcePatch(surface, "scrap", 8, {x=pos.x-72, y=pos.y-53}, 10000)
-    end
     local kOffset=0
     if global.ocfg.krastorio2 then
         kOffset=32
+        if game.active_mods["scrap-resource"] then
+            GenerateResourcePatch(surface, "scrap", 8, {x=pos.x-40-kOffset, y=pos.y-53}, 10000)
+        end
         GenerateResourcePatch(surface, "rare-metals", 16, {x=pos.x-62-kOffset, y=pos.y-38}, 10000)
         if not global.ocfg.krastorio2_resources_increased then
             for k,item in pairs(global.ocfg.spawn_config.resource_tiles) do
@@ -208,6 +208,9 @@ function GenerateStartingResources(surface, pos)
             end
         end
         global.ocfg.krastorio2_resources_increased=true
+    end
+    if game.active_mods["scrap-resource"] then
+        GenerateResourcePatch(surface, "scrap", 8, {x=pos.x-40-kOffset, y=pos.y-53}, 10000)
     end
     if not global.ocfg.seablock then
         -- Generate all resource tile patches

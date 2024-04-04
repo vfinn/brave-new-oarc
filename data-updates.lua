@@ -11,7 +11,7 @@ if (mods["scrap-resource"]) then
         { amount = 1, probability = 0.0025,   name = "crude-oil-barrel",      },
         { amount = 1, probability = 0.1000,   name = "stone",                 },
         { amount = 1, probability = 0.1000,   name = "coal",                  },
-        { amount = 1, probability = 0.4000,   name = "iron-ore",              },
+        { amount = 1, probability = 0.3500,   name = "iron-ore",              },
         { amount = 1, probability = 0.2000,   name = "copper-ore",            },
         { amount = 1, probability = 0.0100,   name = "uranium-ore",           },
         { amount = 1, probability = 0.0400,   name = "iron-gear-wheel",       },
@@ -25,8 +25,12 @@ if (mods["scrap-resource"]) then
         { amount = 1, probability = 0.0002,   name = "fast-inserter",         },
         { amount = 1, probability = 0.0002,   name = "long-handed-inserter",  },
         { amount = 1, probability = 0.0010,   name = "transport-belt",        },        
+        { amount = 1, probability = 0.0010,   name = "splitter",              },
         { amount = 1, probability = 0.00005,  name = "construction-robot",    },        
         { amount = 1, probability = 0.00005,  name = "logistic-robot",        },        
         { amount = 1, probability = 0.000001, name = "roboport",              },        
+        { amount = 1, probability = 0.000003, name = "assembling-machine-2",  },        
+        { amount = 1, probability = 0.000003, name = "electric-furnace",      },        
+        { amount = 1, probability = 0.00015,  name = "steel-chest",           },     
     }
 end

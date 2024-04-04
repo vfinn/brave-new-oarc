@@ -253,7 +253,6 @@ script.on_event(defines.events.on_chunk_generated, function(event)
     if (event.surface.name ~= GAME_SURFACE_NAME) then 
         return 
     end
-
     if global.ocfg.enable_regrowth then
         RegrowthChunkGenerate(event)
     end
@@ -1085,7 +1084,7 @@ script.on_event(defines.events.on_player_driving_changed_state, function(event)
     local player=game.players[event.player_index]
     log("Changed driver state: " .. event.entity.name)
     -- distance between two points √((x2 – x1)² + (y2 – y1)²)
-    if (getDistance(event.entity.position, global.players[event.player_index].previous_position) > 320) then
+    if (getDistance(event.entity.position, global.players[event.player_index].previous_position) > 640) then
         log(string.format("msg: %s, sent to %d players", msg, #game.connected_players-1))
         for idx,p in pairs(game.connected_players) do
             if (p.index ~= player.index) then
@@ -1093,9 +1092,7 @@ script.on_event(defines.events.on_player_driving_changed_state, function(event)
                 p.play_sound { path = 'wtf' }
             end
         end        
-        log("WTF Player : " .. player.name .. " entered a vehicle too far at x: " .. event.entity.position.x .. ", y: " .. event.entity.position.y)
-    else
-        log("Player : " .. player.name .. " entered a close vehicle at x: " .. event.entity.position.x .. ", y: " .. event.entity.position.y)
+        log("WTF Player : " .. player.name .. " entered a vehicle far from his main base at x: " .. event.entity.position.x .. ", y: " .. event.entity.position.y)
     end
 end)
 
@@ -1145,8 +1142,6 @@ script.on_event(defines.events.on_player_changed_position, function(event)
                 -- teleport player to (possibly modified) prev_pos
                 player.teleport(prev_pos)
             end
-        else
-            log("Player : " .. player.name .. " entered a vehicle at x: " .. player.vehicle.position.x .. ", y: " .. player.vehicle.position.y)
         end
     end
     -- save new player position

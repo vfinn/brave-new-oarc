@@ -1,7 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.44
+
+---------------------------------------------------------------------------------------------------
 Version: 4.2.43
     - Fixed Auto Deconstruct, and highlight the area where the miner was for 20 seconds
     - added support for scrap-resource and redefined the items provided from those resources
+      give scrap resources by by RedRafe a try https://mods.factorio.com/mod/scrap-resource
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.42
     - bug fix crash on control.lua 845

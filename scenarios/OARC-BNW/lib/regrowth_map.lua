@@ -406,7 +406,6 @@ function WorldEaterSingleStep()
             if (not has_last_user_set) then
                 for k,v in pairs(entities) do
                     if (v and v.valid) then
-                            log("destroying no last user: " .. v.type)
                             v.die(nil)
                     end
                 end

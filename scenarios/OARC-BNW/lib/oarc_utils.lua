@@ -6,6 +6,7 @@
 
 require("lib/oarc_gui_utils")
 require("mod-gui")
+require("whitelist-players")
 
 --------------------------------------------------------------------------------
 -- Useful constants
@@ -1086,7 +1087,9 @@ end
 -- Anti-griefing Stuff & Gravestone (My own version)
 --------------------------------------------------------------------------------
 function AntiGriefing(force)
-    force.zoom_to_world_deconstruction_planner_enabled=false
+    if not WHITELIST_PLAYERS[force.name] then
+        force.zoom_to_world_deconstruction_planner_enabled=false
+    end
     SetForceGhostTimeToLive(force)
     -- TODO: Mess with permission groups and shit
 end
