@@ -15,9 +15,19 @@ function OarcAutoDeconOnTick()
                 miner.order_deconstruction(miner.force)
                 if miner.last_user then 
                     rendering.draw_rectangle{color={1,0.1,0.1,1}, left_top=miner.selection_box.left_top, right_bottom=miner.selection_box.right_bottom, surface="oarc", time_to_live=60*30, miner.last_user.force, draw_on_ground=false}
---                    game.players[miner.last_user.index].print("Removing miner: " .. miner.gps_tag)
+                    game.players[miner.last_user.index].print("Removing miner: " .. miner.gps_tag)
                     log("Removing miner from " .. miner.last_user.name .. miner.gps.tag)
+                else
+                    log("no miner.last_user on auto decon of miner")
                 end
+                -- Double check above choice to remove miner
+                if (#miner.surface.find_entities_filtered{area = {{miner.selection_box.left_top.x, miner.selection_box.left_top.y},
+                                                                {miner.selection_box.right_bottom.x, miner.selection_box.right_bottom.y}},
+                                                                type = "resource", limit = 1} == 0) then
+                    log("Double Check of miner removed - correctly !")
+                else 
+                    log("Double Check of miner removed - INCORRECTLY!")
+                end 
             end
             table.remove(global.oarc_decon_miners, i)
         end

@@ -1,6 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.44
-
+    - White list added to enable them to work in map mode.
+    - removal of some excessive logging
+    - no 100% fix for Auto Decon Miners yet. I recommend leaving them on until you drop uranium and 
+      just deal with the occasional miner removed incorrectly.
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.43
     - Fixed Auto Deconstruct, and highlight the area where the miner was for 20 seconds
