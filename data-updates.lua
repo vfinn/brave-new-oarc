@@ -1,4 +1,8 @@
 -- update to table for scap-resource patch's items and probability
+-- 
+-- local prod_score = require('production-score')   - from hidden-relic
+-- local values = prod_score.generate_price_list()
+
 if (mods["scrap-resource"]) then
     data.raw.resource.scrap.minable.results =
     {                            -- 1 00.000 % change  

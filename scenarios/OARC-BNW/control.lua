@@ -1194,6 +1194,7 @@ end
 --=================================================================================================
 -- @ event: CustomInputEvent
 -- Docs: https://lua-api.factorio.com/latest/events.html#CustomInputEvent
+-- Taken directly from remove-biter-corpses from RedRafe mod
 local function removeCorpses(event)
   local blacklist = {
       'character-corpse',

@@ -235,7 +235,7 @@ function SendForceMsg(force, msg)
     for name,player in pairs(game.connected_players) do
         if (player.force == force) then
             player.print(msg)
-            log("msg: " .. msg .. ", " .. force.name)
+            log(msg .. ", " .. force.name)
         end
     end
 end 

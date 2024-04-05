@@ -14,14 +14,16 @@
 WELCOME_MSG_TITLE = "Welcome to Brave New Oarc"
 WELCOME_MSG = "This game provides the OARC multiplayer capability, and the Brave New World" -- Printed to player on join as well.
 SERVER_MSG = "Character Mode is same as normal factorio, but with fewer starting items than non char mode, and 1/5 the number of robots.\n" ..
-	         "Features:\n" .. 
-             "   Backspace key clears the area of biter corpses\n" ..
-             "   Server Info menu tab enables various in game options like: Hide your base from other players,\n" ..
-             "   Warn of biters attacks - the constant attack warnings can be stopped\n" ..
-             "   Enable offline attacks - useful in Alien Modules game or competition.\n" ..
-             "   Auto Deconstruction of miners (BETA!)\n" ..
-             "   RESTART is available in the menu choices, and will automatically occur if your main large roboport is destroyed.\n" ..
-             " Most Asked Questions: " ..
+--	         "Features:\n" .. 
+--             "   Backspace key clears the area of biter corpses\n" ..
+--             "   Server Info menu tab enables various in game options like: Hide your base from other players,\n" ..
+--             "   Warn of biters attacks - the constant attack warnings can be stopped\n" ..
+--             "   Enable offline attacks - useful in Alien Modules game or competition.\n" ..
+--             "   Auto Deconstruction of miners (BETA!)\n" ..
+--             "   RESTART is available in the menu choices, and will automatically occur if your main large roboport is destroyed.\n" ..
+--             " Most Asked Questions: \n" ..
+             "Q: Are there special feature?\n"
+             "A: Backspace key clears biter corpses, use the Server Info tab in top left to see selections"
              "Q: Why can't I move outside the area that my main base is located?\n" ..
              "A: Fog of war that limits your movement, but is intended as an antigrief. Use a Radars to claim more area.\n" ..
              "Q: Why can't I make Artillery?\n" ..
@@ -35,7 +37,7 @@ SERVER_MSG = "Character Mode is same as normal factorio, but with fewer starting
              "A: Yes - hover cursor over vehicle and press <enter>, you can NOT fire weapons though. Use them to steam roll the enemy.\n" 
 
 SCENARIO_INFO_MSG = "Latest updates in this scenario version:\n"..
-"No attacks on your base while you are offline!\n"..
+"No attacks on your base while you are offline, configurable!\n"..
 "This scenario offers the option of a buddy base with your friends if you start at the same time.\n"..
 "Join - play, then use RESTART to buddy up with a friend and each have your own base next to each other\n" ..
 "You can be on the main team or your own. All teams are friendly.\n"..
