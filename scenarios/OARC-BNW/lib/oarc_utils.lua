@@ -1087,7 +1087,7 @@ end
 -- Anti-griefing Stuff & Gravestone (My own version)
 --------------------------------------------------------------------------------
 function AntiGriefing(force)
-    if not WHITELIST_PLAYERS[force.name] then
+    if not global.WHITELIST_PLAYERS[force.name] then
         force.zoom_to_world_deconstruction_planner_enabled=false
     end
     SetForceGhostTimeToLive(force)

@@ -22,8 +22,8 @@ SERVER_MSG = "Character Mode is same as normal factorio, but with fewer starting
 --             "   Auto Deconstruction of miners (BETA!)\n" ..
 --             "   RESTART is available in the menu choices, and will automatically occur if your main large roboport is destroyed.\n" ..
 --             " Most Asked Questions: \n" ..
-             "Q: Are there special feature?\n"
-             "A: Backspace key clears biter corpses, use the Server Info tab in top left to see selections"
+             "Q: Are there special feature?\n" ..
+             "A: Backspace key clears biter corpses, use the Server Info tab in top left to see selections" ..
              "Q: Why can't I move outside the area that my main base is located?\n" ..
              "A: Fog of war that limits your movement, but is intended as an antigrief. Use a Radars to claim more area.\n" ..
              "Q: Why can't I make Artillery?\n" ..
