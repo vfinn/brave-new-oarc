@@ -210,7 +210,7 @@ function GenerateStartingResources(surface, pos)
         global.ocfg.krastorio2_resources_increased=true
     end
     if game.active_mods["scrap-resource"] then
-        GenerateResourcePatch(surface, "scrap", 8, {x=pos.x-40-kOffset, y=pos.y-53}, 10000)
+        GenerateResourcePatch(surface, "scrap", 8, {x=pos.x-40-kOffset, y=pos.y-53}, 2000)
     end
     if not global.ocfg.seablock then
         -- Generate all resource tile patches

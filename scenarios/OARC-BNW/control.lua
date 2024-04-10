@@ -503,7 +503,7 @@ script.on_event(defines.events.on_tick, function(event)
     TimeoutSpeechBubblesOnTick()
     FadeoutRenderOnTick()
 
-    if #global.oarc_decon_miners>0 then
+    if #global.oarc_decon_miners>0 and ((game.tick % (TICKS_PER_SECOND)) == 2) then
         OarcAutoDeconOnTick()
     end
 
@@ -511,7 +511,7 @@ script.on_event(defines.events.on_tick, function(event)
         global.swarmCheckTick = global.swarmCheckTick or game.tick
         if (game.tick >= global.swarmCheckTick) then
             BNOCleanGPSStack()
-            global.swarmCheckTick = game.tick + TICKS_PER_SECOND*2    -- check again in 1 second
+            global.swarmCheckTick = game.tick + TICKS_PER_SECOND*2    -- check again in 2 seconds
         end
     end
 end)
@@ -900,12 +900,13 @@ function dropItems(entity, player, name, count)
         if entity then
             if entity.valid then  
                 -- This was causing crashes in dropItems if a ghost entity forced a drop, a thank running over stone, or dropping a ghost on stone could do this                  
-                if (entity.name ~= "entity-ghost") then
                     if (global.enable_oe_debug) then
                         log("dropItems: Spilling items for: ".. entity.name .. ", type: " .. entity.type .. ", at " .. GetGPStext(entity.position) .. ", entity force: ".. entity.force.name)
                     end
-                    if (entity.surface == nil) then
-                        game.prints[player.name]("Send this log to JustGoFly - it shows something that WOULD have crashed, and provides good info to debug what caused it")
+                    if (entity.name == "oarc-gui") then
+                        game.players[player.name].print("Close your menu when stealing ore from someone ;)")                    
+                    elseif (entity.surface == nil) then
+                        game.players[player.name].print("Send this log to JustGoFly - it shows something that WOULD have crashed, and provides good info to debug what caused it")
                         log("dropItems: would have crashed accessing entity.surface - on entity name: " .. entity.name .. " for item: " .. name .. " count: " .. count .. " for player: " .. player.name)
                     else
                         entity.surface.spill_item_stack(entity.position, {name = name, count = count}, false, entity.force, false)
