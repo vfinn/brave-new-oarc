@@ -1474,7 +1474,7 @@ function CreateWall(surface, pos)
 end
 
 function CreateHoldingPen(surface, chunkArea)
-    local radiusTiles = global.ocfg.spawn_config.gen_settings.land_area_tiles-10
+    local radiusTiles = global.ocfg.spawn_config.gen_settings.land_area_tiles-37
     if (((chunkArea.left_top.x >= -(radiusTiles+2*CHUNK_SIZE)) and (chunkArea.left_top.x <= (radiusTiles+2*CHUNK_SIZE))) and
         ((chunkArea.left_top.y >= -(radiusTiles+2*CHUNK_SIZE)) and (chunkArea.left_top.y <= (radiusTiles+2*CHUNK_SIZE)))) then
 
@@ -1486,8 +1486,8 @@ function CreateHoldingPen(surface, chunkArea)
 
         CreateCropCircle(surface, {x=0,y=0}, chunkArea, radiusTiles, "landfill")
         CreateMoat(surface, {x=0,y=0}, chunkArea, radiusTiles, "water", false)
-        CreateMoat(surface, {x=0,y=0}, chunkArea, radiusTiles+10, "out-of-map", false)
-        CreateMoat(surface, {x=0,y=0}, chunkArea, 2, "out-of-map", false)
+        CreateMoat(surface, {x=0,y=0}, chunkArea, radiusTiles+14, "out-of-map", false)
+        CreateMoat(surface, {x=0,y=0}, chunkArea, 4, "out-of-map", false)
     end
 end
 
@@ -1568,4 +1568,3 @@ function empty_players_inventory(player)
         end
     end
 end
-
