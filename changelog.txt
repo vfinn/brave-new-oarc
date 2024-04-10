@@ -1,4 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.45
+    - There was a hard to find bug that caused a crash if in while running alien modules mod, and
+      you wave your cursor over alien-ore, while you have a menu item open, it would cause a crash.
+      This crash area was previously known, but not that it was caused when the menu is open. 
+      The fix I applied with a message to send me your log file - had a typo - DOH !
+      I more definitively debugged this and fix is good.
+    - Auto Deconstruct miners are fixed and will ping the miner being removed.
+    - I reworked the start area.
+    - Some of my special players are white listed. Which means they can work from map view.
+      Admins can add their own special players to whitelist-players.lua
+      They are not admin in this file, it only allows modification of their base in map view.
+---------------------------------------------------------------------------------------------------
 Version: 4.2.44
     - White list added to enable them to work in map mode.
     - removal of some excessive logging
