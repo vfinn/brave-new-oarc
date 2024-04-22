@@ -97,7 +97,11 @@ function GameOptionsGuiClick(event)
         end
         player.print(player.name .. " changed the 'Sharing of Chart' option to " .. onOff)
     end
-
+    
+    if (string_starts_with(name, "player:")) then
+        local p = string.sub(name,string.len("player:")+1)
+        game.players[event.player_index].print(p .. " located: " .. GetGPStext(game.players[p].position) )
+    end
 end
 
 -- Used by AddOarcGuiTab

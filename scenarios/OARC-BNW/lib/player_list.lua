@@ -21,9 +21,9 @@ function CreatePlayerListGuiTab(tab_container, player)
         end
         local caption_str = player.name.." ["..player.force.name.."]".." ("..formattime_hours_mins(player.online_time)..")    ".. charMode
         if (player.admin) then
-            AddLabel(scrollFrame, player.name.."_plist", caption_str, my_player_list_admin_style)
+            AddLabel(scrollFrame, "player:"..player.name, caption_str, my_player_list_admin_style)
         else
-            AddLabel(scrollFrame, player.name.."_plist", caption_str, my_player_list_style)
+            AddLabel(scrollFrame, "player:"..player.name, caption_str, my_player_list_style)
         end
     end
 
@@ -39,7 +39,7 @@ function CreatePlayerListGuiTab(tab_container, player)
             end
             if (not player.connected) then
                 local caption_str = player.name.." ["..player.force.name.."]".." ("..formattime_hours_mins(player.online_time)..")    ".. charMode
-                local text = scrollFrame.add{type="label", caption=caption_str, name=player.name.."_plist"}
+                local text = scrollFrame.add{type="label", caption=caption_str, name="player:"..player.name}
                 ApplyStyle(text, my_player_list_offline_style)
             end
         end

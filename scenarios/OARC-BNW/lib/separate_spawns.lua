@@ -517,35 +517,38 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
 	    end
     end
 
+    -- place dirt beneath structures
+    local dirtTiles = {}
+    local startX=14 
+    local extentX=13
+    local startY=5
+    local extentY=7
+
+    if global.ocfg.space_block then
+        startX=16
+        extentX=19
+        startY=8
+        extentY=9
+    elseif global.ocfg.dangOreus then
+        startX=30
+        extentX=30
+        startY=30
+        extentY=30
+    end
     -- remove trees/stones/resources
-    local entities = surface.find_entities_filtered{area = {{x - 16, y - 8}, {x + 19, y + 9}}, force = "neutral"}
+    local entities = surface.find_entities_filtered{area = {{x - startX, y - startY}, {x + extentX, y + extentY}}, force = "neutral"}
     for _, entity in pairs(entities) do
         entity.destroy()
     end
 
-    -- place dirt beneath structures
-    local dirtTiles = {}
-    if global.ocfg.space_block then
-        for xx = x - 16, x + 19 do
-            for yy = y - 8, y + 9 do
-                local tile = surface.get_tile(xx, yy)
-                local name = tile.name
-                if tile.prototype.layer <= 4 then
-                    name = water_replace_tile
-                end
-                dirtTiles[#dirtTiles + 1] = {name = "landfill", position = {xx, yy}}
+    for xx = x - startX, x + extentX do
+        for yy = y - startY, y + extentY do
+            local tile = surface.get_tile(xx, yy)
+            local name = tile.name
+            if tile.prototype.layer <= 4 then
+                name = water_replace_tile
             end
-        end
-    else
-        for xx = x - 14, x + 13 do
-            for yy = y - 5, y + 7 do
-                local tile = surface.get_tile(xx, yy)
-                local name = tile.name
-                if tile.prototype.layer <= 4 then
-                    name = water_replace_tile
-                end
-                dirtTiles[#dirtTiles + 1] = {name = "landfill", position = {xx, yy}}
-            end
+            dirtTiles[#dirtTiles + 1] = {name = "landfill", position = {xx, yy}}
         end
     end
     surface.set_tiles(dirtTiles)
@@ -575,6 +578,8 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     elseif global.ocfg.seablock then
 --                if (settings.startup["bno-main-area-design-boiler-n-steam-engines"].value == "solar only") then
         blueprint = "0eNqV19uOmzAQBuB38TVZwdjGkFepVpXJWlskMMhA1Sji3ReybRJVYzxzFyL5w4ffZnwTTbe4MbR+FuebaC+Dn8T5x01M7ae33f7ffB2dOIt2dr3IhLf9/jQNnQ2n0XrXiTUTrf9wf8S5WLNkS3u5LP3S2XkILy1hfc+E83M7t+67A/eH60+/9I0LG42+OhPjMG1tBr+/b3NOqnzTmbhuv4x60+veof8koEoyJUmqlKckRZSkSUn6IQX7YQNmqJRRPnvT2647dbYfMQgekMYhQx1WcoIqogTJCaqpUnKaipxKFUmqQPcHEiXzFwKUASqjDxlJZeQho6hMcchoaoqqxzQXkWl+JjsMzTAOYUY3yD8FNaihhjrZnYo4QXC86jWVOVx1yKnM4aoDNcpwuOoA3B2Ro4zk7giceTmgl2aa7b3pwYbIt0+bd+3nr2ZYwv5BA/OOuZq7RfDuldwg4YyhjRJ0dJQKHWXFTRbevZqbLJSROTNZZYUyBTNZEQaYZ22EkcwgRRjFPmvLKlIcafY5GaW48Y4MzjDPyQjDTXOE4aYZZ1TOLozLSLWmCnZlHKWAXRpHKcmujaOUYtejUUqzC9IoVbIr0ihl2BVplKKmXD4glKGmXMons10F73fG88vlNBO/XZjuDaAqlKnBVFCbvKrX9Qukfb7W"
+    elseif global.ocfg.dangOreus then
+        blueprint = "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"
     elseif characterMode then
         -- Normal Oarc game - with a character
         blueprint = "0eNqVmt1uo0AMhd+F67Ri7GF+8iqrakVa1EVKICJkd6sq774kVdtoNcY+d00lvniG44OZk/dqtz93x6kf5mr7XvXP43Cqtj/eq1P/OrT76//mt2NXbat+7g7Vphraw/XTady308OxHbp9ddlU/fDS/a227rJRr2yfn8+H876dx+nuSro8bapumPu57z4KuH14+zmcD7tuWtDfXz2PQ/fwp93vF+hxPC2XjMP16xbMg0+PzaZ6W/5q/GNzudbzH4hgUFMGcXEzCqTwReIyyRtLClpJjREUNVCwro21tUVjSV4rKRlBjQbKRhBpIFcbSaySnHW/a22/nVXftVoUG0lOJXnj8jiqyzNKnNX2dcFIyirJqHFW+9cZRc5qA7tvlU/tSzuVIF7bbDIKnNXmJaN9s9q9dKfvwwJ52LeHY4lE6oPAqG9WjYCMBs6qEVBj7RTVCMiqb9UIyKpv1QgoGZdHqhGQ0cZJf44bVU6qEbBR5aQaARtdnFQjYOuYQqodsFHmpNoBG12cVDtg66RCTl2eUeak+gEbbZxUP2CrytUm9laVq03sjSp3WXNgTzBJqonhqZ4EkodJ0lTfwKuTagowSaopwqurBVKCSU4g5eK7Yem15RNUfPeprZhmFeOsGF7FkBXjVjFW92b1hjXfwp7G3Xgcp7k4yn1SigzreHL3rJTKCcYNovW7Hq2Y9buerJj1u26VMq3e9VDD/S7scsC9WujSAJ+bXP8qkmCv9lkgedA5fC5i7lR93p3m9napbBwLZbmg619/7cbzdD2tivVTiRtAKxHKi6CVCJgEW8n1nKiIyrANSKhY2/aeorT3oSntfXSgL5Q3LRLoCwKGQV8QMB7tZqkHIzybSD0YA9zNQSDBs4koqoT6QixiMjhRlDGpRm2gjHGoDZQxBD53BQyj/VXGeLS/ypgG7a8yBp6zJS2nCJMELSd4zvbC21bKMEk6Qa/h6EMqKjs4aRBRBB+iiyiGD6xFlFXh/AUqYqwKZ17FBPh8UVxYhM/yRFSCz6hEVIbPgySUq+ExXEbBc7gXQyd8ECcJhU/iUixTwxmmXBWcYsqogKaPMiqi+aOMSmgCKaMyGkGKKHOaWesohyaHMorQvE9GMRr4ySiPJn4yqkEjPxkV0LhORkU0r5NRCY3ZZFRGczYRZY42dbWbs01d7URoqCWjGE21ZJRHYy0Z1aC5lowKaBoloyIaR8mohIZIMiqjKZKIMkecutrNGaeudobjHxnFMOo2yTxtPn6dtr37Gdym+t1Np9tFlJyPmWKiHOuUL5d/RoFoZA=="
@@ -584,8 +589,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
             blueprint = "0eNqdmuuOm0gQRt+F33ZEVV/xq6xGEXbIBAmDF/DujkZ+9wVPJrYSqqu6fo08MsdcvlN0d/V7ceyuzWVs+7k4vBftaein4vDXezG1r33drf+b3y5NcSjauTkXu6Kvz+unaejqcX+p+6Yrbrui7b81/xUHuO3YI+vT6Xq+dvU8jE9H4u1lVzT93M5t83EC9w9vX/vr+diMC/rx0/PQN/t/665boJdhWg4Z+vXnFszeRotf3K54W44wFXxxt/WUfmOhmFWyLCNmAcuyUpaJLMuJWRXL8mKWZ1lBzAosK4pZlmVVYpZjWVCKYXxYQZx8Y3iYOPqGjz6Is2/47IM4/MiHH8TpRz79II4/8vEHcf6Rzz+IBUBeABAbgLwBKDYABeVabADyBqDYAOQNQLEByBuAYgOANwDFBgBvAIoNAN4AFBsAvAEoNgB4A1BsAPAGGLEBwIfWqEY/SMBQAzMEzGwOCbnBFEWzYtrz8ICiOTnN8jQvpwFPe1gw1t/qkX3TUZwnAc7Lc9x39fnCvpyoZDwE6IbXdprb0/70o5nm/dj8fV3+NiOLXs9zV/z8/tfvbbcc9DGg/5wj/Pkb43Ac5oV8Gq7rNMSV67l9Tgx+fX2dmszj9bT+9sYhL1sD6lL8zJBPgAU5jU+ARTEN+BxYuYfPxYuiWU3xIlJlnQZGnZnXFC9LwIIG5ghY3Jzibk8FP1l+k1SJSauxCZIr5aSQJoGc5NIkee6fZ0eemOY+cr+WhMswzkQp/QSFTcwj8G0/NaOk0hGhcvK3zvNwlbo+L77vmE6VC2ISMKmSJx2YVMmTDulUedVwi3iEHjQwoi541XCLiIM3GlggYFZRseImySkq1jbJKyrWNumpuF+P01zfj04XrLgMXfqmff1xHK73UYuPW8MKH6VoBBodNtGVwtLN6w+lwtJtEigs3SahRizChWA0MMKFYDViRQLmNLCKgPlsS21ZbpJCtqUUKWZbSpGq7HEFQYqlalxB3PUIqrc4RcPstzh1lSa7PlAkm10fKJLLrg8UyWuUJiyMQQOjnmDMV3q5SAJWaWBU46JUrMDYkpisVaBYgaFpqFiBoWlGsQJD06xibYCmOcXaAE3zirUBmhYUawM0LeZrRZpQVRoY2XYrNV4hRQMNzVC0jFfAr8JttlHydwAGBmU195+8Y05DI++Y19x/S9FCftM/QYv5bf8Ercpv/NO0jO5zJaBBfvM/QcP89n+CZvI3ACRoNn8LQILm8vcAJGg+fxNAghbydwEkaDF/G0CCVuXvA6BpGX1ogQsZjWiBCxmdaIELGa1ogQvyXjQKXJA3o1HggrwbjQIX5O1oFLgg70ejwIWMhrTAhYyOtMAFeUsaBC7Ie9IgcMGY/F0BCZrN3xaQoKnGSHfay+5jK+Xhac/mrvinGaf7cbhcTagwBG8hYLzd/gdAgBor"
         else
 --      adding the boiler to existing ssolar - water pump over land - not water
-            blueprint = "0eNqdmutum0AQhd+F36Zihr2AX6WKKuxsEiQMFEPbKPK7F+ymRu2OZ5hfkSP243bO7OwePpJDM4V+qNsx2X8k9bFrz8n+60dyrl/bqln+N773Idkn9RhOyS5pq9Py69w11ZD2VRua5LJL6vY5/Er2cNmxI6vjcTpNTTV2w2okXp52SWjHeqzD7QKuP96/tdPpEIYZfT/12LUh/Vk1zQztu/M8pGuX082Y1BQGv9hd8j6PMFh+sZflkv5hoZgFLCsXszKWZaSsvGRZVswqWJYTszzL8mKWY1mFmGVZVilmGZYFmRiW8zCx8nNe+SCWfs5LH8Taz3ntg1j8yIsfxOpHXv0glj/y8gex/pHXP4gNgLwBQOwA5B2AYgcg7wAUOwAFtV/sAOQdgGIHIO8AFDsAeAeg2AHAOwDFDgDeASh2APAOQLEDgHcAih0AvANysQOAd0Cu6X6WohuFoQYGBCyPtoRMA0TSjJi2ajVImpXTDE9zchrwtLsLhuq5GrjJieSsDHCa32PaVKeem09IZdwN0HSv9Xmsj+nxLZzHdAjfp/lvGFj0cp275M/x317qZh50a+g/1wj/n2PoDt04k4/dtCxDbLZc2+fC4O/hy9JkHKbjcu7IkKdYQ52J3xnyCjAgp/EKMCimAa8DI/fhqhKSNKMoXpSqjNXAqCtzmuKFBMxrYDkBK6JL3Piy8pNloqRSTFoc+4BkMznJPyaBnGQfk+S6Xy1olgIdpd11v5SEvhtGopR+guKYu+Dr9hwGSaUjRGXls86q9yXvz4mfOz5WlfViEjCqkisdGFXJlQ6PVeU07Rb1Ch1oYERdcKp2i5CDyzUwS8CMomK5KMkqKlac5BQVK05aFffpcB6r6+jHBcvNrUsb6te3QzdduxZXxNoKV0jRCDTaR9GlwqXR+/eZwqVxEihcGiehxliEF3yugRFe8EZjLEfArAbmCZhTuLSIkrzCpXFSoXBpnFQq+oooqchUfQXx1AtQzeIUDRWzePwuc0V9iJOMoj7ESVZRH+Ikp7E04cLCa2DUGyw0li4IWKmBUcFFptmBMcRirQTNDgxJQ80ODEnLNTswJM1o9gZImtXsDZA0p9kbIGleszdA0gqNrQgnlKUGRsZumcJX1H1Cptl0NUDRNkwB5V9YHCWfA9AzKM1GD/3ENDs99BPTbPUYpGheEfrTtEIR+9O0UhH8k7QN6XMhoIEi/KdpqIj/aVquCO1pmlF8TkDTrCK2p2lO8UUBTfOK4J6mFYpvCmhaqYjuSdqGHFrgrA1BtEC9G5JogbM2RNEC9cqzaBQ4Sx5Go8AL8jQaBV6Qx9Eo8II8j0aBFzYE0gIvbEikBV6QR9Ig8II8kwaBF/JcEeTTNKP4xoCmqXokknb3wmEa2jCkD+OLdTNir0Htcz2E4+0gFz2B10XC6ybKyiPhY1c1bBD8s+ue7wfNXX80+4VVNH7o6iYwO13/PxCMUteeDNUpDe1r3Qa2T5DR14E1S8820+8Punt5Ob91Q0j7ifheYK0VL9LKKtHu6z6wDex1q+Vpd/s+eL/6EHmX/JgVcruP2aK+RO+dAY/F5fIb+V3+cQ=="
-                            
+            blueprint = "0eNqdmutum0AQhd+F36Zihr2AX6WKKuxsEiQMFEPbKPK7F+ymRu2OZ5hfkSP243bO7OwePpJDM4V+qNsx2X8k9bFrz8n+60dyrl/bqln+N773Idkn9RhOyS5pq9Py69w11ZD2VRua5LJL6vY5/Er2cNmxI6vjcTpNTTV2w2okXp52SWjHeqzD7QKuP96/tdPpEIYZfT/12LUh/Vk1zQztu/M8pGuX082Y1BQGv9hd8j6PMFh+sZflkv5hoZgFLCsXszKWZaSsvGRZVswqWJYTszzL8mKWY1mFmGVZVilmGZYFmRiW8zCx8nNe+SCWfs5LH8Taz3ntg1j8yIsfxOpHXv0glj/y8gex/pHXP4gNgLwBQOwA5B2AYgcg7wAUOwAFtV/sAOQdgGIHIO8AFDsAeAeg2AHAOwDFDgDeASh2APAOQLEDgHcAih0AvANysQOAd0Cu6X6WohuFoQYGBCyPtoRMA0TSjJi2ajVImpXTDE9zchrwtLsLhuq5GrjJieSsDHCa32PaVKeem09IZdwN0HSv9Xmsj+nxLZzHdAjfp/lvGFj0cp275M/x317qZh50a+g/1wj/n2PoDt04k4/dtCxDbLZc2+fC4O/hy9JkHKbjcu7IkKdYQ52J3xnyCjAgp/EKMCimAa8DI/fhqhKSNKMoXpSqjNXAqCtzmuKFBMxrYDkBK6JL3Piy8pNloqRSTFoc+4BkMznJPyaBnGQfk+S6Xy1olgIdpd11v5SEvhtGopR+guKYu+Dr9hwGSaUjRGXls86q9yXvz4mfOz5WlfViEjCqkisdGFXJlQ6PVeU07Rb1Ch1oYERdcKp2i5CDyzUwS8CMomK5KMkqKlac5BQVK05aFffpcB6r6+jHBcvNrUsb6te3QzdduxZXxNoKV0jRCDTaR9GlwqXR+/eZwqVxEihcGiehxliEF3yugRFe8EZjLEfArAbmCZhTuLSIkrzCpXFSoXBpnFQq+oooqchUfQXx1AtQzeIUDRWzePwuc0V9iJOMoj7ESVZRH+Ikp7E04cLCa2DUGyw0li4IWKmBUcFFptmBMcRirQTNDgxJQ80ODEnLNTswJM1o9gZImtXsDZA0p9kbIGleszdA0gqNrQgnlKUGRsZumcJX1H1Cptl0NUDRNkwB5V9YHCWfA9AzKM1GD/3ENDs99BPTbPUYpGheEfrTtEIR+9O0UhH8k7QN6XMhoIEi/KdpqIj/aVquCO1pmlF8TkDTrCK2p2lO8UUBTfOK4J6mFYpvCmhaqYjuSdqGHFrgrA1BtEC9G5JogbM2RNEC9cqzaBQ4Sx5Go8AL8jQaBV6Qx9Eo8II8j0aBFzYE0gIvbEikBV6QR9Ig8II8kwaBF/JcEeTTNKP4xoCmqXokknb3wmEa2jCkD+OLdTNir0Htcz2E4+0gFz2B10XC6ybKyiPhY1c1bBD8s+ue7wfNXX80+4VVNH7o6iYwO13/PxCMUteeDNUpDe1r3Qa2T5DR14E1S8820+8Punt5Ob91Q0j7ifheYK0VL9LKKtHu6z6wDex1q+Vpd/s+eL/6EHmX/JgVcruP2aK+RO+dAY/F5fIb+V3+cQ=="                            
         end
     end
     build_blueprint_from_string(blueprint,surface,{x=x, y=y},force)
@@ -826,7 +830,7 @@ function DisplayWelcomeGroundTextAtSpawn(player, pos)
     local ttl = 2000
     local rid1 = rendering.draw_text{text="Welcome",
                         surface=game.surfaces[GAME_SURFACE_NAME],
-                        target={x=pos.x-21, y=pos.y-25},
+                        target={x=pos.x, y=pos.y-25},
                         color=tcolor,
                         scale=20,
                         font="compi",
@@ -836,10 +840,11 @@ function DisplayWelcomeGroundTextAtSpawn(player, pos)
                         orientation=0,
                         -- alignment=center,
                         scale_with_zoom=false,
-                        only_in_alt_mode=false}
+                        only_in_alt_mode=false,
+                        alignment= "center"}
     local rid2 = rendering.draw_text{text=player.name,
                         surface=game.surfaces[GAME_SURFACE_NAME],
-                        target={x=pos.x-21, y=pos.y+5},
+                        target={x=pos.x, y=pos.y+5},
                         color=tcolor,
                         scale=20,
                         font="compi",
@@ -849,10 +854,11 @@ function DisplayWelcomeGroundTextAtSpawn(player, pos)
                         orientation=0,
                         -- alignment=center,
                         scale_with_zoom=false,
-                        only_in_alt_mode=false}
+                        only_in_alt_mode=false,
+                        alignment= "center"}
     local rid3 = rendering.draw_text{text="Top left - Click !",
                         surface=game.surfaces[GAME_SURFACE_NAME],
-                        target={x=pos.x-21, y=pos.y+20},
+                        target={x=pos.x, y=pos.y+20},
                         color={0, 1, 1, 0.8},
                         scale=9,
                         font="compi",
@@ -862,7 +868,8 @@ function DisplayWelcomeGroundTextAtSpawn(player, pos)
                         orientation=0,
                         -- alignment=center,
                         scale_with_zoom=false,
-                        only_in_alt_mode=false}
+                        only_in_alt_mode=false,
+                        alignment= "center"}
 
     table.insert(global.oarc_renders_fadeout, rid1)
     table.insert(global.oarc_renders_fadeout, rid2)

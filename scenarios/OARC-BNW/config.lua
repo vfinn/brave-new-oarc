@@ -220,8 +220,8 @@ NEAR_MAX_DIST = SILO_CHUNK_DISTANCE - 50     -- this 250 previously 200
 -- SILO_CHUNK_DISTANCE at 200
 -- Far Distance in chunks
 -- When a player selects "far" spawn, they will be at least this distance away.
-FAR_MIN_DIST = SILO_CHUNK_DISTANCE + 50        -- 200
-FAR_MAX_DIST = SILO_CHUNK_DISTANCE + 100        -- 300
+FAR_MIN_DIST = SILO_CHUNK_DISTANCE + 50        -- 350
+FAR_MAX_DIST = SILO_CHUNK_DISTANCE + 100        -- 400
 
 
 

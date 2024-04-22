@@ -1,4 +1,21 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.47
+    DangOreus mod support:
+        - Stopped DangOreus from populating nauvis surface with ore, this will reduce join lag
+        - Added "tiny" to enable DangOreus players to spawn closer to 0,0 which will reduce the
+          amount of ore in a players base. I recommend a richness of 17%.
+        - Added support for Enders Linked Chests - and fixed that it doesn't allow non-admin players
+          from setting the box address.
+---------------------------------------------------------------------------------------------------
+Version: 4.2.46
+    - In player menu - click on a name and their position will be printed to you. Click on the gps 
+      position provided to see that player in map view.
+    - Modified options for Scrap Resource mod - offering Ore Only and More Items.
+    DangOreus mod support:
+        - Modified starting area for DangOreus mod.
+    Enders Linked Chests
+        - Added ability for anyone to set the address of the chest - not just admins.
+---------------------------------------------------------------------------------------------------
 Version: 4.2.45
     - There was a hard to find bug that caused a crash if in while running alien modules mod, and
       you wave your cursor over alien-ore, while you have a menu item open, it would cause a crash.

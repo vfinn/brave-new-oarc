@@ -340,6 +340,11 @@ script.on_event(defines.events.on_player_joined_game, function(event)
         global.ocfg.creep_initialized=true
     end
 
+    if global.ocfg.dangOreus and not global.ocfg.danOreus_initialized then
+        remote.call("dangOreus", "toggle", game.surfaces["nauvis"], false)      -- turn off ore on nauvis to save cpu
+        global.ocfg.danOreus_initialized=true
+    end
+
     log("on_event::On Player Joined Game " .. joiningPlayer.name)
     PlayerJoinedMessages(event)
     ServerWriteFile("player_events", joiningPlayer.name .. " joined the game." .. "\n")

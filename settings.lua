@@ -21,9 +21,9 @@ data:extend({
         type = "string-setting",
         name = "bno-map-size",     
         setting_type = "startup",
-        allowed_values = {"small", "normal", "large"},
+        allowed_values = {"tiny", "small", "normal", "large"},
         default_value = "normal",
-        order="bnw-015"
+        order="bnw-016"
     },
     {
         type = "string-setting",
@@ -177,3 +177,16 @@ data:extend({
         order="bnw-93"
     }   
 })
+
+if (mods["scrap-resource"]) then
+data:extend({
+    {
+        type = "string-setting",
+        name = "bno-scrap",     
+        setting_type = "startup",
+        allowed_values = {"many items", "ore only"},
+        default_value = "ore only",
+        order="bnw-00"
+    }    
+})
+end

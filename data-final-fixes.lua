@@ -52,7 +52,11 @@ myLogiRoboportItem.place_result = "roboport-main"
 myLogiRoboportItem.icon = "__brave-new-oarc__/graphics/icons/roboport-main.png"
 data:extend({myLogiRoboportItem})
 
-
+if mods["enderlinkedchest"] then
+  local linkedChest = table.deepcopy(data.raw["linked-container"]["ender-linked-chest"])
+  linkedChest.gui_mode="all"
+  data:extend({linkedChest})
+end
 
 -- Bots explode for no good reason(update Jan 2023 JGF - found it we were killing them if they had no owner - FIXED), in a mod that requires you to use ONLY bots to survive, them spontaneous exploding is bad
 -- The thoughts are that adding resistance to explosion and potentially more important physical damage will keep them alive longer, (Update: I like this feature even though bots no longer explode - making it configurable)

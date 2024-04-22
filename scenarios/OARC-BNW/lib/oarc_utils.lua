@@ -43,7 +43,7 @@ function GetGPStext(pos)
     if pos==nil then 
         return "unknown"
     end
-    return "[gps=" .. pos.x .. "," .. pos.y .. "]"
+    return string.format("[gps=%.2f,%.2f]", pos.x, pos.y)
 end
 
 -- Requires having an on_tick handler.
@@ -1567,4 +1567,8 @@ function empty_players_inventory(player)
             player.get_inventory(defines.inventory.character_armor).clear()
         end
     end
+end
+
+string_starts_with = function(str, start)
+  return str.sub(str, 1, string.len(start)) == start
 end

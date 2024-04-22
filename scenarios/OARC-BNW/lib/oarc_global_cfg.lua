@@ -78,7 +78,13 @@ function InitOarcConfig()
     global.ocfg.far_dist_start = FAR_MIN_DIST
     global.ocfg.far_dist_end = FAR_MAX_DIST
     global.ocfg.frontier_silo_distance =  SILO_CHUNK_DISTANCE
-    if (global.ocfg.map_size == "small") then
+    if (global.ocfg.map_size == "tiny") then
+        global.ocfg.frontier_silo_distance =  SILO_CHUNK_DISTANCE / 4
+        global.ocfg.near_dist_start = NEAR_MIN_DIST / 4
+        global.ocfg.near_dist_end = NEAR_MAX_DIST / 4
+        global.ocfg.far_dist_start = FAR_MIN_DIST / 4
+        global.ocfg.far_dist_end = FAR_MAX_DIST / 4
+    elseif (global.ocfg.map_size == "small") then
         global.ocfg.frontier_silo_distance =  SILO_CHUNK_DISTANCE / 2
         global.ocfg.near_dist_start = NEAR_MIN_DIST / 2
         global.ocfg.near_dist_end = NEAR_MAX_DIST / 2
@@ -135,6 +141,7 @@ function InitOarcConfig()
     global.ocfg.lex_aircraft        = game.active_mods["lex-aircraft"]
     global.ocfg.alien_module        = game.active_mods["alien-module"]
     global.ocfg.LootChestPlus       = game.active_mods["LootChestPlus"]
+    global.ocfg.dangOreus           = game.active_mods["dangOreus"]
 
     if (global.ocfg.krastorio2) then 
         global.ocfg.spawn_config.gen_settings.land_area_tiles = global.ocfg.spawn_config.gen_settings.land_area_tiles + 32 
@@ -145,6 +152,10 @@ function InitOarcConfig()
     end
     if global.ocfg.freight_forwarding then global.ocfg.frontier_rocket_silo=false end
     global.ocfg.krastorio2_resources_increased = false
+
+    if global.ocfg.dangOreus then
+    global.ocfg.danOreus_initialized=false
+    end
     -----------------------
     -- VALIDATION CHECKS --
     -----------------------
