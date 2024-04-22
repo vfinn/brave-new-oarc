@@ -2,6 +2,7 @@
 
 -- entities
 require("prototypes.entity.roboport-main")
+local table = require('__stdlib__/stdlib/utils/table')
 -- require("prototypes.entity.loader")
 
 -- items
@@ -53,9 +54,67 @@ myLogiRoboportItem.icon = "__brave-new-oarc__/graphics/icons/roboport-main.png"
 data:extend({myLogiRoboportItem})
 
 if mods["enderlinkedchest"] then
-  local linkedChest = table.deepcopy(data.raw["linked-container"]["ender-linked-chest"])
-  linkedChest.gui_mode="all"
-  data:extend({linkedChest})
+	local linkedChest = table.deepcopy(data.raw["item"]["ender-linked-chest"])
+	local newlinkedChestRecipe = table.deepcopy(data.raw["recipe"]["ender-linked-chest"])
+	local newlinkedChestTech = table.deepcopy(data.raw["technology"]["ender-linked-chest"])
+	data.raw["linked-container"]["ender-linked-chest"] = nil	-- erase enders linked chest to be replaced with my definition
+
+	local newlinkedChest = table.merge(table.deepcopy(data.raw["container"]["iron-chest"]),
+	{
+		type = "linked-container",
+		name = "ender-linked-chest",
+		minable = { mining_time = 0.2, result = name },
+		inventory_type = "with_filters_and_bar",
+		icon = linkedChest.icon,
+		icon_size = linkedChest.icon_size,
+		picture = linkedChest.picture,
+--		picture.layers[1].filename = "__enderlinkedchest__/graphics/entity/ender-linked-chest-icon.png",
+		corpse = linkedChest.corpse,
+		gui_mode = "all",
+		selecttable_in_game = true,
+	})
+	newlinkedChest.next_upgrade = nil
+	newlinkedChest.picture.layers[1].filename = "__enderlinkedchest__/graphics/entity/ender-linked-chest.png"
+	newlinkedChest.picture.layers[1].scale = 0.15
+
+	newlinkedChest.picture.layers[1].hr_version.filename = "__enderlinkedchest__/graphics/entity/ender-linked-chest.png"
+	newlinkedChest.picture.layers[1].hr_version.height = 128
+	newlinkedChest.picture.layers[1].hr_version.width = 128
+	newlinkedChest.picture.layers[1].hr_version.scale = 0.3
+
+	data:extend({newlinkedChest})
+
+	linkedChest = table.deepcopy(data.raw["linked-container"]["ender-linked-chest"])
+	data:extend(
+		{
+			linkedChest,
+			{
+				type						= newlinkedChestRecipe.type,
+				name 						= newlinkedChestRecipe.name,
+				enabled 					= newlinkedChestRecipe.enabled,
+				energy_required 			= newlinkedChestRecipe.craftTime,
+				hide_from_player_crafting 	= newlinkedChestRecipe.hide_from_player_crafting,
+				category 					= newlinkedChestRecipe.category,
+				crafting_machine_tint 		= newlinkedChestRecipe.crafting_machine_tint,
+				ingredients 				= newlinkedChestRecipe.ingredients,
+				result 						= newlinkedChestRecipe.result
+			},
+			{
+				type 						= newlinkedChestTech.type, 		
+				name 						= newlinkedChestTech.name,
+				icon 						= newlinkedChestTech.icon,
+				icon_size 					= newlinkedChestTech.icon_size,
+				effects 					= newlinkedChestTech.effects,
+				prerequisites 				= newlinkedChestTech.prerequisites,
+				unit 						= newlinkedChestTech.unit,
+				order 						= newlinkedChestTech.order
+			}
+		}
+	)
+	newlinkedChestRecipe = table.deepcopy(data.raw["recipe"]["ender-linked-chest"])
+	newlinkedChestTech = table.deepcopy(data.raw["technology"]["ender-linked-chest"])
+
+	log("linked_chest dump "..serpent.block(linkedChest))
 end
 
 -- Bots explode for no good reason(update Jan 2023 JGF - found it we were killing them if they had no owner - FIXED), in a mod that requires you to use ONLY bots to survive, them spontaneous exploding is bad

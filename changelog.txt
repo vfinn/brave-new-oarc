@@ -1,4 +1,7 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.48
+    - added ability for Enders Linked Chests to have logistic wires attached
+---------------------------------------------------------------------------------------------------
 Version: 4.2.47
     DangOreus mod support:
         - Stopped DangOreus from populating nauvis surface with ore, this will reduce join lag
