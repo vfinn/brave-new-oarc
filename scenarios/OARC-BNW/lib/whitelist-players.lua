@@ -9,5 +9,6 @@ global.WHITELIST_PLAYERS = {
     Trophium        =   true,
     ["bits-orio"]   =   true,
     Dugler          =   true,
-    alston13r       =   true
+    alston13r       =   true,
+    Footy           =   true,
 }
