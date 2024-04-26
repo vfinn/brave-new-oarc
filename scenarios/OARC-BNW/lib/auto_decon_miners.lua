@@ -38,7 +38,7 @@ function OarcAutoDeconOnResourceDepleted(event)
    
     if (event.entity and event.entity.position and event.entity.surface) then
         local nearby_miners = event.entity.surface.find_entities_filtered{area = {{event.entity.position.x-1, event.entity.position.y-1},
-                                                                                        {event.entity.position.x+1, event.entity.position.y+1}},
+                                                                                  {event.entity.position.x+1, event.entity.position.y+1}},
                                                                           type = {type = "mining-drill"}}
         for i,v in pairs(nearby_miners) do
             if settings.startup["bno-auto-deconstruct-miners-allowed"].value then

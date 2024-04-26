@@ -61,36 +61,43 @@ if mods["enderlinkedchest"] then
 
 	local newlinkedChest = table.merge(table.deepcopy(data.raw["container"]["iron-chest"]),
 	{
-		type = "linked-container",
-		name = "ender-linked-chest",
-		minable = { mining_time = 0.2, result = name },
-		inventory_type = "with_filters_and_bar",
-		icon = linkedChest.icon,
-		icon_size = linkedChest.icon_size,
-		picture = linkedChest.picture,
---		picture.layers[1].filename = "__enderlinkedchest__/graphics/entity/ender-linked-chest-icon.png",
-		corpse = linkedChest.corpse,
-		gui_mode = "all",
-		selecttable_in_game = true,
+		type								= "linked-container",
+		name								= "ender-linked-chest",
+		minable								= { hardness = 0.2, mining_time = 0.2, result = "ender-linked-chest" },
+		inventory_type						= "with_filters_and_bar",
+		icon								= linkedChest.icon,
+		icon_size							= linkedChest.icon_size,
+		picture								= linkedChest.picture,
+		corpse								= linkedChest.corpse,
+
+		gui_mode							= "all",
+		selecttable_in_game					= true,
+		next_upgrade						= nil
 	})
-	newlinkedChest.next_upgrade = nil
-	newlinkedChest.picture.layers[1].filename = "__enderlinkedchest__/graphics/entity/ender-linked-chest.png"
-	newlinkedChest.picture.layers[1].scale = 0.15
-
+	newlinkedChest.picture.layers[1].filename			= "__enderlinkedchest__/graphics/entity/ender-linked-chest.png"
+	--newlinkedChest.picture.layers[2].filename 			= "__enderlinkedchest__/graphics/entity/ender-linked-chest-shadow.png"
+	newlinkedChest.picture.layers[1].scale				= 0.15
+	
 	newlinkedChest.picture.layers[1].hr_version.filename = "__enderlinkedchest__/graphics/entity/ender-linked-chest.png"
-	newlinkedChest.picture.layers[1].hr_version.height = 128
-	newlinkedChest.picture.layers[1].hr_version.width = 128
-	newlinkedChest.picture.layers[1].hr_version.scale = 0.3
+	newlinkedChest.picture.layers[1].hr_version.height 	= 128
+	newlinkedChest.picture.layers[1].hr_version.width	= 128
+	newlinkedChest.picture.layers[1].hr_version.scale	= 0.3
 
+	newlinkedChest.picture.layers[2].hr_version.filename = "__enderlinkedchest__/graphics/entity/ender-linked-chest-shadow.png"
+	newlinkedChest.picture.layers[2].hr_version.height = 48
+	newlinkedChest.picture.layers[2].hr_version.width  = 116
 	data:extend({newlinkedChest})
 
 	linkedChest = table.deepcopy(data.raw["linked-container"]["ender-linked-chest"])
+
+	table.insert(newlinkedChestRecipe.ingredients, {"advanced-circuit",5})
 	data:extend(
 		{
 			linkedChest,
 			{
-				type						= newlinkedChestRecipe.type,
+				type						= "recipe",
 				name 						= newlinkedChestRecipe.name,
+				minable 					= { hardness = 0.2, mining_time = 0.2, result =  linkedChest.name },
 				enabled 					= newlinkedChestRecipe.enabled,
 				energy_required 			= newlinkedChestRecipe.craftTime,
 				hide_from_player_crafting 	= newlinkedChestRecipe.hide_from_player_crafting,
@@ -100,7 +107,7 @@ if mods["enderlinkedchest"] then
 				result 						= newlinkedChestRecipe.result
 			},
 			{
-				type 						= newlinkedChestTech.type, 		
+				type 						= "technology", 		
 				name 						= newlinkedChestTech.name,
 				icon 						= newlinkedChestTech.icon,
 				icon_size 					= newlinkedChestTech.icon_size,
