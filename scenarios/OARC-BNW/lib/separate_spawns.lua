@@ -186,6 +186,7 @@ end
 function GenerateStartingResources(surface, pos)
 
     local rand_settings = global.ocfg.spawn_config.resource_rand_pos_settings
+     local kOffset=0
     if not global.ocfg.dangOreus then
         if global.ocfg.bzlead then
             GenerateResourcePatch(surface, "lead-ore", 15, {x=pos.x-94, y=pos.y+29}, 20000)
@@ -193,7 +194,6 @@ function GenerateStartingResources(surface, pos)
         if global.ocfg.bztitanium then
             GenerateResourcePatch(surface, "titanium-ore", 8, {x=pos.x-61, y=pos.y-34}, 10000)
         end
-        local kOffset=0
         if global.ocfg.krastorio2 then
             kOffset=32
             if game.active_mods["scrap-resource"] then

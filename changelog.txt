@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.49
+    - Whitelisted Footy
+    - Kux Smart Linked chests - desync's, doesn't support multiplayer, assumed 0,0 is spawn so 
+      blue chests don't work. Removed from support.
+---------------------------------------------------------------------------------------------------
 Version: 4.2.48
     - added ability for Enders Linked Chests to have logistic wires attached
 ---------------------------------------------------------------------------------------------------
