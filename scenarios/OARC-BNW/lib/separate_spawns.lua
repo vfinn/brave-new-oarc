@@ -186,33 +186,35 @@ end
 function GenerateStartingResources(surface, pos)
 
     local rand_settings = global.ocfg.spawn_config.resource_rand_pos_settings
-
-    if global.ocfg.bzlead then
-        GenerateResourcePatch(surface, "lead-ore", 15, {x=pos.x-94, y=pos.y+29}, 20000)
-    end
-    if global.ocfg.bztitanium then
-        GenerateResourcePatch(surface, "titanium-ore", 8, {x=pos.x-61, y=pos.y-34}, 10000)
-    end
-    local kOffset=0
-    if global.ocfg.krastorio2 then
-        kOffset=32
-        if game.active_mods["scrap-resource"] then
-            GenerateResourcePatch(surface, "scrap", 8, {x=pos.x-40-kOffset, y=pos.y-53}, 10000)
+    if not global.ocfg.dangOreus then
+        if global.ocfg.bzlead then
+            GenerateResourcePatch(surface, "lead-ore", 15, {x=pos.x-94, y=pos.y+29}, 20000)
         end
-        GenerateResourcePatch(surface, "rare-metals", 16, {x=pos.x-62-kOffset, y=pos.y-38}, 10000)
-        if not global.ocfg.krastorio2_resources_increased then
-            for k,item in pairs(global.ocfg.spawn_config.resource_tiles) do
-                if (item ~= "") then
-                    item.amount = item.amount*4
+        if global.ocfg.bztitanium then
+            GenerateResourcePatch(surface, "titanium-ore", 8, {x=pos.x-61, y=pos.y-34}, 10000)
+        end
+        local kOffset=0
+        if global.ocfg.krastorio2 then
+            kOffset=32
+            if game.active_mods["scrap-resource"] then
+                GenerateResourcePatch(surface, "scrap", 8, {x=pos.x-40-kOffset, y=pos.y-53}, 10000)
+            end
+            GenerateResourcePatch(surface, "rare-metals", 16, {x=pos.x-62-kOffset, y=pos.y-38}, 10000)
+            if not global.ocfg.krastorio2_resources_increased then
+                for k,item in pairs(global.ocfg.spawn_config.resource_tiles) do
+                    if (item ~= "") then
+                        item.amount = item.amount*4
+                    end
                 end
             end
+            global.ocfg.krastorio2_resources_increased=true
         end
-        global.ocfg.krastorio2_resources_increased=true
+        if game.active_mods["scrap-resource"] then
+            GenerateResourcePatch(surface, "scrap", 8, {x=pos.x-40-kOffset, y=pos.y-53}, 2000)
+        end
     end
-    if game.active_mods["scrap-resource"] then
-        GenerateResourcePatch(surface, "scrap", 8, {x=pos.x-40-kOffset, y=pos.y-53}, 2000)
-    end
-    if not global.ocfg.seablock then
+    -- generate normal ore patch's in main
+    if not global.ocfg.seablock and not global.ocfg.dangOreus then
         -- Generate all resource tile patches
         if (not rand_settings.enabled) then
             for t_name,t_data in pairs (global.ocfg.spawn_config.resource_tiles) do
@@ -248,14 +250,28 @@ function GenerateStartingResources(surface, pos)
                 count = count+1
             end
         end
-
-        -- Generate special resource patches (oil)
+    end
+    if global.ocfg.dangOreus then
+        -- clear under oil patches
+        local p_data = global.ocfg.spawn_config.resource_patches["crude-oil"]
+        local oil_patch_x=pos.x+p_data.x_offset_start
+        local oil_patch_y=pos.y+p_data.y_offset_start
+        for i=1,p_data.num_patches do
+            local entities = surface.find_entities_filtered{area = {{oil_patch_x-6, oil_patch_y-7}, {oil_patch_x+7, oil_patch_y+7}}, force = "neutral"}
+            for _, entity in pairs(entities) do
+                entity.destroy()
+            end
+            oil_patch_x=oil_patch_x+p_data.x_offset_next
+            oil_patch_y=oil_patch_y+p_data.y_offset_next
+        end
+    end
+    -- Generate special resource patches (oil)
+    if not global.ocfg.seablock then
         for p_name,p_data in pairs (global.ocfg.spawn_config.resource_patches) do
             local oil_patch_x=pos.x+p_data.x_offset_start
             local oil_patch_y=pos.y+p_data.y_offset_start
             for i=1,p_data.num_patches do
-                surface.create_entity({name=p_name, amount=p_data.amount,
-                            position={oil_patch_x, oil_patch_y}})
+                surface.create_entity({name=p_name, amount=p_data.amount,position={oil_patch_x, oil_patch_y}})
                 oil_patch_x=oil_patch_x+p_data.x_offset_next
                 oil_patch_y=oil_patch_y+p_data.y_offset_next
             end

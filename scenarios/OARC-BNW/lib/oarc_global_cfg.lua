@@ -154,7 +154,7 @@ function InitOarcConfig()
     global.ocfg.krastorio2_resources_increased = false
 
     if global.ocfg.dangOreus then
-    global.ocfg.danOreus_initialized=false
+        global.ocfg.danOreus_initialized=false
     end
     -----------------------
     -- VALIDATION CHECKS --
