@@ -28,7 +28,6 @@ function InitOarcConfig()
     global.ocfg.server_contact = CONTACT_MSG
     global.ocfg.enable_vanilla_spawns = ENABLE_VANILLA_SPAWNS
     global.ocfg.enable_buddy_spawn = ENABLE_BUDDY_SPAWN
-    global.ocfg.frontier_rocket_silo = FRONTIER_ROCKET_SILO_MODE
     global.ocfg.silo_islands = SILO_ISLANDS_MODE
     global.ocfg.enable_undecorator = ENABLE_UNDECORATOR
     global.ocfg.enable_tags = ENABLE_TAGS
@@ -69,9 +68,13 @@ function InitOarcConfig()
     global.ocfg.max_players_shared_spawn = MAX_PLAYERS_AT_SHARED_SPAWN
     global.ocfg.enable_shared_chat = ENABLE_SHARED_TEAM_CHAT
     global.ocfg.respawn_cooldown_min = RESPAWN_COOLDOWN_IN_MINUTES
-    --global.ocfg.frontier_silo_count = SILO_NUM_SPAWNS    
-    global.ocfg.frontier_silo_count = setGlobalSetting("bno-number-of-silos", SILO_NUM_SPAWNS)
+    
+    -- extract number prior to :
+    -- "0: place anywhere", "6: small", "12: normal", "24: large"
+    global.ocfg.frontier_silo_count=string.gmatch(settings.startup["bno-number-of-silos"].value, "[^:]+")
     log("Silo count: " .. global.ocfg.frontier_silo_count)
+    global.ocfg.frontier_rocket_silo = global.ocfg.frontier_silo_count~=0   -- 0 silo = build your own silo's
+
     global.ocfg.map_size = setGlobalSetting("bno-map-size", "normal") 
     global.ocfg.near_dist_start = NEAR_MIN_DIST
     global.ocfg.near_dist_end = NEAR_MAX_DIST

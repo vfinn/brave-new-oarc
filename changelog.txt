@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.49
+    - added ability to turn on/off silos. Num Silos = 0 means build your own silo anywhere.
+      set this to a number 1..24 to turn on fixed silo's
+---------------------------------------------------------------------------------------------------
 Version: 4.2.48
     - added ability for Enders Linked Chests to have logistic wires attached
 ---------------------------------------------------------------------------------------------------
