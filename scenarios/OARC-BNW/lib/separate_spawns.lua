@@ -629,6 +629,8 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
         numLogisticBots=100
     elseif (global.ocfg.starting_bot_count == "500/250") then
         numLogisticBots=250
+    else 
+        numLogisticBots=100 -- someone messing with code - default to 100
     end
     if characterMode then   numLogisticBots = numLogisticBots / 5 end     -- 1/5 the number of bots if you are in character moed
     -- setup robots in main roboport
