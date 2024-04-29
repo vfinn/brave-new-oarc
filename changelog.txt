@@ -1,3 +1,5 @@
+    - Shout out to ZonkHonk who reported a crash when 250/500 was chose in the array of bot options.
+      This was due to my inadvertently transposing of those numbers from 500/250 to 250/500.  <3
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.49
     - changed number of silo's to a drop list that offers place: anywhere, 6, 12, 24 silos.

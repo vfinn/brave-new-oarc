@@ -28,7 +28,7 @@ data:extend({
         type = "string-setting",
         name = "bno-num-starting-bots",     
         setting_type = "startup",
-        allowed_values = {"10/5", "50/25", "100/50", "200/100", "250/500"},
+        allowed_values = {"10/5", "50/25", "100/50", "200/100", "500/250"},
         default_value = "100/50",
         order="bnw-02"
     },
@@ -39,7 +39,7 @@ data:extend({
         minimum_value = 10,
         maximum_value = 400,
         default_value = 13,
-        order="bnw-02"
+        order="bnw-03"
     },
     {
         type = "string-setting",
@@ -47,7 +47,7 @@ data:extend({
         setting_type = "startup",
         allowed_values = {"normal", "increase storage", "increase range", "increase movement", "increase all"},
         default_value = "normal",
-        order="bnw-02"
+        order="bnw-04"
     },
     {
         type = "string-setting",
@@ -55,7 +55,7 @@ data:extend({
         setting_type = "startup",
         allowed_values = {"yes", "no", "use config.lua setting"},
         default_value = "use config.lua setting",
-        order="bnw-03a"
+        order="bnw-04a"
     },
     {
         type = "string-setting",
@@ -63,7 +63,7 @@ data:extend({
         setting_type = "startup",
         allowed_values = {"yes", "no", "use config.lua setting"},
         default_value = "use config.lua setting",
-        order="bnw-04"
+        order="bnw-04b"
     },
     {
         type = "string-setting",
