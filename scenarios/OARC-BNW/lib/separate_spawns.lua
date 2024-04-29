@@ -186,7 +186,7 @@ end
 function GenerateStartingResources(surface, pos)
 
     local rand_settings = global.ocfg.spawn_config.resource_rand_pos_settings
-     local kOffset=0
+    local kOffset=0
     if not global.ocfg.dangOreus then
         if global.ocfg.bzlead then
             GenerateResourcePatch(surface, "lead-ore", 15, {x=pos.x-94, y=pos.y+29}, 20000)
@@ -305,6 +305,13 @@ function SendPlayerToNewSpawnAndCreateIt(delayedSpawn)
             end
         end
     else
+        if global.ocfg.dangOreus then
+            -- dangOreus writes on top of the silo's, so generate on_init, then regenerate clearing ore after dangOreus finishing on_chunk_generated
+            if global.ocfg.forceRegenerationOfSilos and (global.ocfg.frontier_rocket_silo and not global.ocfg.enable_magic_factories) then
+                GenerateRocketSiloAreas(game.surfaces[GAME_SURFACE_NAME])
+                global.ocfg.forceRegenerationOfSilos=false
+            end
+        end
         ClearNearbyEnemies(delayedSpawn.pos, global.ocfg.spawn_config.safe_area.safe_radius, game.surfaces[GAME_SURFACE_NAME])
         if not global.ocfg.seablock then
             if (not delayedSpawn.vanilla) then

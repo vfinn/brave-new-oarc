@@ -69,6 +69,8 @@ if mods["enderlinkedchest"] then
 		icon_size							= linkedChest.icon_size,
 		picture								= linkedChest.picture,
 		corpse								= linkedChest.corpse,
+		stack_size							= linkedChest.stack_size,
+		inventory_size						= 60,
 
 		gui_mode							= "all",
 		selecttable_in_game					= true,
@@ -121,7 +123,7 @@ if mods["enderlinkedchest"] then
 	newlinkedChestRecipe = table.deepcopy(data.raw["recipe"]["ender-linked-chest"])
 	newlinkedChestTech = table.deepcopy(data.raw["technology"]["ender-linked-chest"])
 
-	log("linked_chest dump "..serpent.block(linkedChest))
+	-- log("linked_chest dump "..serpent.block(linkedChest))
 end
 
 -- Bots explode for no good reason(update Jan 2023 JGF - found it we were killing them if they had no owner - FIXED), in a mod that requires you to use ONLY bots to survive, them spontaneous exploding is bad

@@ -3,8 +3,8 @@ data:extend({
         type = "string-setting",
         name = "bno-number-of-silos",     
         setting_type = "startup",
-        allowed_values = {"place anywhere", "small (6)", "normal (12)", "large(24)"},
-        default_value = "place anywhere",
+        allowed_values = {"place anywhere (0)", "small - 6", "normal - 12", "large - 24"},
+        default_value = "place anywhere (0)",
         order="bnw-01"
     },    
     {

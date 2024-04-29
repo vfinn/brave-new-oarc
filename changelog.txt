@@ -1,12 +1,17 @@
 ---------------------------------------------------------------------------------------------------
-    - bug fix introduced into 4.2.48 that turned off ore under the DangOreus ores.
-    - added ability to turn on/off silos. Num Silos = 0 means build your own silo anywhere.
-      set this to a number 1..24 to turn on fixed silo's
-    - Whitelisted Footy
-    - Kux Smart Linked chests - desync's, doesn't support multiplayer, assumed 0,0 is spawn so 
-      blue chests don't work. Removed from support.
+Version: 4.2.49
+    - changed number of silo's to a drop list that offers place: anywhere, 6, 12, 24 silos.
+    - on dangOreus with silo's ore was being placed on each silo. After the first person joins the
+      game, this ore will be removed.
+    - bug fix: introduced into 4.2.48 that turned off ore under the DangOreus ores.
+    - specifically do not support Kux Smart Linked chests - desync's, doesn't support multiplayer, 
+      assumes 0,0 is spawn so blue chests don't work. Removed from support.
+---------------------------------------------------------------------------------------------------
 Version: 4.2.48
     - added ability for Enders Linked Chests to have logistic wires attached
+    - removed the ore normally placed in main, but left the oil and cleared area around the oil
+      to enable on site starter processing of oil to get plastic/red circuits/ boxes/roboports 
+      without using precious main area.
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.47
     DangOreus mod support:

@@ -7,6 +7,7 @@
 
 -- DON'T JUDGE ME
 
+local table = require('__stdlib__/stdlib/utils/string')
 
 -- That's a LOT of settings.
 function InitOarcConfig()
@@ -69,9 +70,9 @@ function InitOarcConfig()
     global.ocfg.enable_shared_chat = ENABLE_SHARED_TEAM_CHAT
     global.ocfg.respawn_cooldown_min = RESPAWN_COOLDOWN_IN_MINUTES
     
-    -- extract number prior to :
+    -- extract number from string
     -- "0: place anywhere", "6: small", "12: normal", "24: large"
-    global.ocfg.frontier_silo_count=string.gmatch(settings.startup["bno-number-of-silos"].value, "[^:]+")
+    global.ocfg.frontier_silo_count=tonumber(string.match(settings.startup["bno-number-of-silos"].value, '%d[%d.,]*'))
     log("Silo count: " .. global.ocfg.frontier_silo_count)
     global.ocfg.frontier_rocket_silo = global.ocfg.frontier_silo_count~=0   -- 0 silo = build your own silo's
 
@@ -145,6 +146,7 @@ function InitOarcConfig()
     global.ocfg.alien_module        = game.active_mods["alien-module"]
     global.ocfg.LootChestPlus       = game.active_mods["LootChestPlus"]
     global.ocfg.dangOreus           = game.active_mods["dangOreus"]
+    global.ocfg.forceRegenerationOfSilos = global.ocfg.dangOreus
 
     if (global.ocfg.krastorio2) then 
         global.ocfg.spawn_config.gen_settings.land_area_tiles = global.ocfg.spawn_config.gen_settings.land_area_tiles + 32 
