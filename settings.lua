@@ -28,7 +28,7 @@ data:extend({
         type = "string-setting",
         name = "bno-num-starting-bots",     
         setting_type = "startup",
-        allowed_values = {"10/5", "50/25", "100/50", "200/100", "250/500"},
+        allowed_values = {"10/5", "50/25", "100/50", "200/100", "500/250"},
         default_value = "100/50",
         order="bnw-02"
     },

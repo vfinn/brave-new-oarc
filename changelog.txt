@@ -1,3 +1,5 @@
+    - Shout out to ZonkHonk who reported a crash when 250/500 was chose in the array of bot options.
+      This was due to my inadvertently transposing of those numbers from 500/250 to 250/500.  <3
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.49
     - added ability to turn on/off silos. Num Silos = 0 means build your own silo anywhere.
