@@ -1,9 +1,10 @@
 ---------------------------------------------------------------------------------------------------
-Version: 4.2.49
+    - bug fix introduced into 4.2.48 that turned off ore under the DangOreus ores.
+    - added ability to turn on/off silos. Num Silos = 0 means build your own silo anywhere.
+      set this to a number 1..24 to turn on fixed silo's
     - Whitelisted Footy
     - Kux Smart Linked chests - desync's, doesn't support multiplayer, assumed 0,0 is spawn so 
       blue chests don't work. Removed from support.
----------------------------------------------------------------------------------------------------
 Version: 4.2.48
     - added ability for Enders Linked Chests to have logistic wires attached
 ---------------------------------------------------------------------------------------------------
