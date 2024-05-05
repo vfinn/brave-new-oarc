@@ -101,6 +101,7 @@ require("lib/oarc_enemies")
 require("lib/oarc_gui_tabs")
 require("lib/stats_gui")
 
+local string = require('__stdlib__/stdlib/utils/string')
 
 -- compatibility with mods
 require("compat/factoriomaps")
@@ -284,6 +285,8 @@ script.on_event(defines.events.on_gui_click, function(event)
         elseif event.element.name == "stats_dialog" then
             buildStatsTable(game.players[event.player_index], 1)
             HideOarcGui(game.players[event.player_index])
+        elseif event.element.name == "stats_close_stats_gui" then
+            event.element.parent.parent.destroy()
         end
     end
 
@@ -860,15 +863,8 @@ function inventoryChanged(event)
             player.remove_item{name = name, count = to_remove}
         end
     end
-    if (entity and entity.last_user and entity.last_user.force.name ~= player.force.name) then   -- taking something from someone on another force's box ?
-        for idx,p in pairs(game.connected_players) do
-            if (p.force.name ~= player.force.name) then
-                p.print("WTF " .. player.name .. " just took something from " .. game.players[event.player_index].selected.last_user.name .. " chest! " ..  GetGPStext(entity.position))
-                p.play_sound { path = 'wtf' }
-            end
-        end                
-        log("WTF " .. player.name .. " just took something from " .. game.players[event.player_index].selected.last_user.name .. " chest! " ..  GetGPStext(entity.position))
-    end
+
+    checkForStealing(player, entity)
 end
 
 function dropItems(entity, player, name, count)
@@ -901,9 +897,13 @@ function dropItems(entity, player, name, count)
             count = count - entity.insert({name = name, count = count})
         end
     end
-    if count > 0 then
+   if count > 0 then
         -- now we're forced to spill items
-        entity = entity or global.forces[player.force.name].roboport
+        if global.ocfg.alien_module and name=="artifact-ore" and entity==nil then
+            -- the ore it will just disappear - no one gets it
+        else
+            entity = entity or global.forces[player.force.name].roboport    -- dump unknown item to main roboport
+        end
         if entity and entity.valid then
             -- This was causing crashes in dropItems if a ghost entity forced a drop, a tank running over stone, or dropping a ghost on stone could do this                  
             if (global.enable_oe_debug) then
@@ -1021,6 +1021,9 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function(event)
             end
         end
     end
+
+    checkForStealing(player, player.opened)
+
     -- check if user is in trouble due to insufficient storage
     local alerts = player.get_alerts{type = defines.alert_type.no_storage}
     local out_of_storage = false
@@ -1047,6 +1050,102 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function(event)
         log("Sending out of storage message to: " .. player.name)
     end
 end)
+
+script.on_event(defines.events.on_player_fast_transferred, function(event)
+    local player = game.players[event.player_index]
+    local entity = event.entity
+    local itemsStolen
+    local items=""
+
+    if (not event.from_player) then
+        if (player.force.name ~= entity.force.name) then   -- taking something 
+            if player.selected then
+                itemsStolen = player.selected.get_output_inventory().get_contents()
+                for  name, count in pairs(itemsStolen) do
+                    items = items ..  name .. " of qty : " ..  count .. " | "
+                end
+            end
+
+            for idx,p in pairs(game.connected_players) do
+                if (p.force.name ~= player.force.name) then
+                    screamViolationToPlayers(player, entity, items)
+                end
+            end
+            log("WTF (on_player_fast_transferred)" .. player.name .. "just took from " .. entity.last_user.name .. " type: [" .. entity.type .. "] " .. entity.name .. " " .. items ..  GetGPStext(entity.position))
+        end
+    end
+end)
+
+function screamViolationToPlayers(player, entity, items, logOnly)            
+    logOnly = logOnly or false
+
+    if not logOnly then
+        for idx,p in pairs(game.connected_players) do
+            if (p.force.name ~= player.force.name) then
+                p.print("WTF " .. player.name .. "just took from " .. entity.last_user.name .. " " .. entity.name .. " " .. items ..  GetGPStext(entity.position))
+                p.play_sound { path = 'wtf' }
+            end
+        end
+    end
+    log("WTF " .. player.name .. "just took from " .. entity.last_user.name .. " " .. entity.name .. " " .. items ..  GetGPStext(entity.position))
+end
+
+-- called when players stack changes
+function checkForStealing(player, entity)
+    -- warn players that someone is touching a chest - unless it's a /o player (admin) accessing a chest
+        if (entity) then
+        if (not string.contains(entity.type, "frame")) then     -- menu open
+            if (entity.is_player()) then    -- admin accessing another players inventory
+                log("WTF (admin function)" .. player.name .. " just took something from inventory of " .. entity.name .. " body! " ..  GetGPStext(entity.position))
+            else
+                 if (player.opened and not player.opened_self and player.opened.force.name ~= player.force.name) then   -- taking something 
+                    local illegalTypes = {"container", "linked-container", "logistic-container", "furnace", "item", "boiler", "assembling-machine", "car"}
+                    local reported=false
+                    for index, value in ipairs(illegalTypes) do
+                        if value == entity.type then
+                            reportViolationToPlayers(player, entity)
+                            reported=true
+                        end
+                    end
+                    if not reported then
+                        reportViolationToPlayers(player, entity, true)
+                    end
+                end
+            end
+        end
+    end
+end
+
+function reportViolationToPlayers(player, entity, logOnly)
+    local items = ""
+    if entity.is_entity_with_owner then
+        logOnly = logOnly or false
+        local stolenInv = entity.get_output_inventory()
+        itemsStolen = {}
+        for i=1,#stolenInv do
+            if stolenInv[i] and stolenInv[i].valid and stolenInv[i].valid_for_read then
+                if itemsStolen[stolenInv[i].name] == nil then
+                    itemsStolen[stolenInv[i].name] = stolenInv[i].count
+                else
+                    itemsStolen[stolenInv[i].name] = itemsStolen[stolenInv[i].name] + stolenInv[i].count
+                end
+            end
+        end
+        for  name, count in pairs(itemsStolen) do
+            items = items ..  name .. " qty remaining : " ..  count .. " | "
+        end
+        if not logOnly then
+            for idx,p in pairs(game.connected_players) do
+                if (p.force.name ~= player.force.name) then
+                    p.print("WTF " .. player.name .. "just accessed " .. entity.last_user.name .. " " .. entity.name .. " " .. items ..  GetGPStext(entity.position))
+                    p.play_sound { path = 'wtf' }
+                end
+            end
+        end
+        log("WTF (checkForStealing)" .. player.name .. "just accessed " .. entity.last_user.name .. " type: " .. entity.type .. " <" .. entity.name .. "> " .. items ..  GetGPStext(entity.position))
+    end
+end
+
 
 script.on_event(defines.events.on_entity_died, function(event)
     local playerThatDied=nil

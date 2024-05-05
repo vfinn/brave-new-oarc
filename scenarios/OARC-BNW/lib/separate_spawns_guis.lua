@@ -4,6 +4,7 @@
 -- I made a separate file for all the GUI related functions
 
 require("lib/separate_spawns")
+require("lib/gui_popup")
 
 local INFO_GUI_MAX_WIDTH  = 800
 
@@ -328,8 +329,10 @@ function SpawnOptsRadioSelect(event)
                   -- nothing yet chosen, let checkbox change state
             elseif c==1 then
                 event.element.parent.character_mode_option_checkbox.state=true   -- character mode already chosen - force on
+                create_popup_gui(game.players[event.player_index],"Brave New Player option is not possible!", {"Each team must be of the same type - Character or Brave New Player.", "The player that started Main Force has already selected Character.","", "If you'd like to play as Brave New player - choose: 'Create Your Own Team'.", ""})
             elseif c== 2 then
                 event.element.parent.character_mode_option_checkbox.state=false  -- bno mode already chosen force off
+                create_popup_gui(game.players[event.player_index],"Character option is not possible!", {"Each team must be of the same type - Character or Brave New Player.", "The player that started Main Force has already selected Brave New Player.","", "If you'd like to play as character - choose: 'Create Your Own Team'", ""})
             end
         end
     end

@@ -33,7 +33,7 @@ roboportmain.energy_source.buffer_capacity = tostring(util.parse_energy(roboport
 roboportmain.energy_usage = tostring(util.parse_energy(roboportmain.energy_usage)*60*4) .. "W"
 roboportmain.charging_energy = "1MW"
 
-roboportmain.robot_slots_count = 10
+roboportmain.robot_slots_count = 20
 roboportmain.material_slots_count = 8
 roboportmain.charging_offsets = {
 	{-1.5, 1.5}, {-0.5, 1.5}, { 0.5, 1.5}, { 1.5, 1.5},

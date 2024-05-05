@@ -23,14 +23,14 @@ SERVER_MSG = "Character Mode is same as normal factorio, but with fewer starting
 --             "   RESTART is available in the menu choices, and will automatically occur if your main large roboport is destroyed.\n" ..
 --             " Most Asked Questions: \n" ..
              "Q: Are there special feature?\n" ..
-             "A: Backspace key clears biter corpses, use the Server Info tab in top left to see selections" ..
+             "A: Backspace key clears biter corpses, in player menu click on a name to get a gps link to their location, use the Server Info tab in top left to see selections\n" ..
              "Q: Why can't I move outside the area that my main base is located?\n" ..
              "A: Fog of war that limits your movement, but is intended as an antigrief. Use a Radars to claim more area.\n" ..
              "Q: Why can't I make Artillery?\n" ..
              "A: These are available after you launch one rocket.\n" ..
-             "Non-Character Mode:\n" ..
+             "Brave New Player Mode:\n" ..
              "Q: Why do I have no man?\n" ..
-             "A: This part of the scenario. It makes early game harder, but later it becomes an advantage and enables extremely quick building of your base. Bots do all your work. For easier use selected Settings->Interface->Pick ghosts if no items are available.\n" ..
+             "A: You did not select 'character' mode on spawn. In Brave New Player mode you start with more items, and have 5x more bots, but can not craft or hold many items in your inventory. Bots do all your work. For easier use selected Settings->Interface->Pick ghosts if no items are available.\n" ..
              "Q: What items can I hold in inventory, and pick up from chests/assemblers?\n" ..
              "A: 1) Red&Green wires, copper cable, 2) Any module, 3) Any vehicles and all the items that go into a vehicles, 4) fuel cells 5) Blueprints\n" ..
 	         "Q: Can I drive a vehicle?\n" ..
@@ -50,8 +50,6 @@ DISCORD_INV = "https://discord.gg/RjxsUfkJzj"
 -- Module Enables
 -- Each of the following things enable special features. These can't be changed once the game starts.
 ------------------------------------------------------------------------------------------------------------------------
-BRAVE_NEW_OARC_MASHUP = false  -- true is BNO mode, false provides a character
-
 ENABLE_LARGE_ROBOPORT = true
 -- This allows 2 players to spawn next to each other in the wilderness, each with their own starting point. It adds more
 -- GUI selection options.
