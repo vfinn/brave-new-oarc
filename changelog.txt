@@ -1,7 +1,5 @@
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.50
-    - Shout out to ZonkHonk who reported a crash when 250/500 was chose in the array of bot options.
-      This was due to my inadvertently transposing of those numbers from 500/250 to 250/500.  <3
     - Updated #slots from 10 to 20 in main roboport to allow placing 750 bots in the roboport.
       Thanks Pirion!
     - Fixed a rare bug where an admin accesses an admin moves something from a players inventory,
@@ -11,6 +9,9 @@ Version: 4.2.50
       and vice-versa.  The team must be of the same type character or brave new player.
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.49
+    - Shout out to ZonkHonk who reported a crash when 250/500 was chose in the array of bot options.
+      This was due to my inadvertently transposing of those numbers from 500/250 to 250/500.
+    - updated main roboport to have 20 slots, since 500/250 bots will require 15 slots - thx ??????.
     - changed number of silo's to a drop list that offers place: anywhere, 6, 12, 24 silos.
     - on dangOreus with silo's ore was being placed on each silo. After the first person joins the
       game, this ore will be removed.
