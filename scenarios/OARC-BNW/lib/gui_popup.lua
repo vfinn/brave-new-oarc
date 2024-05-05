@@ -38,7 +38,7 @@ function create_popup_gui(player, title, msgArray)
         direction = "vertical"
     }
     dialog.auto_center = true
-    add_titlebar(dialog, title, "popup_close_gui_title")
+    add_titlebar(dialog, title, "popup_close_gui")
     for index, msg in ipairs(msgArray) do
         dialog.add{
             type = "label",

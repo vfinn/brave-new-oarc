@@ -468,7 +468,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     local surface = player.surface
     local characterMode = global.players[player.index].characterMode
 
-    global.forces[force.name] = {}
+    global.forces[force.name] = {characterMode = characterMode} -- track per team - eventually remove from player and index from here
 
     -- setup event listeners for creative mode
     if remote.interfaces["creative-mode"] then

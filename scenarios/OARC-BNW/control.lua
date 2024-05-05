@@ -378,6 +378,7 @@ log("on_event::On Player created: " .. player.name)
 -- Additions from BraveNewWork OnEvent_on_player_created(event) vf
     if not global.players then  
         global.players = {}
+
     end
     if (#global.players < event.player_index) then
         log("Zeroing out index :" .. event.player_index .. " drawOnExit to nil for " .. game.players[event.player_index].name)
@@ -1331,3 +1332,28 @@ end
 script.on_event("remove-corpses", removeCorpses)
 
 --=================================================================================================
+-- patch globals for 50 to 51 migration
+-- add characterMode to global.forces and use in UI
+commands.add_command("migrate-51", "4.2.51 migration" , function(command)
+    if (game.players[command.player_index].admin) then
+        for i, player in pairs(game.players) do
+            if player.force.name == nil then
+                log("Player: ".. player.name .. " is not on a force yet!")
+            else
+                if not global.forces then
+                    log("initializing global.forces with " .. #game.players .. " players")
+                    global.forces = {}
+                end
+                if global.forces[player.force.name].characterMode == nil then
+                    global.forces[player.force.name].characterMode = global.players[i].characterMode
+                else
+                    if global.forces[player.force.name].characterMode == global.players[i].characterMode then
+                        log("characterMode verification for player: " .. player.name .. " good !")
+                    else
+                        log("!!!!!  Major problem - " .. player.name .. " is characterMode : " .. tostring(global.players[i].characterMode) .. " and team is " .. tostring(global.forces[player.force.name].characterMode))
+                    end
+                end
+            end
+        end
+    end
+end)

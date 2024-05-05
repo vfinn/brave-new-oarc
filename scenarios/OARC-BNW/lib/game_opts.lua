@@ -25,7 +25,9 @@ function GameOptionsGuiClick(event)
         end
     end
 
-    if (name == "restart_player") then
+    if (name == "popup_close_gui") then
+        player.gui.screen.popup_gui.destroy()
+    elseif (name == "restart_player") then
         local pIndex = event.element.parent.ban_players_dropdown.selected_index
 
         if (pIndex ~= 0) then
@@ -42,9 +44,8 @@ function GameOptionsGuiClick(event)
                                     crafted = {},
                                     inventory_items = {},
                                     previous_position = {x=0, y=0},
-                                    drawOnExit = nil   -- do NOT reset this - the player name rendered is still needed
-                                    -- ,characterMode = false   -- leave this uncleared so ui can display their last choice after a restart
-                                }
+                                    drawOnExit = nil,   -- do NOT reset this - the player name rendered is still needed
+                                    characterMode = global.forces[MAIN_FORCE].characterMode} -- They are placed onto MainForce on restart - set to main force character mode                                
                 log("Resetting " .. resetPlayerName)
             end
         end
