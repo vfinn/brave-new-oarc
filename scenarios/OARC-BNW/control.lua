@@ -796,7 +796,7 @@ script.on_event(defines.events.on_worker_robot_expired, robotdied)
 -- Start of Brave New World functions
 -----------------------------------------------------------------------------------------------------------
 
-function inventoryChanged(event)
+safunction inventoryChanged(event)
     if global.creative or global.players[event.player_index].characterMode then
         return
     end
@@ -1179,8 +1179,9 @@ script.on_event(defines.events.on_entity_died, function(event)
                 player.play_sound { path = 'you-lost' }  -- if the player that died is still online - play random sound
             end
         end
-        
---        game.set_game_state{game_finished = false, player_won = false, can_continue = true, }
+    end
+    if entity.name=="character" then
+        game.set_game_state{game_finished = false, player_won = false, can_continue = true, }
     end
 end)
 
