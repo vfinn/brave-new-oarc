@@ -1,4 +1,22 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.53
+    - Added host option for choice to enable/disable moat, and if moat bridge/no bridge
+    - I moved the water strip from top of base, to left of the coal for those playing without moat.
+    - Fix for crash when player CTRL Clicks a chest when the menu is opened.
+    - More work on anti-griefing, reporting to other players that someone is suspected of cheating
+---------------------------------------------------------------------------------------------------
+Version: 4.2.52
+    - Fixed bug that caused crash on restart of the first player, when no one was on Main Force
+---------------------------------------------------------------------------------------------------
+Version: 4.2.51
+    - Pop up was added in .51 to inform you why you can't choose character or are forced to choose
+      character for a specific team/force.  You must be the same type as the whole team. If someone
+      chooses character for Main Force - and you choose to join main force, you must be character.
+      The pop up attempts to make that clear. But I didn't properly dismiss the pop up.
+    - Previously I would enumerate players to determine what that team was, but if a player
+      restarted they would automatically be tossed onto Main Force. This could cause a mismatch if 
+      a player restarted while another player joined - fixed.
+---------------------------------------------------------------------------------------------------
 Version: 4.2.50
     - Updated #slots from 10 to 20 in main roboport to allow placing 750 bots in the roboport.
       Thanks Pirion!

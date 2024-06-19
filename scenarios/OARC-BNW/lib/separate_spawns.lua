@@ -319,11 +319,12 @@ function SendPlayerToNewSpawnAndCreateIt(delayedSpawn)
                 -- Generate water strip only if we don't have a moat.
                 if (not delayedSpawn.moat) then
                     local water_data = global.ocfg.spawn_config.water
+                    -- top left
                     CreateWaterStrip(game.surfaces[GAME_SURFACE_NAME],
                                     {x=delayedSpawn.pos.x+water_data.x_offset, y=delayedSpawn.pos.y+water_data.y_offset},
                                     water_data.length)
                     CreateWaterStrip(game.surfaces[GAME_SURFACE_NAME],
-                                    {x=delayedSpawn.pos.x+water_data.x_offset, y=delayedSpawn.pos.y+water_data.y_offset+1},
+                                    {x=delayedSpawn.pos.x+water_data.x_offset+1, y=delayedSpawn.pos.y+water_data.y_offset},
                                     water_data.length)
                 end
             end
@@ -1016,10 +1017,7 @@ function SetupAndClearSpawnAreas(surface, chunkArea)
             if CheckIfInArea(chunkAreaCenter,landArea) then -- previously used landArea vf
                 if (spawn.moat) then
                     -- allowed_values = {"yes", "no", "use config.lua setting"}
-                    local moat_bridge_enabled=global.ocfg.spawn_config.gen_settings.moat_bridging
-                    if (settings.startup["bno-moat-bridge"].value ~= "use config.lua setting") then
-                        moat_bridge_enabled = settings.startup["bno-moat-bridge"].value == "yes"
-                    end
+                    moat_bridge_enabled = settings.startup["bno-moat-choice"].value == "Player choice w Bridge"
 
                     CreateMoat(surface,
                         spawn.pos,

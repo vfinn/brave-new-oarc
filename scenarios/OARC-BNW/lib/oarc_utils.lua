@@ -1438,7 +1438,7 @@ end
 function CreateWaterStrip(surface, leftPos, length)
     local waterTiles = {}
     for i=0,length,1 do
-        table.insert(waterTiles, {name = "water", position={leftPos.x+i,leftPos.y}})
+        table.insert(waterTiles, {name = "water", position={leftPos.x,leftPos.y+i}})
     end
     surface.set_tiles(waterTiles)
 end

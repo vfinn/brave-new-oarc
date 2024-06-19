@@ -293,8 +293,8 @@ OARC_CFG = {
 
     -- Location of water strip (horizontal)
     water = {
-        x_offset = -31, -- previously 4
-        y_offset = -72,	-- previously 60
+        x_offset = -60,  -- -31, -- previously 4
+        y_offset =  22,	 -- -72 previously 60
         length = 8
     },
 

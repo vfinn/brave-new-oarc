@@ -157,22 +157,36 @@ function DisplaySpawnOptions(player)
     -- AddLabel(soloSpawnFlow, "options_spawn_lbl1",
     --     "Additional spawn options can be selected here. Not all are compatible with each other.", my_label_style)
 
-    -- Allow players to spawn with a moat around their area.
+-- Allow players to spawn with a moat around their area.
     if (global.ocfg.space_block) then
             soloSpawnFlow.add{name = "easy_start_option_checkbox",
                             type = "checkbox",
                             caption={"oarc-easy-start-option"},
                             state=global.ocfg.easyStart}
     else
-        local moatChoice = global.ocfg.moatChoice
-        if global.ocore.buddySpawnOpts[player.name] then
-            moatChoice = global.ocore.buddySpawnOpts[player.name].moatChoice
+        local moat_bridge_enabled=global.ocfg.spawn_config.gen_settings.moat_bridging
+        if (settings.startup["bno-moat-choice"].value == "Player choice w Bridge") then
+            global.ocfg.spawn_config.gen_settings.moat_choice_enabled = true
+            moat_bridge_enabled = true
+        elseif (settings.startup["bno-moat-choice"].value == "Player choice w/o Bridge") then
+            global.ocfg.spawn_config.gen_settings.moat_choice_enabled = true
+            moat_bridge_enabled = false
+        else
+            global.ocfg.spawn_config.gen_settings.moat_choice_enabled = false
+            moat_bridge_enabled = false
         end
-        if (global.ocfg.spawn_config.gen_settings.moat_choice_enabled and not global.ocfg.enable_vanilla_spawns) then
-            soloSpawnFlow.add{name = "isolated_spawn_moat_option_checkbox",
-                            type = "checkbox",
-                            caption={"oarc-moat-option"},
-                            state=moatChoice}
+    
+        if global.ocfg.spawn_config.gen_settings.moat_choice_enabled then
+            local moatChoice = global.ocfg.moatChoice
+            if global.ocore.buddySpawnOpts[player.name] then
+                moatChoice = global.ocore.buddySpawnOpts[player.name].moatChoice
+            end
+            if (global.ocfg.spawn_config.gen_settings.moat_choice_enabled and not global.ocfg.enable_vanilla_spawns) then
+                soloSpawnFlow.add{name = "isolated_spawn_moat_option_checkbox",
+                                type = "checkbox",
+                                caption={"oarc-moat-option"},
+                                state=moatChoice}
+            end
         end
     end    
     DisplayCharacterSpawnOptions(player, soloSpawnFlow)

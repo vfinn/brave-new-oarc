@@ -1058,22 +1058,20 @@ script.on_event(defines.events.on_player_fast_transferred, function(event)
     local itemsStolen
     local items=""
 
-    if (not event.from_player) then
-        if (player.force.name ~= entity.force.name) then   -- taking something 
-            if player.selected then
-                itemsStolen = player.selected.get_output_inventory().get_contents()
-                for  name, count in pairs(itemsStolen) do
-                    items = items ..  name .. " of qty : " ..  count .. " | "
-                end
+    if (player.force.name ~= entity.force.name) then   -- taking something 
+        if player.selected then
+            itemsStolen = player.selected.get_output_inventory().get_contents()
+            for  name, count in pairs(itemsStolen) do
+                items = items ..  name .. " of qty : " ..  count .. " | "
             end
-
-            for idx,p in pairs(game.connected_players) do
-                if (p.force.name ~= player.force.name) then
-                    screamViolationToPlayers(player, entity, items)
-                end
-            end
-            log("WTF (on_player_fast_transferred)" .. player.name .. "just took from " .. entity.last_user.name .. " type: [" .. entity.type .. "] " .. entity.name .. " " .. items ..  GetGPStext(entity.position))
         end
+
+        for idx,p in pairs(game.connected_players) do
+            if (p.force.name ~= player.force.name) then
+                screamViolationToPlayers(player, entity, items)
+            end
+        end
+        log("WTF (on_player_fast_transferred)" .. player.name .. "just took from " .. entity.last_user.name .. " type: [" .. entity.type .. "] " .. entity.name .. " " .. items ..  GetGPStext(entity.position))
     end
 end)
 
@@ -1099,17 +1097,21 @@ function checkForStealing(player, entity)
             if (entity.is_player()) then    -- admin accessing another players inventory
                 log("WTF (admin function)" .. player.name .. " just took something from inventory of " .. entity.name .. " body! " ..  GetGPStext(entity.position))
             else
-                 if (player.opened and not player.opened_self and player.opened.force.name ~= player.force.name) then   -- taking something 
-                    local illegalTypes = {"container", "linked-container", "logistic-container", "furnace", "item", "boiler", "assembling-machine", "car"}
-                    local reported=false
-                    for index, value in ipairs(illegalTypes) do
-                        if value == entity.type then
-                            reportViolationToPlayers(player, entity)
-                            reported=true
+                -- if the player and we're not processing a menu 
+                 if (player.opened and (player.opened.name ~= "oarc_gui")) then
+                    -- fast transfer only of accessing a box/entity of another players
+                    if (not player.opened_self and (player.opened.force.name ~= player.force.name)) then   -- taking something 
+                        local illegalTypes = {"container", "linked-container", "logistic-container", "furnace", "item", "boiler", "assembling-machine", "car"}
+                        local reported=false
+                        for index, value in ipairs(illegalTypes) do
+                            if value == entity.type then
+                                reportViolationToPlayers(player, entity)
+                                reported=true
+                            end
                         end
-                    end
-                    if not reported then
-                        reportViolationToPlayers(player, entity, true)
+                        if not reported then
+                            reportViolationToPlayers(player, entity, true)
+                        end
                     end
                 end
             end
@@ -1179,8 +1181,9 @@ script.on_event(defines.events.on_entity_died, function(event)
                 player.play_sound { path = 'you-lost' }  -- if the player that died is still online - play random sound
             end
         end
-        
---        game.set_game_state{game_finished = false, player_won = false, can_continue = true, }
+    end
+    if entity.name=="character" then
+        game.set_game_state{game_finished = false, player_won = false, can_continue = true, }
     end
 end)
 
@@ -1189,15 +1192,16 @@ script.on_event(defines.events.on_player_driving_changed_state, function(event)
     local player=game.players[event.player_index]
     log("Changed driver state: " .. event.entity.name)
     -- distance between two points √((x2 – x1)² + (y2 – y1)²)
-    if (getDistance(event.entity.position, global.players[event.player_index].previous_position) > 640) then
+    local distance = getDistance(event.entity.position, global.players[event.player_index].previous_position)
+    if (distance > 1500) then
         log(string.format("msg: %s, sent to %d players", msg, #game.connected_players-1))
         for idx,p in pairs(game.connected_players) do
             if (p.index ~= player.index) then
-                p.print("WTF is this guy doing teleporting so far :" .. player.name ..  GetGPStext(event.entity.position))
+                p.print("WTF is this guy (" .. player.name .. ") doing teleporting " .. distance .. " tiles " ..  GetGPStext(event.entity.position))
                 p.play_sound { path = 'wtf' }
             end
         end        
-        log("WTF Player : " .. player.name .. " entered a vehicle far from his main base at x: " .. event.entity.position.x .. ", y: " .. event.entity.position.y)
+        log("WTF Player : " .. player.name .. " teleported " .. distance .. " tiles and entered a vehicle far from his main base to x: " .. event.entity.position.x .. ", y: " .. event.entity.position.y)
     end
 end)
 

@@ -40,12 +40,13 @@ function GameOptionsGuiClick(event)
                     log("Restarting player - destroy of drawOnExit and all entries for " .. game.players[idx].name .. " value of ".. tostring(global.players[idx].drawOnExit))                  
                     rendering.destroy(global.players[idx].drawOnExit)
                 end
+                
                 global.players[idx] = {
                                     crafted = {},
                                     inventory_items = {},
                                     previous_position = {x=0, y=0},
                                     drawOnExit = nil,   -- do NOT reset this - the player name rendered is still needed
-                                    characterMode = global.forces[MAIN_FORCE].characterMode} -- They are placed onto MainForce on restart - set to main force character mode                                
+                                    characterMode = global.players[idx].characterMode} -- They are placed onto MainForce on restart - set to main force character mode                                
                 log("Resetting " .. resetPlayerName)
             end
         end
