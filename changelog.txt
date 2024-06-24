@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.54
+    - if you include "Scrap Resource" mod - you can choose between entities or ore. 
+      I rebalanced the amounts since I used a 10X multiplier, which is now 1X, but then increased
+      the size and quantity of the main scrap patch.
+---------------------------------------------------------------------------------------------------
 Version: 4.2.53
     - Added host option for choice to enable/disable moat, and if moat bridge/no bridge
     - I moved the water strip from top of base, to left of the coal for those playing without moat.

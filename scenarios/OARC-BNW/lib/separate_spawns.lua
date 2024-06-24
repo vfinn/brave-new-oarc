@@ -197,7 +197,7 @@ function GenerateStartingResources(surface, pos)
         if global.ocfg.krastorio2 then
             kOffset=32
             if game.active_mods["scrap-resource"] then
-                GenerateResourcePatch(surface, "scrap", 8, {x=pos.x-40-kOffset, y=pos.y-53}, 10000)
+                GenerateResourcePatch(surface, "scrap", 12, {x=pos.x-42-kOffset, y=pos.y-57}, 3000)
             end
             GenerateResourcePatch(surface, "rare-metals", 16, {x=pos.x-62-kOffset, y=pos.y-38}, 10000)
             if not global.ocfg.krastorio2_resources_increased then
@@ -210,7 +210,7 @@ function GenerateStartingResources(surface, pos)
             global.ocfg.krastorio2_resources_increased=true
         end
         if game.active_mods["scrap-resource"] then
-            GenerateResourcePatch(surface, "scrap", 8, {x=pos.x-40-kOffset, y=pos.y-53}, 2000)
+            GenerateResourcePatch(surface, "scrap", 12, {x=pos.x-42-kOffset, y=pos.y-57}, 3000)
         end
     end
     -- generate normal ore patch's in main

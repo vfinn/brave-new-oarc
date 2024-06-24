@@ -7,11 +7,11 @@ if (mods["scrap-resource"]) then
     if (settings.startup["bno-scrap"].value== "ore only") then
     data.raw.resource.scrap.minable.results =
     {                            -- 1 00.000 % change  
-        { amount = 10, probability = 0.0500,   name = "stone",                 },
-        { amount = 10, probability = 0.0500,   name = "coal",                  },
-        { amount = 10, probability = 0.4500,   name = "iron-ore",              },
-        { amount = 10, probability = 0.3500,   name = "copper-ore",            },
-        { amount = 10, probability = 0.0100,   name = "uranium-ore",           },
+        { amount = 1, probability = 0.0500,   name = "stone",                 },
+        { amount = 1, probability = 0.0500,   name = "coal",                  },
+        { amount = 1, probability = 0.4500,   name = "iron-ore",              },
+        { amount = 1, probability = 0.3500,   name = "copper-ore",            },
+        { amount = 1, probability = 0.0100,   name = "uranium-ore",           },
     }
     else
         data.raw.resource.scrap.minable.results =
