@@ -1308,22 +1308,22 @@ local function removeCorpses(event)
   local blacklist = {
       'character-corpse',
       'transport-caution-corpse'  -- Transport Drones
-    }
+      }
       local player = game.players[event.player_index]
-  if not player then return end
-  local radius = 32
-  -- settings.get_player_settings(event.player_index)['rbc-radius'].value
+      if not player then return end
+      local radius = 32
+      -- settings.get_player_settings(event.player_index)['rbc-radius'].value
   
-  local bodyCount = 0
-  for ___, entity in pairs(player.surface.find_entities_filtered{
-    position = player.position,
-    radius = radius,
-    type = 'corpse'}
-  ) do 
-    if not tableContains(blacklist, entity.name) then 
-      entity.destroy()
-      bodyCount = bodyCount + 1
-    end
+      local bodyCount = 0
+      for ___, entity in pairs(player.surface.find_entities_filtered{
+        position = player.position,
+        radius = radius,
+        type = 'corpse'}
+      ) do 
+     if not tableContains(blacklist, entity.name) then 
+         entity.destroy()
+         bodyCount = bodyCount + 1
+     end
   end
   if bodyCount > 0 then 
     player.print('Removed ' .. tostring(bodyCount) .. ' corpses', {r=254/255, g=255/255, b=10/255, a=1})

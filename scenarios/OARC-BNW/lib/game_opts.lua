@@ -76,12 +76,25 @@ function GameOptionsGuiClick(event)
 
         if global.ocfg.enable_miner_decon[player.force.name] ==nil then
             global.ocfg.enable_miner_decon[player.force.name] = ENABLE_MINER_AUTODECON
-        end 
+        end
         -- Slight change pace here using force.name as index instead of event.player_index - I recommend prosecution and persecution
         global.ocfg.enable_miner_decon [player.force.name] = not  global.ocfg.enable_miner_decon [player.force.name]
         local onOff = " OFF"
         if global.ocfg.enable_miner_decon [player.force.name] then onOff = " ON" end
         player.print(player.name .. " changed the 'Auto Miner Deconstruct' option to " .. onOff)
+   end  
+   if (name == "decon_miners_notification") then
+
+        local hostSettingForDeconMiners = settings.startup["bno-auto-deconstruct-miners-allowed"].value
+
+        if global.ocfg.enable_miner_decon_notification[player.force.name] ==nil then
+            global.ocfg.enable_miner_decon_notification[player.force.name] = ENABLE_MINER_AUTODECON
+        end
+        -- Slight change pace here using force.name as index instead of event.player_index - I recommend prosecution and persecution
+        global.ocfg.enable_miner_decon_notification[player.force.name] = not  global.ocfg.enable_miner_decon_notification[player.force.name]
+        local onOff = " OFF"
+        if global.ocfg.enable_miner_decon_notification[player.force.name] then onOff = " ON" end
+        player.print(player.name .. " changed the 'Auto Miner Deconstruct notification' option to " .. onOff)
    end  
   
    
@@ -272,11 +285,18 @@ function CreateGameOptionsTab(tab_container, player)
         if global.ocfg.enable_miner_decon[player.force.name] == nil then
             global.ocfg.enable_miner_decon[player.force.name] = ENABLE_MINER_AUTODECON
         end
+        if global.ocfg.enable_miner_decon_notification[player.force.name] == nil then
+            global.ocfg.enable_miner_decon_notification[player.force.name] = ENABLE_MINER_AUTODECON
+        end
         if (settings.startup["bno-auto-deconstruct-miners-allowed"].value) then
             tab_container.add{name = "decon_miners",
                             type = "checkbox",
                             caption={"decon-empty-miners"},
                             state=(global.ocfg.enable_miner_decon[player.force.name])}
+            tab_container.add{name = "decon_miners_notification",
+                            type = "checkbox",
+                            caption={"decon-empty-miners-notification"},
+                            state=(global.ocfg.enable_miner_decon_notification[player.force.name])}
         end
     end
 end

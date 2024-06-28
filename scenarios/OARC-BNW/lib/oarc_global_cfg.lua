@@ -51,6 +51,7 @@ function InitOarcConfig()
     global.ocfg.enable_offline_protect = ENABLE_OFFLINE_PROTECTION  
     global.ocfg.offline_protect = {}
     global.ocfg.enable_miner_decon = {} -- forces
+    global.ocfg.enable_miner_decon_notification = {} -- forces
     global.oarc_decon_miners = {}       -- table of miners to decon on_nth_tick
     global.ocfg.enable_power_armor_start = ENABLE_POWER_ARMOR_QUICK_START
     global.ocfg.enable_modular_armor_start = ENABLE_MODULAR_ARMOR_QUICK_START
