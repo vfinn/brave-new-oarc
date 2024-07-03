@@ -1100,6 +1100,7 @@ function checkForStealing(player, entity)
                 -- if the player and we're not processing a menu 
                  if (player.opened and (player.opened.name ~= "oarc_gui")) then
                     -- fast transfer only of accessing a box/entity of another players
+                    log("Debug info: player.opened.name - " .. player.opened.name)
                     if (not player.opened_self and (player.opened.force.name ~= player.force.name)) then   -- taking something 
                         local illegalTypes = {"container", "linked-container", "logistic-container", "furnace", "item", "boiler", "assembling-machine", "car"}
                         local reported=false
@@ -1213,6 +1214,10 @@ script.on_event(defines.events.on_player_changed_position, function(event)
     if not global.forces then
 		return
 	end
+    -- some mods teleport a player to a new surface, new position, allow this to happen
+    if (game.players[event.player_index].surface.name ~= GAME_SURFACE_NAME) then
+        return
+    end
     -- enable moving around at 0,0
     if (event.player_index > #global.players) then
         return
