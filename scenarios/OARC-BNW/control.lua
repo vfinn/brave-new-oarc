@@ -1097,8 +1097,8 @@ function checkForStealing(player, entity)
             if (entity.is_player()) then    -- admin accessing another players inventory
                 log("WTF (admin function)" .. player.name .. " just took something from inventory of " .. entity.name .. " body! " ..  GetGPStext(entity.position))
             else
-                -- if the player and we're not processing a menu 
-                 if (player.opened and (player.opened.name ~= "oarc_gui")) then
+                -- if the player and we're not processing a menu of ANY MOD 
+                 if (player.opened and (player.opened.gui == nil)) then
                     -- fast transfer only of accessing a box/entity of another players
                     log("Debug info: player.opened.name - " .. player.opened.name)
                     if (not player.opened_self and (player.opened.force.name ~= player.force.name)) then   -- taking something 
