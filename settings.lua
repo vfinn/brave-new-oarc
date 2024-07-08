@@ -57,14 +57,6 @@ data:extend({
         default_value = "Player choice w/o Bridge",
         order="bnw-04a"
     },
---    {
---        type = "string-setting",
---        name = "bno-moat-bridge",     
---        setting_type = "startup",
---        allowed_values = {"yes", "no", "use config.lua setting"},
---        default_value = "use config.lua setting",
---        order="bnw-04c"
---    },
     {
         type = "string-setting",
         name = "bno-anti-grief",     

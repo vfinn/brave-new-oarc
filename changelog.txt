@@ -1,7 +1,13 @@
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.55
+    - Kudos to Nomad, found a couple issues working with other mods.
+      circuitissimo shows a black screen when in the mods circuit - fixed.  I do need to add an
+      an option to allow hosts to define a list of entities that can be held in BNO players
+      inventory - so items can be placed from within the circuit.
     - Added more support for circuitissimo, allowing player to hold combinators and poles.  Fixed
       a black screen when entering the special circuit from circuitsissimo.
+    - A compatibility issue - crash - in FNEI. When menu is open and hit Q or fast transfer items
+      a crash can occur. I modified the cheat detector to keep from crashing when any menu is opened.
     - Modified prerequisites for ender linked chests, to require research of red circuits before
       you can research ender linked chests.
 ---------------------------------------------------------------------------------------------------

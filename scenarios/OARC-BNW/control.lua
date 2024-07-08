@@ -1106,12 +1106,12 @@ end
 function checkForStealing(player, entity)
     -- warn players that someone is touching a chest - unless it's a /o player (admin) accessing a chest
         if (entity) then
-            if (not string.contains(entity.type, "frame")) then     -- menu open
-                if (entity.is_player()) then    -- admin accessing another players inventory
-                    log("WTF (admin function)" .. player.name .. " just took something from inventory of " .. entity.name .. " body! " ..  GetGPStext(entity.position))
-                else
-                    -- if the player and we're not processing a menu 
-                    if (player.opened and (player.opened.name ~= "oarc_gui")) then
+        if (not string.contains(entity.type, "frame")) then     -- menu open
+            if (entity.is_player()) then    -- admin accessing another players inventory
+                log("WTF (admin function)" .. player.name .. " just took something from inventory of " .. entity.name .. " body! " ..  GetGPStext(entity.position))
+            else
+                -- if the player and we're not processing a menu of ANY MOD 
+                 if (player.opened and (player.opened.gui == nil)) then
                     -- fast transfer only of accessing a box/entity of another players
                     if (not player.opened_self and (player.opened.force.name ~= player.force.name)) then   -- taking something from someone else
                         log("Debug info: " .. player.name .. " player.opened.name - " .. player.opened.name .. "player force: " .. player.force.name .. ", opened force: " .. player.opened.force.name)
