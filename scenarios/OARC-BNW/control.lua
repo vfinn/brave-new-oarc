@@ -955,6 +955,9 @@ function itemCountAllowed(name, count, player)
     elseif name == "BlueprintAlignment-blueprint-holder" then
         -- temporary holding location for original blueprint, should only ever be one of these.
         return count
+        -- allow poles and combinators for circuitissimo
+    elseif global.ocfg.circuitissimo and (string.match(name, ".*combinator*") or string.match(name, ".*pole")) then
+        return math.min(20, count)
     end
     return 0
 end
@@ -984,12 +987,22 @@ log("on_configuration_changed")
     end
  end)
 
+ -- if player hits q over an item, check their inventory to see if they have that item,
+ -- if they do - load their hand, otherwise put a ghost in their hand
 script.on_event(defines.events.on_player_pipette, function(event)
     if global.creative or global.players[event.player_index].characterMode then
         return
     end
-    game.players[event.player_index].cursor_stack.clear()
-    game.players[event.player_index].cursor_ghost = event.item
+    local player = game.players[event.player_index]
+    local inv = global.players[event.player_index].inventory_items
+    local allowed = 0
+    if inv[event.item.name] then
+        allowed = itemCountAllowed(event.item.name, inv[event.item.name].count, player)
+    end
+    if allowed == 0 then
+        player.cursor_stack.clear()
+        player.cursor_ghost = event.item
+    end
 end)
 
 script.on_event(defines.events.on_player_crafted_item, function(event)
@@ -1093,16 +1106,16 @@ end
 function checkForStealing(player, entity)
     -- warn players that someone is touching a chest - unless it's a /o player (admin) accessing a chest
         if (entity) then
-        if (not string.contains(entity.type, "frame")) then     -- menu open
-            if (entity.is_player()) then    -- admin accessing another players inventory
-                log("WTF (admin function)" .. player.name .. " just took something from inventory of " .. entity.name .. " body! " ..  GetGPStext(entity.position))
-            else
-                -- if the player and we're not processing a menu 
-                 if (player.opened and (player.opened.name ~= "oarc_gui")) then
+            if (not string.contains(entity.type, "frame")) then     -- menu open
+                if (entity.is_player()) then    -- admin accessing another players inventory
+                    log("WTF (admin function)" .. player.name .. " just took something from inventory of " .. entity.name .. " body! " ..  GetGPStext(entity.position))
+                else
+                    -- if the player and we're not processing a menu 
+                    if (player.opened and (player.opened.name ~= "oarc_gui")) then
                     -- fast transfer only of accessing a box/entity of another players
-                    log("Debug info: player.opened.name - " .. player.opened.name)
-                    if (not player.opened_self and (player.opened.force.name ~= player.force.name)) then   -- taking something 
-                        local illegalTypes = {"container", "linked-container", "logistic-container", "furnace", "item", "boiler", "assembling-machine", "car"}
+                    if (not player.opened_self and (player.opened.force.name ~= player.force.name)) then   -- taking something from someone else
+                        log("Debug info: " .. player.name .. " player.opened.name - " .. player.opened.name .. "player force: " .. player.force.name .. ", opened force: " .. player.opened.force.name)
+                        local illegalTypes = {"container", "linked-container", "logistic-container", "furnace", "item", "boiler", "assembling-machine-1", "assembling-machine-2", "assembling-machine-3", "car"}
                         local reported=false
                         for index, value in ipairs(illegalTypes) do
                             if value == entity.type then

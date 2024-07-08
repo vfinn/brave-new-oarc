@@ -93,6 +93,7 @@ if mods["enderlinkedchest"] then
 	linkedChest = table.deepcopy(data.raw["linked-container"]["ender-linked-chest"])
 
 	table.insert(newlinkedChestRecipe.ingredients, {"advanced-circuit",5})
+	newlinkedChestTech.prerequisites = {"advanced-electronics"}
 	data:extend(
 		{
 			linkedChest,

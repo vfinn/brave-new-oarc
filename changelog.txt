@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.55
+    - Added more support for circuitissimo, allowing player to hold combinators and poles.  Fixed
+      a black screen when entering the special circuit from circuitsissimo.
+    - Modified prerequisites for ender linked chests, to require research of red circuits before
+      you can research ender linked chests.
+---------------------------------------------------------------------------------------------------
 Version: 4.2.54
     - If you include "Scrap Resource" mod - you can choose between entities or ore. 
       I rebalanced the amounts since I used a 10X multiplier, which is now 1X, but then increased

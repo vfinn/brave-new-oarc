@@ -147,6 +147,7 @@ function InitOarcConfig()
     global.ocfg.alien_module        = game.active_mods["alien-module"]
     global.ocfg.LootChestPlus       = game.active_mods["LootChestPlus"]
     global.ocfg.dangOreus           = game.active_mods["dangOreus"]
+    global.ocfg.circuitissimo       = game.active_mods["circuitissimo"]
     global.ocfg.forceRegenerationOfSilos = global.ocfg.dangOreus
 
     if (global.ocfg.krastorio2) then 
