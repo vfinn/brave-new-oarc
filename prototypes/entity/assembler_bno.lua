@@ -18,8 +18,8 @@ data:extend({
 {
     type = "technology",
     name = "assembling-machine-bno",
-    icon_size = 128,
-    icon = "__base__/graphics/technology/automation-1.png",
+    icon_size = 256,
+    icon = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/automation-bno-tech.png",
     effects =
     {
       {
@@ -58,7 +58,7 @@ data:extend({
   {
     type = "item",
     name = "assembling-machine-bno",
-    icon = "__base__/graphics/icons/assembling-machine-3.png",
+    icon = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/assembling-machine-bno-icon.png",
     icon_size = 64,
     -- flags = {"goes-to-quickbar"},
     subgroup = "production-machine",
@@ -71,7 +71,7 @@ data:extend({
   {
     type = "assembling-machine",
     name = "assembling-machine-bno",
-    icon = "__base__/graphics/icons/assembling-machine-3.png",
+    icon = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/assembling-machine-bno-icon.png",
     icon_size = 64,
     flags = {"placeable-neutral","placeable-player", "player-creation"},
     minable = {hardness = 0.2, mining_time = 0.5, result = "assembling-machine-bno"},
@@ -135,7 +135,7 @@ data:extend({
       layers =
       {
         {
-          filename = "__base__/graphics/entity/assembling-machine-3/assembling-machine-3.png",
+          filename = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/assembling-machine-bno-entity.png",
           priority = "high",
           width = 108,
           height = 119,
@@ -143,7 +143,7 @@ data:extend({
           line_length = 1,
           shift = util.by_pixel(0, -0.5),
           hr_version = {
-            filename = "__base__/graphics/entity/assembling-machine-3/hr-assembling-machine-3.png",
+            filename = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/hr-assembling-machine-bno-entity.png",
             priority = "high",
             width = 214,
             height = 237,
