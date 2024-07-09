@@ -17,12 +17,21 @@ data:extend({
         order="bnw-015"
     },    
     {
+        type = "int-setting",
+        name = "bno-assembler-choice",     
+        setting_type = "startup",
+        minimum_value=0,
+        maximum_value=100,
+        default_value = 0,
+        order="bnw-016"
+    },
+    {
         type = "string-setting",
         name = "bno-map-size",     
         setting_type = "startup",
         allowed_values = {"tiny", "small", "normal", "large"},
         default_value = "normal",
-        order="bnw-016"
+        order="bnw-017"
     },
     {
         type = "string-setting",
@@ -63,7 +72,7 @@ data:extend({
         setting_type = "startup",
         allowed_values = {"yes", "no", "use config.lua setting"},
         default_value = "use config.lua setting",
-        order="bnw-04b"
+        order="bnw-04c"
     },
     {
         type = "string-setting",

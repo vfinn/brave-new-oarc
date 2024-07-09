@@ -229,6 +229,7 @@ script.on_init(function(event)
     OARC_CFG.safe_area.danger_radius = OARC_CFG.safe_area.danger_radius * starting_area
 
     update_loaders()   -- loaders
+
 end)
 
 

@@ -107,6 +107,7 @@ ENABLE_OFFLINE_PROTECTION = true
 -- This has no effect unless the tech multiplier is more than 1!
 ENABLE_FORCE_LAB_PROD_BONUS = false
 
+
 -- Lock various recipes and technologies behind a rocket launch.
 -- Each team/force must launch their own rocket to unlock this!
 LOCK_GOODIES_UNTIL_ROCKET_LAUNCH = true
