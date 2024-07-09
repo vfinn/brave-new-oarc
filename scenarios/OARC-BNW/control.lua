@@ -1111,7 +1111,7 @@ function checkForStealing(player, entity)
                 log("WTF (admin function)" .. player.name .. " just took something from inventory of " .. entity.name .. " body! " ..  GetGPStext(entity.position))
             else
                 -- if the player and we're not processing a menu of ANY MOD 
-                 if (player.opened and (player.opened.gui == nil)) then
+                 if (player.opened and (pcall(function () return player.opened.gui == nil end))) then
                     -- fast transfer only of accessing a box/entity of another players
                     if (not player.opened_self and (player.opened.force.name ~= player.force.name)) then   -- taking something from someone else
                         log("Debug info: " .. player.name .. " player.opened.name - " .. player.opened.name .. "player force: " .. player.force.name .. ", opened force: " .. player.opened.force.name)

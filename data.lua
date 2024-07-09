@@ -2,6 +2,7 @@ require("prototypes.sounds")
 -- moved bot definitions to data-final-fixes.lua to take back bot settings done in data-update in Krastorio2
 -- Krastorio2 slows down bots - so this mods speed settings would not work
 require("prototypes.recipe")
+-- require("prototypes.assembler_bno")  -- work in progress - intended to be tested in Space Block ONLY
 
 data:extend({
   -- remove corpses
