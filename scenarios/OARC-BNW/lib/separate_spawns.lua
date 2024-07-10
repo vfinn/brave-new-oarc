@@ -700,6 +700,9 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
         destination_for_inventory.insert{name = "burner-inserter", count = 2}
         destination_for_inventory.insert{name = "copper-cable", count = 20}
         
+        if (settings.startup["bno-assembler-choice"].value >0) then -- large assemblers ?  Give them one !
+            destination_for_inventory.insert{name = "assembling-machine-bno", count = 1}
+        end
 
         -- now normal items from space block
 --	    destination_for_inventory.insert{name="assembling-machine-2",count=1}
