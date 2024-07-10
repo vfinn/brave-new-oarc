@@ -526,8 +526,34 @@ script.on_event(defines.events.on_tick, function(event)
             global.swarmCheckTick = game.tick + TICKS_PER_SECOND*2    -- check again in 2 seconds
         end
     end
+    -- check to see if a bno assembler is in the game and needs to be damaged and then exploded
+    if (game.tick % (TICKS_PER_SECOND) == 59) and (settings.startup["bno-assembler-choice"].value >0) then
+        checkKillBnoAssembler()
+    end
 end)
 
+----------------------------------------
+    Checks to see if a new bno assembler needs to be damaged due to low power, exploded and ghost removed
+    when below 20% for more than 8 seconds.
+----------------------------------------
+function checkKillBnoAssembler()
+    local entityPos={}
+    local surface = game.surfaces[GAME_SURFACE_NAME]
+	local entities = surface.find_entities_filtered{name="assembling-machine-bno"}
+	for _, entity in pairs(entities) do
+	    if entity and entity.valid and entity.health and ((entity.energy / entity.electric_buffer_size)<.20) then
+            entityPos=entity.position
+	        entity.damage(50, "neutral", "explosion")
+            if not entity.valid then
+                local tile = surface.get_tile(entityPos.x,entityPos.y)
+                local ghost = surface.find_entities_filtered{ghost_name="assembling-machine-bno",position=entityPos}
+                if ghost then
+                    ghost[1].destroy()
+                end
+            end
+	    end
+	end
+end
 
 
 script.on_event(defines.events.on_sector_scanned, function (event)   

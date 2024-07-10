@@ -185,7 +185,7 @@ data:extend({
       usage_priority = "secondary-input",
       emissions = 0.03 / 3.5
     },
-    energy_usage = "500kW",
+    energy_usage = "5000kW",
     ingredient_count = 10,
     module_specification =
     {
