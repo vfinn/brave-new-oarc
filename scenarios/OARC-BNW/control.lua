@@ -1,1 +1,1 @@
-require("control_script")	-- easier reloading during debug
+require("__brave-new-oarc__/control_script")	-- easier reloading during debug

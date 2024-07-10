@@ -10,6 +10,7 @@ Version: 4.2.55
       a crash can occur. I modified the cheat detector to keep from crashing when any menu is opened.
     - Modified prerequisites for ender linked chests, to require research of red circuits before
       you can research ender linked chests.
+    - fix to crash if miner notification is on
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.54
     - If you include "Scrap Resource" mod - you can choose between entities or ore. 

@@ -26,12 +26,19 @@ data:extend({
         order="bnw-016"
     },
     {
+        type = "bool-setting",
+        name = "bno-assembler-explode",     
+        setting_type = "startup",
+        default_value = true,
+        order="bnw-017"
+    },
+    {
         type = "string-setting",
         name = "bno-map-size",     
         setting_type = "startup",
         allowed_values = {"tiny", "small", "normal", "large"},
         default_value = "normal",
-        order="bnw-017"
+        order="bnw-018"
     },
     {
         type = "string-setting",

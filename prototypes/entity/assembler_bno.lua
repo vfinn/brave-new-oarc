@@ -20,6 +20,8 @@ data:extend({
     name = "assembling-machine-bno",
     icon_size = 256,
     icon = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/automation-bno-tech.png",
+ --   icon = "__base__/graphics/technology/automation-3.png",
+ --   tint = {r = 0.95, g = 0.25, b = 0.05, a = 1},
     effects =
     {
       {
@@ -75,7 +77,7 @@ data:extend({
     icon_size = 64,
     flags = {"placeable-neutral","placeable-player", "player-creation"},
     minable = {hardness = 0.2, mining_time = 0.5, result = "assembling-machine-bno"},
-    max_health = 400,
+    max_health = 800,
     corpse = "big-remnants",
     dying_explosion = "medium-explosion",
     alert_icon_shift = util.by_pixel(-3, -12),
@@ -195,5 +197,32 @@ data:extend({
   },
   
   
-})
+},
+{
+    type = "explosion",
+    name = "huge-explosion",
+    animation_speed = 5,
+    animations =
+    {
+        {
+        filename = "__base__/graphics/entity/huge-explosion/huge-explosion.png",
+        priority = "extra-high",
+        frame_width = 111,
+        frame_height = 131,
+        frame_count = 24,
+        line_length = 5
+        }
+    },
+    light = {intensity = 1, size = 50},
+    smoke = "smoke",
+    smoke_count = 20,
+    smoke_slow_down_factor = 1,
+    sound =
+    {
+        {
+        filename = "__base__/sound/huge-explosion.wav",
+        volume = 1.25
+        }
+    }
+  })
 end

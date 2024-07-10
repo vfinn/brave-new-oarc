@@ -527,14 +527,16 @@ script.on_event(defines.events.on_tick, function(event)
         end
     end
     -- check to see if a bno assembler is in the game and needs to be damaged and then exploded
-    if (game.tick % (TICKS_PER_SECOND) == 59) and (settings.startup["bno-assembler-choice"].value >0) then
+    if  (game.tick % (TICKS_PER_SECOND) == 59) 
+    and (settings.startup["bno-assembler-choice"].value >0) 
+    and (settings.startup["bno-assembler-explode"].value==true) then
         checkKillBnoAssembler()
     end
 end)
 
 ----------------------------------------
-    Checks to see if a new bno assembler needs to be damaged due to low power, exploded and ghost removed
-    when below 20% for more than 8 seconds.
+--  Checks to see if a new bno assembler needs to be damaged due to low power, exploded and ghost removed
+--  Only notify a player once every 2 minutes, and only if damaged assembler is in a shared map
 ----------------------------------------
 function checkKillBnoAssembler()
     local entityPos={}
@@ -543,7 +545,30 @@ function checkKillBnoAssembler()
 	for _, entity in pairs(entities) do
 	    if entity and entity.valid and entity.health and ((entity.energy / entity.electric_buffer_size)<.20) then
             entityPos=entity.position
-	        entity.damage(50, "neutral", "explosion")
+	        entity.damage(40, "neutral", "explosion")   -- entity becomes invalid when health == 0
+            -- if the bots have repair packs they will typically keep the assembler above 700 in health
+            if (entity.valid and entity.health <= 600) then
+                if global.ocfg.share_chart[entity.last_user.index] then
+                    for _,player in pairs(game.connected_players) do
+                        if global.ocfg.notify_assembler_explode_notification[player.name] == nil then
+                            global.ocfg.notify_assembler_explode_notification[player.name] = true
+                        end
+                        if global.ocfg.notify_assembler_explode_notification[player.name] then
+                            local notify = false
+                            -- only notify once every 2 minutes
+                            if  global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] == nil then
+                                notify = true
+                            elseif global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] > (game.tick + 2 * TICKS_PER_MINUTE) then
+                                notify = true
+                            end
+                            if notify then
+                                global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] = game.tick
+                                player.print("Large assembler owned by " .. entity.last_user.name .. " is about to explode! " .. GetGPStext(entityPos))
+                            end
+                        end
+                    end
+                end
+            end
             if not entity.valid then
                 local tile = surface.get_tile(entityPos.x,entityPos.y)
                 local ghost = surface.find_entities_filtered{ghost_name="assembling-machine-bno",position=entityPos}
