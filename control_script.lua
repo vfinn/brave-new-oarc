@@ -529,7 +529,7 @@ script.on_event(defines.events.on_tick, function(event)
     -- check to see if a bno assembler is in the game and needs to be damaged and then exploded
     if  (game.tick % (TICKS_PER_SECOND) == 59) 
     and (settings.startup["bno-assembler-choice"].value >0) 
-    and (settings.startup["bno-assembler-explode"].value==true) then
+    and global.ocfg.bno_assembler_explodes then         -- (settings.startup["bno-assembler-explode"].value==true) then
         checkKillBnoAssembler()
     end
 end)
@@ -558,11 +558,11 @@ function checkKillBnoAssembler()
                             -- only notify once every 2 minutes
                             if  global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] == nil then
                                 notify = true
-                            elseif global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] > (game.tick + 2 * TICKS_PER_MINUTE) then
+                            elseif global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] < game.tick then
                                 notify = true
                             end
                             if notify then
-                                global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] = game.tick
+                                global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] = game.tick  + (2 * TICKS_PER_MINUTE)
                                 player.print("Large assembler owned by " .. entity.last_user.name .. " is about to explode! " .. GetGPStext(entityPos))
                             end
                         end
@@ -1327,6 +1327,21 @@ script.on_event(defines.events.on_player_changed_position, function(event)
     global.players[event.player_index].previous_position = player.position
 end)
 
+
+script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
+	if event.setting == "bno-exploding-assemblers" then
+        if not game.players[event.player_index].admin then
+            player.print("Sorry but this is an admin only function - request that it be changed")
+            return
+        end
+        global.ocfg.bno_assembler_explodes = settings.global["bno-exploding-assemblers"].value
+        local onOff = " OFF"
+        if global.ocfg.bno_assembler_explodes then 
+            onOff = " ON" 
+        end
+        game.print("The admin turned " .. onOff .. " exploding large assemblers", {color={r=0, g=1, b=1, a=1}})
+	end
+end)
 
 --script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
 --    log("events.on_runtime_mod_setting_changed: setting " .. event.setting .. " for: " .. game.players[event.player_index].name .. "type: " .. event.setting_type)

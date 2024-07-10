@@ -190,7 +190,15 @@ data:extend({
         setting_type = "startup",
         default_value = false,
         order="bnw-93"
-    }   
+    },
+	{
+		type = "bool-setting",
+		name = "bno-exploding-assemblers",
+		setting_type = "runtime-global",
+		order = "a",
+		default_value = true
+	},
+    
 })
 
 if (mods["scrap-resource"]) then

@@ -164,6 +164,8 @@ function InitOarcConfig()
     if global.ocfg.dangOreus then
         global.ocfg.danOreus_initialized=false
     end
+
+    global.ocfg.bno_assembler_explodes = settings.startup["bno-assembler-explode"].value
     -----------------------
     -- VALIDATION CHECKS --
     -----------------------
