@@ -670,6 +670,12 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     end
     -- everyone always gets 4 red circuits
     destination_for_inventory.insert{name="advanced-circuit", count=4}
+    if (settings.startup["bno-assembler-choice"].value >0) then -- large assemblers ?  Give them one !
+        local numAssemblers= settings.startup["bno-assembler-at-start"].value
+
+        destination_for_inventory.insert{name = "assembling-machine-bno", count = numAssemblers}
+    end
+
     -- S P A C E   B L O C K
     if global.ocfg.space_block then      
         if characterMode then
@@ -700,10 +706,6 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
         destination_for_inventory.insert{name = "burner-inserter", count = 2}
         destination_for_inventory.insert{name = "copper-cable", count = 20}
         
-        if (settings.startup["bno-assembler-choice"].value >0) then -- large assemblers ?  Give them one !
-            destination_for_inventory.insert{name = "assembling-machine-bno", count = 1}
-        end
-
         -- now normal items from space block
 --	    destination_for_inventory.insert{name="assembling-machine-2",count=1}
 --	    destination_for_inventory.insert{name="assembling-machine-1",count=4}
