@@ -33,7 +33,7 @@ data:extend({
         maximum_value=6,
         default_value = 0,
         order="bnw-017"
-    },    
+    },
     {
         type = "bool-setting",
         name = "bno-assembler-explode",     
