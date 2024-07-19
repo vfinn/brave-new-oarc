@@ -1282,7 +1282,7 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
     -- clear main inventory
 --    log("player valid: " .. tostring(player.valid))
 --    log("player index: " .. tostring(player.index))
---    log("player global.players[player.index]: " .. tostring(global.player[player.index]))
+--    log("player global.player[player.index]: " .. tostring(global.player[player.index]))
 --    log("global.players[player.index].characterMode: " .. tostring(global.players[player.index].characterMode))
 
     
