@@ -47,5 +47,12 @@ data:extend{
 		category = "alert",
 		filename = "__brave-new-oarc__/sounds/what-a-fuck-120320.ogg",
 		volume = 2
-	}
+	},
+	{
+		type = "sound",
+		name = "Nu-uhh",
+		category = "alert",
+		filename = "__brave-new-oarc__/sounds/error-call-to-attention-129258.ogg",
+		volume = 2
+	}	
 }

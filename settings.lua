@@ -21,16 +21,25 @@ data:extend({
         name = "bno-assembler-choice",     
         setting_type = "startup",
         minimum_value=0,
-        maximum_value=100,
+        maximum_value=30,
         default_value = 0,
         order="bnw-016"
     },
+    {
+        type = "int-setting",
+        name = "bno-assembler-at-start",     
+        setting_type = "startup",
+        minimum_value=0,
+        maximum_value=6,
+        default_value = 0,
+        order="bnw-017"
+    },    
     {
         type = "bool-setting",
         name = "bno-assembler-explode",     
         setting_type = "startup",
         default_value = true,
-        order="bnw-017"
+        order="bnw-018"
     },
     {
         type = "string-setting",
@@ -38,7 +47,7 @@ data:extend({
         setting_type = "startup",
         allowed_values = {"tiny", "small", "normal", "large"},
         default_value = "normal",
-        order="bnw-018"
+        order="bnw-019"
     },
     {
         type = "string-setting",

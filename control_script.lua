@@ -276,7 +276,7 @@ end)
 -- Gui Click
 ----------------------------------------
 script.on_event(defines.events.on_gui_click, function(event)
-    
+--    log(game.players[event.player_index].name .. " generated a gui click event: " .. tostring(event.element.name))
     -- Don't interfere with other mod related stuff.
     if (event.element.get_mod() ~= nil) then return end
 
@@ -379,16 +379,22 @@ log("on_event::On Player created: " .. player.name)
 -- Additions from BraveNewWork OnEvent_on_player_created(event) vf
     if not global.players then  
         global.players = {}
-
     end
     if (#global.players < event.player_index) then
         log("Zeroing out index :" .. event.player_index .. " drawOnExit to nil for " .. game.players[event.player_index].name)
+        local moatChoice=true
+        if global.ocfg.spawn_config.gen_settings.moat_choice_enabled then
+            moatChoice =  global.ocfg.spawn_config.gen_settings.moat_choice_enabled
+        end
+
         global.players[event.player_index] = {
             crafted = {},
             inventory_items = {},   
             previous_position = player.position,
             drawOnExit = nil,
-            characterMode = false
+            characterMode = false,
+            inSpawn = true,
+            moatChoice=moatChoice
         }
     end
     -- Move the player to the game surface immediately.  First time spawning - character has to be deleted
@@ -1061,8 +1067,10 @@ script.on_event(defines.events.on_player_crafted_item, function(event)
     if global.creative or global.players[event.player_index].characterMode then
         return
     end
-    game.players[event.player_index].cursor_ghost = event.item_stack.prototype
-    event.item_stack.count = 0
+    pcall(function()    -- mostly safeguard seablock from crashing when a player tries to craft a liquid
+        game.players[event.player_index].cursor_ghost = event.item_stack.prototype
+        event.item_stack.count = 0
+    end)
 end)
 
 script.on_event(defines.events.on_player_main_inventory_changed, inventoryChanged)
@@ -1163,9 +1171,9 @@ function checkForStealing(player, entity)
                 log("WTF (admin function)" .. player.name .. " just took something from inventory of " .. entity.name .. " body! " ..  GetGPStext(entity.position))
             else
                 -- if the player and we're not processing a menu of ANY MOD 
-                 if (player.opened and (pcall(function () return player.opened.gui == nil end))) then
+                if (player.opened and (pcall(function () return player.opened.gui == nil end))) then
                     -- fast transfer only of accessing a box/entity of another players
-                    if (not player.opened_self and (player.opened.force.name ~= player.force.name)) then   -- taking something from someone else
+                    if (pcall(function() return (not player.opened_self and (player.opened.force.name ~= player.force.name)) end)) then   -- taking something from someone else
                         log("Debug info: " .. player.name .. " player.opened.name - " .. player.opened.name .. "player force: " .. player.force.name .. ", opened force: " .. player.opened.force.name)
                         local illegalTypes = {"container", "linked-container", "logistic-container", "furnace", "item", "boiler", "assembling-machine-1", "assembling-machine-2", "assembling-machine-3", "car"}
                         local reported=false
@@ -1223,7 +1231,7 @@ script.on_event(defines.events.on_entity_died, function(event)
     end
     local entity = event.entity
     -- check if roboport was destroyed
-    if entity.name=="roboport-main" then
+    if entity.name=="roboport-bno" then
         log("Force DIED: " .. entity.force.name)
         SendBroadcastMsg("Oh No someone on '" .. entity.force.name ..  "'' Gone like a fart in the wind")
         for name,player in pairs(game.players) do
@@ -1320,6 +1328,8 @@ script.on_event(defines.events.on_player_changed_position, function(event)
                 end
                 -- teleport player to (possibly modified) prev_pos
                 player.teleport(prev_pos)
+                player.print("Fog of War limit! Drop a radar to extend your reach", {sound=defines.print_sound.never})
+                player.play_sound { path = 'Nu-uhh' }
             end
         end
     end

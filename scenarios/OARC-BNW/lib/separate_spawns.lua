@@ -406,13 +406,15 @@ function SendPlayerToNewSpawnAndCreateIt(delayedSpawn)
 end
 
 function SetupCharacterOrBNOPlayer(player)
+    local gPlayer = global.players[player.index]
     preventMining(player)   -- enables or prevents based on character mode
-    if global.players[player.index].characterMode then 
+    player.cheat_mode=not gPlayer.characterMode
+    if gPlayer.characterMode then 
         if not player.character then 
             player.create_character() 
-         end
+        end
     else
-        if not global.players[player.index].characterMode and player.character then
+        if player.character then
             log("on_event::On Player created: destroy character")
             player.character.destroy()
             player.character = nil
@@ -485,7 +487,37 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     force.technologies["construction-robotics"].researched = true
     force.technologies["logistic-robotics"].researched = true
     force.technologies["logistic-system"].researched = true
-    if not global.ocfg.seablock then
+    if global.ocfg.seablock then
+        local gx = x-math.random(32,90)
+        local gy = y+math.random(32,90)
+        log("Placing temperate garden at " .. GetGPStext({x=gx, y=gy}))
+        local tiles = {}
+        local width=5
+        local height=5
+        local tileRadSqr = width^2
+        -- make it roune
+        for xx = gx - width, gx + width do
+            for yy = gy - height, gy + height do
+                local distVar = math.floor((gx - xx)^2 + (gy - yy)^2)
+
+                if (distVar < tileRadSqr) then
+                    local tile = surface.get_tile(xx, yy)
+                    local name = tile.name
+                    if tile.prototype.layer <= 4 then
+                        name = "sand-2"
+                    end
+                    tiles[#tiles + 1] = {name = name, position = {xx, yy}}
+                end
+            end
+        end
+        surface.set_tiles(tiles)
+        surface.create_entity({name="temperate-garden",amount=50,position = {x=gx, y=gy}, force=game.forces.neutral})
+        surface.create_entity({name="desert-garden",   amount=50,position = {x=gx+2, y=gy+2}, force=game.forces.neutral})
+        surface.create_entity({name="temperate-tree",  amount=50,position = {x=gx-2, y=gy+2}, force=game.forces.neutral})
+        surface.create_entity({name="temperate-tree",  amount=50,position = {x=gx-2, y=gy-2}, force=game.forces.neutral})
+        surface.create_entity({name="temperate-tree",  amount=50,position = {x=gx+3, y=gy-2}, force=game.forces.neutral})
+        surface.create_entity({name="temperate-tree",  amount=50,position = {x=gx-3, y=gy-3}, force=game.forces.neutral})
+    else
         -- setup starting location
         local water_replace_tile = "sand-1"
         force.chart(surface, {{x - 192, y - 192}, {x + 192, y + 192}})
@@ -601,7 +633,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
         end
     elseif global.ocfg.seablock then
 --                if (settings.startup["bno-main-area-design-boiler-n-steam-engines"].value == "solar only") then
-        blueprint = "0eNqV19uOmzAQBuB38TVZwdjGkFepVpXJWlskMMhA1Sji3ReybRJVYzxzFyL5w4ffZnwTTbe4MbR+FuebaC+Dn8T5x01M7ae33f7ffB2dOIt2dr3IhLf9/jQNnQ2n0XrXiTUTrf9wf8S5WLNkS3u5LP3S2XkILy1hfc+E83M7t+67A/eH60+/9I0LG42+OhPjMG1tBr+/b3NOqnzTmbhuv4x60+veof8koEoyJUmqlKckRZSkSUn6IQX7YQNmqJRRPnvT2647dbYfMQgekMYhQx1WcoIqogTJCaqpUnKaipxKFUmqQPcHEiXzFwKUASqjDxlJZeQho6hMcchoaoqqxzQXkWl+JjsMzTAOYUY3yD8FNaihhjrZnYo4QXC86jWVOVx1yKnM4aoDNcpwuOoA3B2Ro4zk7giceTmgl2aa7b3pwYbIt0+bd+3nr2ZYwv5BA/OOuZq7RfDuldwg4YyhjRJ0dJQKHWXFTRbevZqbLJSROTNZZYUyBTNZEQaYZ22EkcwgRRjFPmvLKlIcafY5GaW48Y4MzjDPyQjDTXOE4aYZZ1TOLozLSLWmCnZlHKWAXRpHKcmujaOUYtejUUqzC9IoVbIr0ihl2BVplKKmXD4glKGmXMons10F73fG88vlNBO/XZjuDaAqlKnBVFCbvKrX9Qukfb7W"
+        blueprint = "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"
     elseif global.ocfg.dangOreus then
         blueprint = "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"
     elseif characterMode then
@@ -619,7 +651,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     build_blueprint_from_string(blueprint,surface,{x=x, y=y},force)
         
      local config = global.forces[force.name]
-    config.roboport = surface.create_entity{name = "roboport-main", position = {x, y}, force = force, raise_built = true}
+    config.roboport = surface.create_entity{name = "roboport-bno", position = {x, y}, force = force, raise_built = true}
     config.roboport.backer_name = player.name
     config.roboport.minable = false
     config.roboport.energy = 400000000    
@@ -670,6 +702,11 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     end
     -- everyone always gets 4 red circuits
     destination_for_inventory.insert{name="advanced-circuit", count=4}
+    if (settings.startup["bno-assembler-choice"].value >0) then -- large assemblers ?  Give them one !
+        local numAssemblers= settings.startup["bno-assembler-at-start"].value
+        destination_for_inventory.insert{name = "assembling-machine-bno", count = numAssemblers}
+    end
+
     -- S P A C E   B L O C K
     if global.ocfg.space_block then      
         if characterMode then
@@ -700,10 +737,6 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
         destination_for_inventory.insert{name = "burner-inserter", count = 2}
         destination_for_inventory.insert{name = "copper-cable", count = 20}
         
-        if (settings.startup["bno-assembler-choice"].value >0) then -- large assemblers ?  Give them one !
-            destination_for_inventory.insert{name = "assembling-machine-bno", count = 1}
-        end
-
         -- now normal items from space block
 --	    destination_for_inventory.insert{name="assembling-machine-2",count=1}
 --	    destination_for_inventory.insert{name="assembling-machine-1",count=4}
@@ -820,6 +853,8 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
             destination_for_inventory.insert{name = "liquifier", count = 1}
             destination_for_inventory.insert{name = "crystallizer", count = 1}
             destination_for_inventory.insert{name = "algae-farm", count = 2}            
+            destination_for_inventory.insert{name = "filter-inserter", count = 4}            
+            destination_for_inventory.insert{name = "fast-inserter", count = 4}            
         else
             -- prevent error when looking for "rock-chest" later
             global.seablocked = true
@@ -1247,7 +1282,7 @@ function RemoveOrResetPlayer(player, remove_player, remove_force, remove_base, i
     -- clear main inventory
 --    log("player valid: " .. tostring(player.valid))
 --    log("player index: " .. tostring(player.index))
---    log("player global.player[player.index]: " .. tostring(global.player[player.index]))
+--    log("player global.players[player.index]: " .. tostring(global.player[player.index]))
 --    log("global.players[player.index].characterMode: " .. tostring(global.players[player.index].characterMode))
 
     

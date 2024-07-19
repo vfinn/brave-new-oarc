@@ -19,7 +19,11 @@ function CreatePlayerListGuiTab(tab_container, player)
         else
             charMode = "Brave New Player"
         end
-        local caption_str = player.name.." ["..player.force.name.."]".." ("..formattime_hours_mins(player.online_time)..")    ".. charMode
+        local forceName = player.force.name
+        if global.players[player.index].inSpawn then
+            forceName = "In Spawn"
+        end
+        local caption_str = player.name.." ["..forceName.."]".." ("..formattime_hours_mins(player.online_time)..")    ".. charMode
         if (player.admin) then
             AddLabel(scrollFrame, "player:"..player.name, caption_str, my_player_list_admin_style)
         else

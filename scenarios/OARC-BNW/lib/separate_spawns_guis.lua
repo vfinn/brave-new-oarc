@@ -25,7 +25,6 @@ local SPAWN_GUI_MAX_HEIGHT = 1400
 --                        testName2=sharedSpawnExample2,
 --                        Oarc=sharedSpawnExample3}
 
-
 -- A display gui message
 -- Meant to be display the first time a player joins.
 function DisplayWelcomeTextGui(player)
@@ -98,6 +97,20 @@ function WelcomeTextGuiClick(event)
     end
 end
 
+function getBuddy(player)
+    local buddy = nil
+    for i=1, #global.ocore.waitingBuddies,1 do
+        if (global.ocore.waitingBuddies[i] ~= nil and global.ocore.waitingBuddies[i] ~= player.name) then
+            buddy = game.players[global.ocore.waitingBuddies[i]]
+        end
+    end
+    if (buddy) then
+        log ("Buddy is " .. buddy.name)
+    else
+        log ("no buddy")
+    end
+    return buddy
+end
 
 -- Display the spawn options and explanation
 function DisplaySpawnOptions(player)
@@ -110,6 +123,7 @@ function DisplaySpawnOptions(player)
         log("Tried to display spawn options when it was already displayed!")
         return
     end
+    global.players[player.index].inSpawn=true
     player.gui.screen.add{name = "spawn_opts",
                             type = "frame",
                             direction = "vertical",
@@ -123,16 +137,6 @@ function DisplaySpawnOptions(player)
     local warn_msg = {"oarc-click-info-btn-help"}
     AddLabel(sGui, "warning_lbl1", warn_msg, my_warning_style)
     AddLabel(sGui, "spawn_msg_lbl1", SPAWN_MSG1, my_label_style)
-
-    -- Button and message about the regular vanilla spawn
-    -- if ENABLE_DEFAULT_SPAWN then
-    --     sGui.add{name = "default_spawn_btn",
-    --                 type = "button",
-    --                 caption={"oarc-vanilla-spawn"}}
-    --     local normal_spawn_text = {"oarc-default-spawn-behavior"}
-    --     AddLabel(sGui, "normal_spawn_lbl1", normal_spawn_text, my_label_style)
-    --     -- AddSpacerLine(sGui, "normal_spawn_spacer")
-    -- end
 
     -- The main spawning options. Solo near and solo far.
     -- If enable, you can also choose to be on your own team.
@@ -164,32 +168,31 @@ function DisplaySpawnOptions(player)
                             caption={"oarc-easy-start-option"},
                             state=global.ocfg.easyStart}
     else
-        local moat_bridge_enabled=global.ocfg.spawn_config.gen_settings.moat_bridging
-        if (settings.startup["bno-moat-choice"].value == "Player choice w Bridge") then
-            global.ocfg.spawn_config.gen_settings.moat_choice_enabled = true
-            moat_bridge_enabled = true
-        elseif (settings.startup["bno-moat-choice"].value == "Player choice w/o Bridge") then
-            global.ocfg.spawn_config.gen_settings.moat_choice_enabled = true
-            moat_bridge_enabled = false
+        if global.ocfg.seablock then
+            global.ocfg.spawn_config.gen_settings.moat_choice_enabled=false
         else
-            global.ocfg.spawn_config.gen_settings.moat_choice_enabled = false
-            moat_bridge_enabled = false
-        end
-    
-        if global.ocfg.spawn_config.gen_settings.moat_choice_enabled then
-            local moatChoice = global.ocfg.moatChoice
-            if global.ocore.buddySpawnOpts[player.name] then
-                moatChoice = global.ocore.buddySpawnOpts[player.name].moatChoice
+            local moat_bridge_enabled=global.ocfg.spawn_config.gen_settings.moat_bridging
+            if (settings.startup["bno-moat-choice"].value == "Player choice w Bridge") then
+                global.ocfg.spawn_config.gen_settings.moat_choice_enabled = true
+                moat_bridge_enabled = true
+            elseif (settings.startup["bno-moat-choice"].value == "Player choice w/o Bridge") then
+                global.ocfg.spawn_config.gen_settings.moat_choice_enabled = true
+                moat_bridge_enabled = false
+            else
+                global.ocfg.spawn_config.gen_settings.moat_choice_enabled = false
+                moat_bridge_enabled = false
             end
+        end
+        if global.ocfg.spawn_config.gen_settings.moat_choice_enabled then
             if (global.ocfg.spawn_config.gen_settings.moat_choice_enabled and not global.ocfg.enable_vanilla_spawns) then
                 soloSpawnFlow.add{name = "isolated_spawn_moat_option_checkbox",
                                 type = "checkbox",
                                 caption={"oarc-moat-option"},
-                                state=moatChoice}
+                                state=global.players[player.index].moatChoice}
             end
         end
     end    
-    DisplayCharacterSpawnOptions(player, soloSpawnFlow)
+    DisplayCharacterSpawnOptions(player, soloSpawnFlow, global.ocfg.main_team)
 
     -- if (global.ocfg.enable_vanilla_spawns and (#global.vanillaSpawns > 0)) then
     --     soloSpawnFlow.add{name = "isolated_spawn_vanilla_option_checkbox",
@@ -274,8 +277,8 @@ function DisplaySpawnOptions(player)
     AddLabel(sGui, "note_lbl1", spawn_distance_notes, my_note_style)
 end
 
-function DisplayCharacterSpawnOptions(player, soloSpawnFlow)
-    local characterModeState = CharacterOptionChosenForThisPlayersForce(player, true) --0 not chosen, 1 char, 2 bno
+function DisplayCharacterSpawnOptions(player, SpawnFlow, mainTeamBool)
+    local characterModeState = CharacterOptionChosenForThisPlayersForce(player, mainTeamBool) --0 not chosen, 1 char, 2 bno
     if characterModeState == 0 then
         if global.players[player.index].characterMode then
             characterModeState = 1
@@ -283,12 +286,12 @@ function DisplayCharacterSpawnOptions(player, soloSpawnFlow)
             characterModeState = 2
         end
     end
-    AddLabel(soloSpawnFlow, "bno-character-warning-lbl1", "Character Mode checkbox will be enforced by options that may have already been selected for this team", my_green_style)
-    soloSpawnFlow.add{name = "character_mode_option_checkbox",
+    AddLabel(SpawnFlow, "bno-character-warning-lbl1", "Character Mode checkbox will be enforced by options that may have already been selected for this team", my_green_style)
+    SpawnFlow.add{name = "character_mode_option_checkbox",
                 type = "checkbox",
                 caption={"bno-mode-option"},
                 state=characterModeState==1}
---    AddLabel(soloSpawnFlow, "character_mode_spawn_lbl1",{"bno-mode-start"}, my_label_style)
+--    AddLabel(SpawnFlow, "character_mode_spawn_lbl1",{"bno-mode-start"}, my_label_style)
 end
 
 -- returns  0 if no team has chosen 
@@ -299,18 +302,20 @@ function CharacterOptionChosenForThisPlayersForce(thisPlayer, bMainTeam)
     -- if at least 1 team has already joined then Character option has been selected already
     if bMainTeam then 
         for idx,player in pairs(game.players) do
-            local t = player.force.name
-            if idx ~= thisPlayer.index then     -- don't count this player
-                if (player.force.name == thisPlayer.force.name)  then
-                    if global.players[idx].characterMode then
-                        log("char option selection- team: " .. tostring(t) .. " in characterMode - " ..tostring(global.players[idx].characterMode))
-                        return 1
-                    else
-                        log("char option selection- team: " .. tostring(t) .. " in characterMode - " ..tostring(global.players[idx].characterMode))
-                        return 2
+            if not global.players[game.players[idx].index].inSpawn then    -- ignore players in spawn area
+                local t = player.force.name
+                if idx ~= thisPlayer.index then     -- don't count this player
+                    if (player.force.name == thisPlayer.force.name)  then
+                        if global.players[idx].characterMode then
+                            log("char option selection- team: " .. tostring(t) .. " in characterMode - " ..tostring(global.players[idx].characterMode))
+                            return 1
+                        else
+                            log("char option selection- team: " .. tostring(t) .. " in characterMode - " ..tostring(global.players[idx].characterMode))
+                            return 2
+                        end
                     end
                 end
-            end            
+            end
         end
     end
     log("No Character option selected for this team and no one else on this team: " .. thisPlayer.force.name .. ". Either option available")
@@ -320,11 +325,15 @@ end
 -- This just updates the radio buttons/checkboxes when players click them.
 function SpawnOptsRadioSelect(event)
     
+    local player=game.players[event.player_index]
+    local gPlayer=global.players[event.player_index]
+
     if not (event and event.element and event.element.valid) then return end
     local elemName = event.element.name
 
     if (elemName == "isolated_spawn_main_team_radio") then
         event.element.parent.isolated_spawn_new_team_radio.state=false
+        
     elseif (elemName == "isolated_spawn_new_team_radio") then
         event.element.parent.isolated_spawn_main_team_radio.state=false
     end
@@ -337,29 +346,95 @@ function SpawnOptsRadioSelect(event)
         if (event.element.parent.buddy_spawn_main_team_radio    and event.element.parent.buddy_spawn_main_team_radio.state) then
             mainTeamState = event.element.parent.buddy_spawn_main_team_radio.state
         end
-        if mainTeamState then
-            local c=CharacterOptionChosenForThisPlayersForce(game.players[event.player_index], mainTeamState)
-            if c==0 then
-                  -- nothing yet chosen, let checkbox change state
-            elseif c==1 then
-                event.element.parent.character_mode_option_checkbox.state=true   -- character mode already chosen - force on
-                create_popup_gui(game.players[event.player_index],"Brave New Player option is not possible!", {"Each team must be of the same type - Character or Brave New Player.", "The player that started Main Force has already selected Character.","", "If you'd like to play as Brave New player - choose: 'Create Your Own Team'.", ""})
-            elseif c== 2 then
-                event.element.parent.character_mode_option_checkbox.state=false  -- bno mode already chosen force off
-                create_popup_gui(game.players[event.player_index],"Character option is not possible!", {"Each team must be of the same type - Character or Brave New Player.", "The player that started Main Force has already selected Brave New Player.","", "If you'd like to play as character - choose: 'Create Your Own Team'", ""})
+        -- sync my machine to what some other buddy spawn player has chosen for character mode
+        if pcall(function()
+--            log("SpawnOptsRadioSelect: pcall processing of event for character mode from player: " .. player.name)
+            -- keep the characterMode variable in sync with player menu selection - while running - easier to debug 
+            local menuSpawnFlow = nil
+            if player.gui.screen.spawn_opts then
+                menuSpawnFlow = player.gui.screen.spawn_opts.spawn_solo_flow
+            elseif player.gui.screen.buddy_spawn_opts then       -- we're in the buddy screen
+                menuSpawnFlow = player.gui.screen.buddy_spawn_opts
             end
+            if mainTeamState then 
+                if menuSpawnFlow.character_mode_option_checkbox.state==true then
+                    create_popup_gui(game.players[event.player_index],"Character option not supported for Main Force", {"If you'd like to play normal Factorio character mode", "please select 'Create You Own Team' checkbox","", "Main Team is for BNO players only", ""})
+                end
+                menuSpawnFlow.character_mode_option_checkbox.state=false
+            end
+            if player.gui.screen.buddy_spawn_opts then
+                local characterState=false  -- main team is always BNO mode
+                if not mainTeamState then 
+                    characterState = event.element.parent.character_mode_option_checkbox.state
+                end
+                -- only in buddy mode - every player in this menu gets their checkbox checked when any other player clicks it
+                for i=#global.ocore.waitingBuddies,1,-1 do
+                    local playerName = global.ocore.waitingBuddies[i]
+                    global.players[game.players[playerName].index].characterMode = characterState
+                    game.players[playerName].gui.screen.buddy_spawn_opts.spawn_buddy_flow.character_mode_option_checkbox.state = characterState
+                end
+            end
+--            if mainTeamState then   -- do not allow team to be out of sync with others that may have spawned on Main Force
+--                local c=CharacterOptionChosenForThisPlayersForce(game.players[event.player_index], mainTeamState)
+--                if c==0 then
+--                        -- nothing yet chosen, let checkbox change state
+--                elseif c==1 then
+--                    event.element.parent.character_mode_option_checkbox.state=true   -- character mode already chosen - force on
+--                    create_popup_gui(game.players[event.player_index],"Brave New Player option is not possible!", {"Each team must be of the same type - Character or Brave New Player.", "The player that started Main Force has already selected Character.","", "If you'd like to play as Brave New player - choose: 'Create Your Own Team'.", ""})
+--                elseif c== 2 then
+--                    event.element.parent.character_mode_option_checkbox.state=false  -- bno mode already chosen force off
+--                    create_popup_gui(game.players[event.player_index],"Character option is not possible!", {"Each team must be of the same type - Character or Brave New Player.", "The player that started Main Force has already selected Brave New Player.","", "If you'd like to play as character - choose: 'Create Your Own Team'", ""})
+--                end
+--            end                    
+            if (menuSpawnFlow and (menuSpawnFlow.character_mode_option_checkbox ~= nil)) then
+                gPlayer.characterMode = menuSpawnFlow.character_mode_option_checkbox.state        
+            end
+        end) then
+--            log("SpawnOptsRadioSelect: Successfully completed pcall processing of character mode buddy capture")
+        else
+            log("SpawnOptsRadioSelect: Error processing pcall processing of character mode buddy capture, ".. player.name)
         end
+--    if mainTeamState then
+--            local c=CharacterOptionChosenForThisPlayersForce(game.players[event.player_index], mainTeamState)
+--        if c==0 then
+--                  -- nothing yet chosen, let checkbox change state
+--            else -- other players checkbox is out of sync - he will process my change on his scree
+--            end
+--            elseif c==1 then
+--                event.element.parent.character_mode_option_checkbox.state=true   -- character mode already chosen - force on
+--                create_popup_gui(game.players[event.player_index],"Brave New Player option is not possible!", {"Each team must be of the same type - Character or Brave New Player.", "The player that started Main Force has already selected Character.","", "If you'd like to play as Brave New player - choose: 'Create Your Own Team'.", ""})
+--            elseif c== 2 then
+--                event.element.parent.character_mode_option_checkbox.state=false  -- bno mode already chosen force off
+--                create_popup_gui(game.players[event.player_index],"Character option is not possible!", {"Each team must be of the same type - Character or Brave New Player.", "The player that started Main Force has already selected Brave New Player.","", "If you'd like to play as character - choose: 'Create Your Own Team'", ""})
+--            end
+--        end
     end
 
+    local buddy = getBuddy(player)
     if (elemName == "buddy_spawn_main_team_radio") then
         event.element.parent.buddy_spawn_new_team_radio.state=false
         event.element.parent.buddy_spawn_buddy_team_radio.state=false
+        if buddy then            
+            -- buddy.gui.screen.buddy_spawn_opts.buddy_spawn_main_team_radio.state=true
+            buddy.gui.screen.buddy_spawn_opts.spawn_buddy_flow.buddy_spawn_new_team_radio.state=false
+            buddy.gui.screen.buddy_spawn_opts.spawn_buddy_flow.buddy_spawn_buddy_team_radio.state=false
+        end
     elseif (elemName == "buddy_spawn_new_team_radio") then
-        event.element.parent.buddy_spawn_main_team_radio.state=false
+        -- event.element.parent.buddy_spawn_main_team_radio.state=false
         event.element.parent.buddy_spawn_buddy_team_radio.state=false
+        if buddy then
+            -- buddy.gui.screen.buddy_spawn_opts.buddy_spawn_main_team_radio.state=false
+            buddy.gui.screen.buddy_spawn_opts.spawn_buddy_flow.buddy_spawn_new_team_radio.state=true
+            buddy.gui.screen.buddy_spawn_opts.spawn_buddy_flow.buddy_spawn_buddy_team_radio.state=false
+        end
     elseif (elemName == "buddy_spawn_buddy_team_radio") then
-        event.element.parent.buddy_spawn_main_team_radio.state=false
+        -- event.element.parent.buddy_spawn_main_team_radio.state=false
         event.element.parent.buddy_spawn_new_team_radio.state=false
+        if buddy then
+            -- buddy.gui.screen.buddy_spawn_opts.buddy_spawn_main_team_radio.state=false
+            buddy.gui.screen.buddy_spawn_opts.spawn_buddy_flow.buddy_spawn_new_team_radio.state=false
+            buddy.gui.screen.buddy_spawn_opts.spawn_buddy_flow.buddy_spawn_buddy_team_radio.state=true
+        end
     end
 end
 
@@ -382,7 +457,12 @@ function SpawnOptsGuiClick(event)
     local pgcs = player.gui.screen.spawn_opts
 
     local joinMainTeamRadio, joinOwnTeamRadio, moatChoice, vanillaChoice = false
-    
+    if (elemName == "isolated_spawn_moat_option_checkbox") then
+        global.players[player.index].moatChoice=pgcs.spawn_solo_flow.isolated_spawn_moat_option_checkbox.state
+        return
+    end
+
+--    log("SpawnOptsGuiClick: ".. tostring(elemNam))
     -- Check if a valid button on the gui was pressed
     -- and delete the GUI
     if ((elemName == "default_spawn_btn") or
@@ -401,19 +481,21 @@ function SpawnOptsGuiClick(event)
         end
         global.ocfg.main_team = joinMainTeamRadio       -- remember so on a restart we keep the setting
         
+        -- modify above based on choice to remove main team for this. Code left in case we ever put it back
+--        joinMainTeamRadio = false
+--        joinOwnTeamRadio  = true
+--        global.ocfg.main_team = false
+
+        if global.ocfg.seablock then
+            global.ocfg.spawn_config.gen_settings.moat_choice_enabled=false
+        end
         if (global.ocfg.space_block) then
             global.ocfg.easyStart = pgcs.spawn_solo_flow.easy_start_option_checkbox.state
         end
         if (global.ocfg.spawn_config.gen_settings.moat_choice_enabled and not global.ocfg.enable_vanilla_spawns and
            (pgcs.spawn_solo_flow.isolated_spawn_moat_option_checkbox ~= nil)) then
-                global.ocfg.moatChoice = pgcs.spawn_solo_flow.isolated_spawn_moat_option_checkbox.state
-                moatChoice = global.ocfg.moatChoice
-        end
-
-        if (pgcs.spawn_solo_flow.character_mode_option_checkbox ~= nil) then
-            global.players[player.index].characterMode = pgcs.spawn_solo_flow.character_mode_option_checkbox.state
-            player.cheat_mode=not global.players[player.index].characterMode
---            if global.players[player.index].characterMode and not player.character then player.create_character() end        -- character mode - make a character
+                moatChoice = pgcs.spawn_solo_flow.isolated_spawn_moat_option_checkbox.state
+                global.players[player.index].moatChoice=moatChoice
         end
         
         -- if (global.ocfg.enable_vanilla_spawns and
@@ -474,7 +556,7 @@ function SpawnOptsGuiClick(event)
         ChangePlayerSpawn(player, newSpawn)
 
         -- Send the player there
-        QueuePlayerForDelayedSpawn(player.name, newSpawn, moatChoice, global.ocfg.enable_vanilla_spawns)
+        QueuePlayerForDelayedSpawn(player.name, newSpawn, global.players[player.index].moatChoice, global.ocfg.enable_vanilla_spawns)
         if (elemName == "isolated_spawn_near") then
             SendBroadcastMsg({"oarc-player-is-joining-near", player.name})
         elseif (elemName == "isolated_spawn_far") then
@@ -483,7 +565,7 @@ function SpawnOptsGuiClick(event)
 
         -- Unlock spawn control gui tab
         SetOarcGuiTabEnabled(player, OARC_SPAWN_CTRL_GUI_NAME, true)
-
+        global.players[player.index].inSpawn=false
         player.print({"", {"oarc-please-wait"}, "!"})
 
     elseif (elemName == "join_other_spawn") then
@@ -496,9 +578,14 @@ function SpawnOptsGuiClick(event)
 
     -- Hacky buddy spawn system
     elseif (elemName == "buddy_spawn") then
+        if #global.ocore.waitingBuddies>1 then
+            game.print(player.name .. " attempting to form a buddy team, but we're busy forming another team. Get moving in there!")
+            create_popup_gui(player,"Sorry busy forming a team - please wait, and try again", {"Two players are already in the process of forming a buddy team", "You will be able to join this screen when they are done","", "Please wait and try again ...", ""})        
+            return
+        end
         table.insert(global.ocore.waitingBuddies, player.name)
         SendBroadcastMsg({"oarc-looking-for-buddy", player.name})
-
+        
         DisplayBuddySpawnOptions(player)
     end
 end
@@ -887,6 +974,32 @@ function SpawnCtrlGuiClick(event)
     end
 end
 
+-- Refresh buddy list
+function refreshBuddyList(player)
+    local waiting_buddies_dropdown = player.gui.screen.buddy_spawn_opts.spawn_buddy_flow.waiting_buddies_dropdown
+    local index=0
+    waiting_buddies_dropdown.clear_items()
+    log ("Refresh buddy list - refreshed by: " .. player.name)
+    for _,buddyName in pairs(global.ocore.waitingBuddies) do
+        if (player.name == buddyName) then
+            log ("buddy list refreshed by " .. player.name)
+        else
+            log ("Adding " .. buddyName .. " to my waiting_buddies_dropdown, index of " .. game.players[buddyName].index)
+            waiting_buddies_dropdown.add_item(buddyName)
+            index=game.players[buddyName].index
+        end
+    end
+--    log ("buddy index: " .. index)
+--    log("contents of waitingBuddies list")
+--    for _,buddyName in pairs(global.ocore.waitingBuddies) do
+--        log("    " .. buddyName)
+--    end
+    if #waiting_buddies_dropdown.items >0 then
+        waiting_buddies_dropdown.selected_index = 1
+    end
+end
+
+
 -- Display the buddy spawn menu
 function DisplayBuddySpawnOptions(player)
     local buddyGui = player.gui.screen.add{name = "buddy_spawn_opts",
@@ -919,34 +1032,43 @@ function DisplayBuddySpawnOptions(player)
     buddySpawnFlow.add{name = "waiting_buddies_dropdown",
                     type = "drop-down",
                     items = buddyList}
-    buddySpawnFlow.add{name = "refresh_buddy_list",
-                    type = "button",
-                    caption={"oarc-buddy-refresh"}}
+-- removed since this is now automatic
+--    buddySpawnFlow.add{name = "refresh_buddy_list",
+--                    type = "button",
+--                    caption={"oarc-buddy-refresh"}}
     -- AddSpacerLine(buddySpawnFlow)
 
     -- Allow picking of teams
     if (global.ocfg.enable_separate_teams) then
-        buddySpawnFlow.add{name = "buddy_spawn_main_team_radio",
-                        type = "radiobutton",
-                        caption={"oarc-join-main-team-radio"},
-                        state=true}
+-- removed because 1) causes mismatch of characterMode 2) Players didn't like it being here
+--        buddySpawnFlow.add{name = "buddy_spawn_main_team_radio",
+--                        type = "radiobutton",
+--                        caption={"oarc-join-main-team-radio"},
+--                        state=true}
+        local buddy = getBuddy(player)
+        ntState=false
+        btState=true
+        if buddy then
+            ntState=buddy.gui.screen.buddy_spawn_opts.spawn_buddy_flow.buddy_spawn_new_team_radio.state
+            btState=buddy.gui.screen.buddy_spawn_opts.spawn_buddy_flow.buddy_spawn_buddy_team_radio.state
+        end
         buddySpawnFlow.add{name = "buddy_spawn_new_team_radio",
                         type = "radiobutton",
                         caption={"oarc-create-own-team-radio"},
-                        state=false}
+                        state=ntState}
         buddySpawnFlow.add{name = "buddy_spawn_buddy_team_radio",
                         type = "radiobutton",
                         caption={"oarc-create-buddy-team"},
-                        state=false}
+                        state=btState}
     end
     if (global.ocfg.spawn_config.gen_settings.moat_choice_enabled) then
         buddySpawnFlow.add{name = "buddy_spawn_moat_option_checkbox",
                         type = "checkbox",
                         caption={"oarc-moat-option"},
-                        state=true}
+                        state=global.players[player.index].moatChoice}
     end
 
-    DisplayCharacterSpawnOptions(player, buddySpawnFlow)
+    DisplayCharacterSpawnOptions(player, buddySpawnFlow, false) -- main team not allowed in buddy spawn
 
     -- AddSpacerLine(buddySpawnFlow)
     buddySpawnFlow.add{name = "buddy_spawn_request_near",
@@ -973,15 +1095,18 @@ function DisplayBuddySpawnOptions(player)
     end
     local spawn_distance_notes={"oarc-spawn-dist-notes", global.ocfg.near_dist_start, global.ocfg.near_dist_end, global.ocfg.far_dist_start, global.ocfg.far_dist_end}
     AddLabel(buddyGui, "note_lbl1", spawn_distance_notes, my_note_style)
+    refreshBuddyList(player)
+    if (#global.ocore.waitingBuddies)>0 then
+        refreshBuddyList(game.players[global.ocore.waitingBuddies[1]])   -- only one other player in the menu when you join, it has to be [1]
+    end
 end
-
-
 
 -- Handle the gui click of the spawn options
 function BuddySpawnOptsGuiClick(event)
     if not (event and event.element and event.element.valid) then return end
     local player = game.players[event.player_index]
     local elemName = event.element.name
+    log("BuddySpawnOptsGuiClick element name: " .. elemName .. ", player: ".. player.name)    
 
     if not player then
         log("Another gui click happened with no valid player...")
@@ -992,32 +1117,38 @@ function BuddySpawnOptsGuiClick(event)
         return -- Gui event unrelated to this gui.
     end
 
-    local waiting_buddies_dropdown = player.gui.screen.buddy_spawn_opts.spawn_buddy_flow.waiting_buddies_dropdown
-
     -- Just refresh the buddy list dropdown values only.
     if (elemName == "refresh_buddy_list") then
-        waiting_buddies_dropdown.clear_items()
-
-        for _,buddyName in pairs(global.ocore.waitingBuddies) do
-            if (player.name ~= buddyName) then
-                waiting_buddies_dropdown.add_item(buddyName)
-            end
-        end
+        refreshBuddyList(player)
         return
     end
 
     -- Handle the cancel button to exit this menu
     if (elemName == "buddy_spawn_cancel") then
+        log(player.name .. " left buddy spawn")
+        game.print({"oarc-buddy-cancel-request", player.name})
+        player.gui.screen.buddy_spawn_opts.spawn_buddy_flow.waiting_buddies_dropdown.clear_items()
+        -- now clear the list for the other player in buddy spawn
         player.gui.screen.buddy_spawn_opts.destroy()
+
         DisplaySpawnOptions(player)
 
         -- Remove them from the buddy list when they cancel
         for i=#global.ocore.waitingBuddies,1,-1 do
             if (global.ocore.waitingBuddies[i] == player.name) then
-                global.ocore.waitingBuddies[i] = nil
+                table.remove(global.ocore.waitingBuddies, i)
             end
+        end                    
+        local buddy = getBuddy(player)
+        if (buddy ~= nil) then
+            buddy.gui.screen.buddy_spawn_opts.spawn_buddy_flow.waiting_buddies_dropdown.clear_items()
         end
     end
+
+    if elemName == "buddy_spawn_moat_option_checkbox" then
+        global.players[player.index].moatChoice=player.gui.screen.buddy_spawn_opts.spawn_buddy_flow.buddy_spawn_moat_option_checkbox.state
+    end
+
 
     local joinMainTeamRadio, joinOwnTeamRadio, joinBuddyTeamRadio, moatChoice = false
     local buddyChoice = nil
@@ -1053,26 +1184,26 @@ function BuddySpawnOptsGuiClick(event)
         end
 
         if (global.ocfg.enable_separate_teams) then
-            joinMainTeamRadio = buddySpawnGui.buddy_spawn_main_team_radio.state
+            -- joinMainTeamRadio = buddySpawnGui.buddy_spawn_main_team_radio.state
+            joinMainTeamRadio = false
             joinOwnTeamRadio = buddySpawnGui.buddy_spawn_new_team_radio.state
             joinBuddyTeamRadio = buddySpawnGui.buddy_spawn_buddy_team_radio.state
         else
-            joinMainTeamRadio = true
+            joinMainTeamRadio = false
             joinOwnTeamRadio = false
-            joinBuddyTeamRadio = false
+            joinBuddyTeamRadio = true
         end
         if (global.ocfg.spawn_config.gen_settings.moat_choice_enabled) then
             moatChoice =  buddySpawnGui.buddy_spawn_moat_option_checkbox.state
+            global.players[player.index].moatChoice = moatChoice
         end
 
         -- Save the chosen spawn options somewhere for later use.
         global.ocore.buddySpawnOpts[player.name] = {joinMainTeamRadio=joinMainTeamRadio,
                                                     joinOwnTeamRadio=joinOwnTeamRadio,
                                                     joinBuddyTeamRadio=joinBuddyTeamRadio,
-                                                    moatChoice=moatChoice,
                                                     buddyChoice=buddyChoice,
                                                     distChoice=elemName}
-
         player.gui.screen.buddy_spawn_opts.destroy()
 
         -- Display prompts to the players
@@ -1086,7 +1217,7 @@ function BuddySpawnOptsGuiClick(event)
         for i=#global.ocore.waitingBuddies,1,-1 do
             name = global.ocore.waitingBuddies[i]
             if ((name == player.name) or (name == buddyChoice)) then
-                global.ocore.waitingBuddies[i] = nil
+                table.remove(global.ocore.waitingBuddies, i)
             end
         end
 
@@ -1135,7 +1266,10 @@ function BuddySpawnWaitMenuClick(event)
         player.gui.screen.buddy_wait_menu.destroy()
         DisplaySpawnOptions(player)
 
-        local buddy = game.players[global.ocore.buddySpawnOpts[player.name].buddyChoice]
+        local buddy = nil
+        if #global.ocore.waitingBuddies >0 then  -- Any buddies in buddy spawn menu ?
+            buddy = game.players[global.ocore.buddySpawnOpts[player.name].buddyChoice]
+        end
 
         -- Catch a case where the buddy has left the game early and no longer exists.
         if (buddy == nil) then
@@ -1146,6 +1280,7 @@ function BuddySpawnWaitMenuClick(event)
             buddy.gui.screen.buddy_request_menu.destroy()
         end
         if (buddy.gui.screen.buddy_spawn ~= nil) then
+            buddy.gui.screen.buddy_spawn_opts.spawn_buddy_flow.waiting_buddies_dropdown.clear_items()
             buddy.gui.screen.buddy_spawn_opts.destroy()
         end
         DisplaySpawnOptions(buddy)
@@ -1183,7 +1318,7 @@ function DisplayBuddySpawnRequestMenu(player, requestingBuddyName)
     end
 
     local moatText = " "
-    if (global.ocore.buddySpawnOpts[requestingBuddyName].moatChoice) then
+    if (global.players[player.index].moatChoice) then
         moatText = {"oarc-buddy-txt-moat"}
     end
 
@@ -1211,17 +1346,17 @@ end
 -- Handle the gui click of the buddy request menu
 function BuddySpawnRequestMenuClick(event)
     if not (event and event.element and event.element.valid) then return end
-    local player = game.players[event.player_index]
+    local joiningPlayer = game.players[event.player_index]
     local elemName = event.element.name
     local requesterName = nil
     local requesterOptions = {}
 
-    if not player then
+    if not joiningPlayer then
         log("Another gui click happened with no valid player...")
         return
     end
 
-    if (player.gui.screen.buddy_request_menu == nil) then
+    if (joiningPlayer.gui.screen.buddy_request_menu == nil) then
         return -- Gui event unrelated to this gui.
     end
 
@@ -1229,7 +1364,7 @@ function BuddySpawnRequestMenuClick(event)
     -- Check if it's a button press and lookup the matching buddy info
     if ((elemName == "accept_buddy_request") or (elemName == "decline_buddy_request")) then
         for name,opts in pairs(global.ocore.buddySpawnOpts) do
-            if (opts.buddyChoice == player.name) then
+            if (opts.buddyChoice == joiningPlayer.name) then
                 requesterName = name
                 requesterOptions = opts
             end
@@ -1240,8 +1375,8 @@ function BuddySpawnRequestMenuClick(event)
             SendBroadcastMsg("Error! Invalid buddy info???")
             log("Error! Invalid buddy info...")
 
-            player.gui.screen.buddy_request_menu.destroy()
-            DisplaySpawnOptions(player)
+            joiningPlayer.gui.screen.buddy_request_menu.destroy()
+            DisplaySpawnOptions(joiningPlayer)
             return
         end
     else
@@ -1254,8 +1389,8 @@ function BuddySpawnRequestMenuClick(event)
         if (game.players[requesterName].gui.screen.buddy_wait_menu ~= nil) then
             game.players[requesterName].gui.screen.buddy_wait_menu.destroy()
         end
-        if (player.gui.screen.buddy_request_menu ~= nil) then
-            player.gui.screen.buddy_request_menu.destroy()
+        if (joiningPlayer.gui.screen.buddy_request_menu ~= nil) then
+            joiningPlayer.gui.screen.buddy_request_menu.destroy()
         end
 
         -- Create a new spawn point
@@ -1263,64 +1398,69 @@ function BuddySpawnRequestMenuClick(event)
 
         -- Create a new force for each player if they chose that option
         if requesterOptions.joinOwnTeamRadio then
-            local newForce = CreatePlayerCustomForce(player)
+            local newForce = CreatePlayerCustomForce(joiningPlayer)
             local buddyForce = CreatePlayerCustomForce(game.players[requesterName])
 
         -- Create a new force for the combined players if they chose that option
         elseif requesterOptions.joinBuddyTeamRadio then
             local buddyForce = CreatePlayerCustomForce(game.players[requesterName])
-            player.force = buddyForce
+            joiningPlayer.force = buddyForce
         end
 
         -- Find coordinates of a good place to spawn
         if (requesterOptions.distChoice == "buddy_spawn_request_far") then
-            newSpawn = FindUngeneratedCoordinates(global.ocfg.far_dist_start,global.ocfg.far_dist_end, player.surface)
+            newSpawn = FindUngeneratedCoordinates(global.ocfg.far_dist_start,global.ocfg.far_dist_end, joiningPlayer.surface)
         elseif (requesterOptions.distChoice == "buddy_spawn_request_near") then
-            newSpawn = FindUngeneratedCoordinates(global.ocfg.near_dist_start,global.ocfg.near_dist_end, player.surface)
+            newSpawn = FindUngeneratedCoordinates(global.ocfg.near_dist_start,global.ocfg.near_dist_end, joiningPlayer.surface)
         end
 
         -- If that fails, find a random map edge in a rand direction.
         if ((newSpawn.x == 0) and (newSpawn.x == 0)) then
-            newSpawn = FindMapEdge(GetRandomVector(), player.surface)
+            newSpawn = FindMapEdge(GetRandomVector(), joiningPlayer.surface)
             log("Resorting to find map edge! x=" .. newSpawn.x .. ",y=" .. newSpawn.y)
         end
 
         -- Create that spawn in the global vars
-        local buddySpawn = {x=0,y=0}
-        if (requesterOptions.moatChoice) then
-            buddySpawn = {x=newSpawn.x+(global.ocfg.spawn_config.gen_settings.land_area_tiles*6)+10, y=newSpawn.y}
+        local buddySpawn = {x=0,y=0}    -- buddy spawns 6 * land_area_tiles (2.5 chunks)
+        if (global.players[game.players[requesterName].index].moatChoice) then
+            buddySpawn = {x=newSpawn.x+(global.ocfg.spawn_config.gen_settings.land_area_tiles*6), y=newSpawn.y} -- x  .. +10
         else
             buddySpawn = {x=newSpawn.x+(global.ocfg.spawn_config.gen_settings.land_area_tiles*6), y=newSpawn.y}
         end
-        ChangePlayerSpawn(player, newSpawn)
+
+        ChangePlayerSpawn(joiningPlayer, newSpawn)
         ChangePlayerSpawn(game.players[requesterName], buddySpawn)
 
-        -- Patch in case - rarely someone can change to BNO player while joining a Character player - or vice-versa
-        VerifySameForce(player, game.players[requesterName])
+        -- Patch in case - rarely someone can change to BNO joiningPlayer while joining a Character player - or vice-versa
+        VerifySameForce(game.players[requesterName], joiningPlayer)
 
-        -- Send the player there
-        QueuePlayerForDelayedSpawn(player.name, newSpawn, requesterOptions.moatChoice, false)
-        QueuePlayerForDelayedSpawn(requesterName, buddySpawn, requesterOptions.moatChoice, false)
-        SendBroadcastMsg(requesterName .. " and " .. player.name .. " are joining the game together!")
+        -- Send the joiningPlayer there - each have their potentially different moat choices
+        QueuePlayerForDelayedSpawn(joiningPlayer.name, newSpawn, global.players[joiningPlayer.index].moatChoice, false)
+        QueuePlayerForDelayedSpawn(requesterName, buddySpawn, global.players[game.players[requesterName].index].moatChoice, false)
+        SendBroadcastMsg(requesterName .. " and " .. joiningPlayer.name .. " are joining the game together!")
 
         -- Unlock spawn control gui tab
-        SetOarcGuiTabEnabled(player, OARC_SPAWN_CTRL_GUI_NAME, true)
+        SetOarcGuiTabEnabled(joiningPlayer, OARC_SPAWN_CTRL_GUI_NAME, true)
         SetOarcGuiTabEnabled(game.players[requesterName], OARC_SPAWN_CTRL_GUI_NAME, true)
 
-        player.print({"oarc-please-wait"})
-        player.print({"", {"oarc-please-wait"}, "!"})
-        player.print({"", {"oarc-please-wait"}, "!!"})
+        joiningPlayer.print({"oarc-please-wait"})
+        joiningPlayer.print({"", {"oarc-please-wait"}, "!"})
+        joiningPlayer.print({"", {"oarc-please-wait"}, "!!"})
         game.players[requesterName].print({"oarc-please-wait"})
         game.players[requesterName].print({"", {"oarc-please-wait"}, "!"})
         game.players[requesterName].print({"", {"oarc-please-wait"}, "!!"})
 
-        global.ocore.buddyPairs[player.name] = requesterName
-        global.ocore.buddyPairs[requesterName] = player.name
+        global.ocore.buddyPairs[joiningPlayer.name] = requesterName
+        global.ocore.buddyPairs[requesterName] = joiningPlayer.name
+
+        global.players[joiningPlayer.index].inSpawn=false
+        global.players[game.players[requesterName].index].inSpawn=false
+
 
     -- Check if player is cancelling the request.
     elseif (elemName == "decline_buddy_request") then
-        player.gui.screen.buddy_request_menu.destroy()
-        DisplaySpawnOptions(player)
+        joiningPlayer.gui.screen.buddy_request_menu.destroy()
+        DisplaySpawnOptions(joiningPlayer)
 
         local requesterBuddy = game.players[requesterName]
 
@@ -1332,7 +1472,7 @@ function BuddySpawnRequestMenuClick(event)
         end
         DisplaySpawnOptions(requesterBuddy)
 
-        requesterBuddy.print({"oarc-buddy-declined", player.name})
+        requesterBuddy.print({"oarc-buddy-declined", joiningPlayer.name})
     end
 
     global.ocore.buddySpawnOpts[requesterName] = nil

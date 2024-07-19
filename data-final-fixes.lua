@@ -1,12 +1,9 @@
 -- 12/3/2023 VF moved from Data.lua since Krastorio overrides alot of these settings - taking them back.
 
 -- entities
-require("prototypes.entity.roboport-main")
+require("prototypes.entity.roboport-bno")
 local table = require('__stdlib__/stdlib/utils/table')
 -- require("prototypes.entity.loader")
-
--- items
-require("prototypes.item")
 
 local myConBotItem
 local myConBot
@@ -48,9 +45,9 @@ myLogiBot.energy_per_move	= energyBotsRange
 data:extend({myLogiBot})
 
 myLogiRoboportItem = util.table.deepcopy(data.raw["item"]["roboport"])
-myLogiRoboportItem.name="roboport-main"
-myLogiRoboportItem.place_result = "roboport-main"
-myLogiRoboportItem.icon = "__brave-new-oarc__/graphics/icons/roboport-main.png"
+myLogiRoboportItem.name="roboport-bno"
+myLogiRoboportItem.place_result = "roboport-bno"
+myLogiRoboportItem.icon = "__brave-new-oarc__/graphics/icons/roboport-bno.png"
 data:extend({myLogiRoboportItem})
 
 if mods["enderlinkedchest"] then

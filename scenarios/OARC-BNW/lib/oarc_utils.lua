@@ -217,7 +217,6 @@ end
 
 -- Broadcast messages to all connected players
 function SendBroadcastMsg(msg)
-    log(string.format("msg: %s, sent to %d players", msg, #game.connected_players))
     for name,player in pairs(game.connected_players) do
         player.print(msg)
     end

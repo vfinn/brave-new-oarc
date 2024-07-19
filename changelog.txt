@@ -1,4 +1,31 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.57
+    - Protection added on clicking items for creation in BNO mode. BNO uses the prototype of the
+      item you select to build, to load the players hand. Some craftable items in SeaBlock can not
+      be loaded into your hand, and would cause a crash. Fixed.
+    - SeaBlock: Changed the blueprint to include initial power setup - on water.
+    - SeaBlock:Added 4 temperate trees near main on an island - this includes 400 wood 
+    - SeaBlock:added 4 blue inserters and 4 filter inserters
+    - SeaBlock: Moat choice removed
+    - Buddy System Overhaul. Synchronization of the drop list, limit to 2 players in the menu
+      at one time, support for independant moat settings for buddy spawns. Much more testing.
+      Removal of Main Force from buddy system.
+    - Limit of Main Force to be Brave New Players ONLY. This solves some complexity and confusion
+      around use of the character checkbox.
+    - Spawn defaults have changed - and more consistant with the most used options in this mod.
+    - Movement outside Fog Of War shows a message and sound to inform you that you need a radar
+      to move further outside your base.
+    - Synchronization in buddy screen - when one player chooses character option it shows up on 
+      the other players screen.
+      When each player enters the buddy screen, the buddy list is updated and selects a player 
+      making selection of buddies faster.
+    - I renamed the prototype Roboport-main to Roboport-bno since you can now research
+      these roboports for use in the game.
+    - New Assembler with settable quantity to provide to players, and starting crafting speed 1-30x
+---------------------------------------------------------------------------------------------------
+Version: 4.2.56
+    - bug fix on crash for SeaBlock
+---------------------------------------------------------------------------------------------------
 Version: 4.2.55
     - Kudos to Nomad, found a couple issues working with other mods.
       circuitissimo shows a black screen when in the mods circuit - fixed.  I do need to add an
@@ -11,6 +38,8 @@ Version: 4.2.55
     - Modified prerequisites for ender linked chests, to require research of red circuits before
       you can research ender linked chests.
     - fix to crash if miner notification is on
+    - I made the main new roboport researchable and useable. I had to extend the construction zone
+      to make it reachable via blueprint, without dropping an intermediate roboport.
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.54
     - If you include "Scrap Resource" mod - you can choose between entities or ore. 

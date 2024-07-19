@@ -135,9 +135,8 @@ function InitOarcConfig()
         log("Space Block mod installed !")
     end
     global.ocfg.easyStart=false
-    global.ocfg.moatChoice=true
 
-    global.ocfg.main_team=true
+    global.ocfg.main_team=false
     -- The results of each of these can be treated as a boolean, but also contain the version number of the mod
     global.ocfg.freight_forwarding  = game.active_mods["FreightForwarding"]
     global.ocfg.bzlead              = game.active_mods["bzlead"]
