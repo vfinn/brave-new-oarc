@@ -550,36 +550,38 @@ function checkKillBnoAssembler()
 	local entities = surface.find_entities_filtered{name="assembling-machine-bno"}
 	for _, entity in pairs(entities) do
 	    if entity and entity.valid and entity.health and ((entity.energy / entity.electric_buffer_size)<.20) then
-            entityPos=entity.position
-	        entity.damage(40, "neutral", "explosion")   -- entity becomes invalid when health == 0
-            -- if the bots have repair packs they will typically keep the assembler above 700 in health
-            if (entity.valid and entity.health <= 600) then
-                if global.ocfg.share_chart[entity.last_user.index] then
-                    for _,player in pairs(game.connected_players) do
-                        if global.ocfg.notify_assembler_explode_notification[player.name] == nil then
-                            global.ocfg.notify_assembler_explode_notification[player.name] = true
-                        end
-                        if global.ocfg.notify_assembler_explode_notification[player.name] then
-                            local notify = false
-                            -- only notify once every 2 minutes
-                            if  global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] == nil then
-                                notify = true
-                            elseif global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] < game.tick then
-                                notify = true
+            if entity.last_user.connected then  -- is player online - then damage bno assembler
+                entityPos=entity.position
+	            entity.damage(40, "neutral", "explosion")   -- entity becomes invalid when health == 0
+                -- if the bots have repair packs they will typically keep the assembler above 700 in health
+                if (entity.valid and entity.health <= 600) then
+                    if global.ocfg.share_chart[entity.last_user.index] then
+                        for _,player in pairs(game.connected_players) do
+                            if global.ocfg.notify_assembler_explode_notification[player.name] == nil then
+                                global.ocfg.notify_assembler_explode_notification[player.name] = true
                             end
-                            if notify then
-                                global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] = game.tick  + (2 * TICKS_PER_MINUTE)
-                                player.print("Large assembler owned by " .. entity.last_user.name .. " is about to explode! " .. GetGPStext(entityPos))
+                            if global.ocfg.notify_assembler_explode_notification[player.name] then
+                                local notify = false
+                                -- only notify once every 2 minutes
+                                if  global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] == nil then
+                                    notify = true
+                                elseif global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] < game.tick then
+                                    notify = true
+                                end
+                                if notify then
+                                    global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] = game.tick  + (2 * TICKS_PER_MINUTE)
+                                    player.print("Large assembler owned by " .. entity.last_user.name .. " is about to explode! " .. GetGPStext(entityPos))
+                                end
                             end
                         end
                     end
                 end
-            end
-            if not entity.valid then
-                local tile = surface.get_tile(entityPos.x,entityPos.y)
-                local ghost = surface.find_entities_filtered{ghost_name="assembling-machine-bno",position=entityPos}
-                if ghost then
-                    ghost[1].destroy()
+                if not entity.valid then
+                    local tile = surface.get_tile(entityPos.x,entityPos.y)
+                    local ghost = surface.find_entities_filtered{ghost_name="assembling-machine-bno",position=entityPos}
+                    if ghost then
+                        ghost[1].destroy()
+                    end
                 end
             end
 	    end
@@ -1029,6 +1031,15 @@ function preventMining(player)
     else
     -- prevent mining (this appeared to be reset when loading a 0.16.26 save in 0.16.27)
         player.force.manual_mining_speed_modifier = -0.99999999 -- allows removing ghosts with right-click
+        if global.ocfg.krastorio2 then
+            if global.players[player.index].characterPlayer then
+                EnableTech(player.force, "kr-iron-pickaxe")
+                EnableTech(player.force, "kr-advanced-pickaxe")
+            else
+                DisableTech(player.force, "kr-iron-pickaxe")
+                DisableTech(player.force, "kr-advanced-pickaxe")
+            end
+        end
         DisableTech(player.force, "steel-axe") -- researching this upgrades the above manual_mining_speed_modifier by 1 - not good !
     end
 end
@@ -1237,7 +1248,6 @@ script.on_event(defines.events.on_entity_died, function(event)
         for name,player in pairs(game.players) do
             local SP=entity.position
             SP.y=SP.y+10        -- move them down 10 tiles, otherwise they spawn inside the walls, next to large roboport
-
             if (GetGPStext(global.spawn[player.index]) == GetGPStext(SP)) then
                 playerThatDied=global.spawn[player.index]   -- capture the player that died
                 global.spawn[player.index]=nil  -- solves a race condition - player dies, then roboport dies, on respawn - crash without this in SafeTeleport

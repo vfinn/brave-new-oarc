@@ -296,12 +296,13 @@ function SendPlayerToNewSpawnAndCreateIt(delayedSpawn)
         end           
 
         -- remove more items from research if you are Space Block and BNO Player
-        for _,v in ipairs(SPACE_BLOCK_LOCKED_TECHNOLOGIES_BNO) do
-            DisableTech(player.force, v.t)
-        end
         if global.players[player.index].characterMode then
             for _,v in ipairs(SPACE_BLOCK_UNLOCKED_TECHNOLOGIES_CHAR) do
                 EnableTech(player.force, v.t)
+            end
+        else
+            for _,v in ipairs(SPACE_BLOCK_LOCKED_TECHNOLOGIES_BNO) do
+                DisableTech(player.force, v.t)
             end
         end
     else
@@ -650,7 +651,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     end
     build_blueprint_from_string(blueprint,surface,{x=x, y=y},force)
         
-     local config = global.forces[force.name]
+    local config = global.forces[force.name]
     config.roboport = surface.create_entity{name = "roboport-bno", position = {x, y}, force = force, raise_built = true}
     config.roboport.backer_name = player.name
     config.roboport.minable = false
@@ -697,7 +698,9 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     local destination_for_inventory = chest_inventory
 
     if characterMode then
-        player.insert{name="power-armor", count = 1}
+        if global.ocfg.space_block then 
+            player.insert{name="power-armor", count = 1}
+        end
         destination_for_inventory = player
     end
     -- everyone always gets 4 red circuits
@@ -1362,7 +1365,7 @@ function CleanupPlayerGlobals(playerName)
         if (#teamMates >= 1) then
             local newOwnerName = table.remove(teamMates) -- Remove 1 to use as new owner.
             TransferOwnershipOfSharedSpawn(playerName, newOwnerName)
-            SendBroadcastMsg(playerName .. "has left so " .. newOwnerName .. " now owns their base.")
+            SendBroadcastMsg(playerName .. " has left so " .. newOwnerName .. " now owns their base.")
         else
             global.ocore.sharedSpawns[playerName] = nil
         end
@@ -1553,7 +1556,7 @@ function QueuePlayerForDelayedSpawn(playerName, spawn, moatEnabled, vanillaSpawn
         DisplayPleaseWaitForSpawnDialog(game.players[playerName], delay_spawn_seconds)
 
         RegrowthMarkAreaSafeGivenTilePos(spawn, math.ceil(global.ocfg.spawn_config.gen_settings.land_area_tiles/CHUNK_SIZE), true)
-
+        global.players[game.players[playerName].index].inSpawn=false
     else
         log("THIS SHOULD NOT EVER HAPPEN! Spawn failed!")
         SendBroadcastMsg("ERROR!! Failed to create spawn point for: " .. playerName)

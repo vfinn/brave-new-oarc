@@ -306,11 +306,10 @@ function CharacterOptionChosenForThisPlayersForce(thisPlayer, bMainTeam)
                 local t = player.force.name
                 if idx ~= thisPlayer.index then     -- don't count this player
                     if (player.force.name == thisPlayer.force.name)  then
+                        log("char option selection- team: " .. tostring(t) .. " in characterMode - " ..tostring(global.players[idx].characterMode))
                         if global.players[idx].characterMode then
-                            log("char option selection- team: " .. tostring(t) .. " in characterMode - " ..tostring(global.players[idx].characterMode))
                             return 1
                         else
-                            log("char option selection- team: " .. tostring(t) .. " in characterMode - " ..tostring(global.players[idx].characterMode))
                             return 2
                         end
                     end
@@ -374,18 +373,6 @@ function SpawnOptsRadioSelect(event)
                     game.players[playerName].gui.screen.buddy_spawn_opts.spawn_buddy_flow.character_mode_option_checkbox.state = characterState
                 end
             end
---            if mainTeamState then   -- do not allow team to be out of sync with others that may have spawned on Main Force
---                local c=CharacterOptionChosenForThisPlayersForce(game.players[event.player_index], mainTeamState)
---                if c==0 then
---                        -- nothing yet chosen, let checkbox change state
---                elseif c==1 then
---                    event.element.parent.character_mode_option_checkbox.state=true   -- character mode already chosen - force on
---                    create_popup_gui(game.players[event.player_index],"Brave New Player option is not possible!", {"Each team must be of the same type - Character or Brave New Player.", "The player that started Main Force has already selected Character.","", "If you'd like to play as Brave New player - choose: 'Create Your Own Team'.", ""})
---                elseif c== 2 then
---                    event.element.parent.character_mode_option_checkbox.state=false  -- bno mode already chosen force off
---                    create_popup_gui(game.players[event.player_index],"Character option is not possible!", {"Each team must be of the same type - Character or Brave New Player.", "The player that started Main Force has already selected Brave New Player.","", "If you'd like to play as character - choose: 'Create Your Own Team'", ""})
---                end
---            end                    
             if (menuSpawnFlow and (menuSpawnFlow.character_mode_option_checkbox ~= nil)) then
                 gPlayer.characterMode = menuSpawnFlow.character_mode_option_checkbox.state        
             end
@@ -394,20 +381,6 @@ function SpawnOptsRadioSelect(event)
         else
             log("SpawnOptsRadioSelect: Error processing pcall processing of character mode buddy capture, ".. player.name)
         end
---    if mainTeamState then
---            local c=CharacterOptionChosenForThisPlayersForce(game.players[event.player_index], mainTeamState)
---        if c==0 then
---                  -- nothing yet chosen, let checkbox change state
---            else -- other players checkbox is out of sync - he will process my change on his scree
---            end
---            elseif c==1 then
---                event.element.parent.character_mode_option_checkbox.state=true   -- character mode already chosen - force on
---                create_popup_gui(game.players[event.player_index],"Brave New Player option is not possible!", {"Each team must be of the same type - Character or Brave New Player.", "The player that started Main Force has already selected Character.","", "If you'd like to play as Brave New player - choose: 'Create Your Own Team'.", ""})
---            elseif c== 2 then
---                event.element.parent.character_mode_option_checkbox.state=false  -- bno mode already chosen force off
---                create_popup_gui(game.players[event.player_index],"Character option is not possible!", {"Each team must be of the same type - Character or Brave New Player.", "The player that started Main Force has already selected Brave New Player.","", "If you'd like to play as character - choose: 'Create Your Own Team'", ""})
---            end
---        end
     end
 
     local buddy = getBuddy(player)
@@ -565,7 +538,6 @@ function SpawnOptsGuiClick(event)
 
         -- Unlock spawn control gui tab
         SetOarcGuiTabEnabled(player, OARC_SPAWN_CTRL_GUI_NAME, true)
-        global.players[player.index].inSpawn=false
         player.print({"", {"oarc-please-wait"}, "!"})
 
     elseif (elemName == "join_other_spawn") then
@@ -951,22 +923,48 @@ function SpawnCtrlGuiClick(event)
                 -- Spawn the player
                 local joiningPlayer = game.players[joinQueuePlayerChoice]
 
+                local baseOwnerPlayer = game.players[player.name]
+                -- auto generate location of spawn - UPTO 4 additional players (E, SE, S) for buddies
+                local landTileArea = global.ocfg.spawn_config.gen_settings.land_area_tiles
+                local spawnPosOffset={0,0}
+
+                local numBuddiesJoined = #global.ocore.sharedSpawns[baseOwnerPlayer.name].players
+                local distanceBetweenSpawns = DISTANCE_BETWEEN_SPAWNS
+                if distanceBetweenSpawns<10 then distanceBetweenSpawns=5 end
+                if distanceBetweenSpawns>20 then distanceBetweenSpawns=20 end
+                if  numBuddiesJoined== 0 then
+                    spawnPosOffset={x=landTileArea * distanceBetweenSpawns, y=0}    -- east
+                elseif numBuddiesJoined == 1 then
+--                    spawnPosOffset={x=landTileArea * -distanceBetweenSpawns, y=0} -- west
+                    spawnPosOffset={x=landTileArea * distanceBetweenSpawns, y=landTileArea * distanceBetweenSpawns} -- south-east
+                elseif numBuddiesJoined == 2 then
+                    spawnPosOffset={x=0, y=landTileArea * distanceBetweenSpawns}    -- south
+--                    spawnPosOffset={x=0, y=landTileArea * -distanceBetweenSpawns} -- north
+                else
+                    player.print({"oarc-reject-joiner", joinQueuePlayerChoice})
+                    SendMsg(joinQueuePlayerChoice, {"oarc-your-request-rejected"})
+                    return
+                end
+
                 -- Patch in case - rarely someone can change to BNO player while joining a Character player - or vice-versa
                 VerifySameForce(player, joiningPlayer)
 
-                ChangePlayerSpawn(joiningPlayer, global.ocore.sharedSpawns[player.name].position)
+                SpawnBuddyIntoAdjoiningBase(joiningPlayer, baseOwnerPlayer, false, spawnPosOffset)
+
+--                ChangePlayerSpawn(joiningPlayer, global.ocore.sharedSpawns[player.name].position)
                 if global.players[joiningPlayer.index].characterMode then
                     joiningPlayer.insert{name="power-armor", count = 1}
                     joiningPlayer.insert{name = "firearm-magazine", count = 20}
                 end
-                SendPlayerToSpawn(joiningPlayer)
+--                SendPlayerToSpawn(joiningPlayer)
                 GivePlayerStarterItems(joiningPlayer)
                 table.insert(global.ocore.sharedSpawns[player.name].players, joiningPlayer.name)
-                joiningPlayer.force = game.players[player.name].force
+--                joiningPlayer.force = game.players[player.name].force
                 global.spawn[joiningPlayer.index] = global.spawn[game.players[player.name].index]       -- vf update the global.spawn table, so when one dies, both die
 
                 -- Unlock spawn control gui tab
                 SetOarcGuiTabEnabled(joiningPlayer, OARC_SPAWN_CTRL_GUI_NAME, true)
+                HideOarcGui(baseOwnerPlayer)
             else
                 SendBroadcastMsg({"oarc-player-left-while-joining", joinQueuePlayerChoice})
             end
@@ -1027,11 +1025,11 @@ function DisplayBuddySpawnOptions(player)
             table.insert(buddyList, buddyName)
         end
     end
-
     AddLabel(buddySpawnFlow, "drop_down_msg_lbl1", {"oarc-buddy-select-info"}, my_label_style)
     buddySpawnFlow.add{name = "waiting_buddies_dropdown",
-                    type = "drop-down",
+                    type = "drop-down",     -- "list-box"
                     items = buddyList}
+
 -- removed since this is now automatic
 --    buddySpawnFlow.add{name = "refresh_buddy_list",
 --                    type = "button",
@@ -1106,7 +1104,7 @@ function BuddySpawnOptsGuiClick(event)
     if not (event and event.element and event.element.valid) then return end
     local player = game.players[event.player_index]
     local elemName = event.element.name
-    log("BuddySpawnOptsGuiClick element name: " .. elemName .. ", player: ".. player.name)    
+log("BuddySpawnOptsGuiClick element name: " .. elemName .. ", player: ".. player.name)    
 
     if not player then
         log("Another gui click happened with no valid player...")
@@ -1343,6 +1341,37 @@ function DisplayBuddySpawnRequestMenu(player, requestingBuddyName)
                     caption={"oarc-reject"}}
 end
 
+-- Spawn a buddy into a buddy base next to yours
+function SpawnBuddyIntoAdjoiningBase(joiningPlayer, baseOwnerPlayer, joinOwnTeam, offsetPos)
+    local baseOwnerSpawnPos=global.ocore.playerSpawns[baseOwnerPlayer.name]
+log("base owner: " .. baseOwnerPlayer.name .. ", baseOwnerSpawnPos = " .. GetGPStext(baseOwnerSpawnPos))
+    -- default to pos 6 chunks away east
+    if offsetPos==nil then offsetPos = {x=global.ocfg.spawn_config.gen_settings.land_area_tiles*6, y=0} end
+    -- Create a new force for each player if they chose that option
+    if joinOwnTeam then
+        -- Create a new force for the combined players if they chose that option
+        local newForce = CreatePlayerCustomForce(joiningPlayer)            
+    else
+--        joiningPlayer.force = CreatePlayerCustomForce(baseOwnerPlayer)
+        joiningPlayer.force = game.players[baseOwnerPlayer.name].force
+    end
+    
+    -- Create that spawn in the global vars
+    -- buddy spawns 6 * land_area_tiles (2.5 chunks)
+    local buddySpawnPos = {x=(baseOwnerSpawnPos.x + offsetPos.x), y=(baseOwnerSpawnPos.y + offsetPos.y)} 
+    ChangePlayerSpawn(joiningPlayer, buddySpawnPos)
+    -- Send the joiningPlayer there - each have their potentially different moat choices
+    QueuePlayerForDelayedSpawn(joiningPlayer.name, buddySpawnPos, global.players[joiningPlayer.index].moatChoice, false)
+    -- Unlock spawn control gui tab
+    SetOarcGuiTabEnabled(joiningPlayer, OARC_SPAWN_CTRL_GUI_NAME, true)
+    joiningPlayer.print({"oarc-please-wait"})
+    joiningPlayer.print({"", {"oarc-please-wait"}, "!"})
+    joiningPlayer.print({"", {"oarc-please-wait"}, "!!"})
+    global.ocore.buddyPairs[joiningPlayer.name] = baseOwnerPlayer.name
+    global.players[joiningPlayer.index].inSpawn=false
+end
+
+
 -- Handle the gui click of the buddy request menu
 function BuddySpawnRequestMenuClick(event)
     if not (event and event.element and event.element.valid) then return end
@@ -1392,69 +1421,46 @@ function BuddySpawnRequestMenuClick(event)
         if (joiningPlayer.gui.screen.buddy_request_menu ~= nil) then
             joiningPlayer.gui.screen.buddy_request_menu.destroy()
         end
-
+        local baseOwnerPlayer = game.players[requesterName]
+        local joinOwnTeam = requesterOptions.joinOwnTeamRadio
+        local farSpawn=requesterOptions.distChoice == "buddy_spawn_request_far"
+        
+        -- make base for primary player
+        -- Create a new force for each player if they chose that option
+        if joinOwnTeam then
+            -- Create a new force for the combined players if they chose that option
+            local buddyForce = CreatePlayerCustomForce(baseOwnerPlayer)
+        end
         -- Create a new spawn point
         local newSpawn = {x=0,y=0}
-
-        -- Create a new force for each player if they chose that option
-        if requesterOptions.joinOwnTeamRadio then
-            local newForce = CreatePlayerCustomForce(joiningPlayer)
-            local buddyForce = CreatePlayerCustomForce(game.players[requesterName])
-
-        -- Create a new force for the combined players if they chose that option
-        elseif requesterOptions.joinBuddyTeamRadio then
-            local buddyForce = CreatePlayerCustomForce(game.players[requesterName])
-            joiningPlayer.force = buddyForce
-        end
-
         -- Find coordinates of a good place to spawn
-        if (requesterOptions.distChoice == "buddy_spawn_request_far") then
+        if (farSpawn) then
             newSpawn = FindUngeneratedCoordinates(global.ocfg.far_dist_start,global.ocfg.far_dist_end, joiningPlayer.surface)
-        elseif (requesterOptions.distChoice == "buddy_spawn_request_near") then
+        else    -- near spawn
             newSpawn = FindUngeneratedCoordinates(global.ocfg.near_dist_start,global.ocfg.near_dist_end, joiningPlayer.surface)
         end
-
         -- If that fails, find a random map edge in a rand direction.
         if ((newSpawn.x == 0) and (newSpawn.x == 0)) then
             newSpawn = FindMapEdge(GetRandomVector(), joiningPlayer.surface)
             log("Resorting to find map edge! x=" .. newSpawn.x .. ",y=" .. newSpawn.y)
         end
-
-        -- Create that spawn in the global vars
-        local buddySpawn = {x=0,y=0}    -- buddy spawns 6 * land_area_tiles (2.5 chunks)
-        if (global.players[game.players[requesterName].index].moatChoice) then
-            buddySpawn = {x=newSpawn.x+(global.ocfg.spawn_config.gen_settings.land_area_tiles*6), y=newSpawn.y} -- x  .. +10
-        else
-            buddySpawn = {x=newSpawn.x+(global.ocfg.spawn_config.gen_settings.land_area_tiles*6), y=newSpawn.y}
-        end
-
-        ChangePlayerSpawn(joiningPlayer, newSpawn)
-        ChangePlayerSpawn(game.players[requesterName], buddySpawn)
-
+        ChangePlayerSpawn(baseOwnerPlayer, newSpawn)
         -- Patch in case - rarely someone can change to BNO joiningPlayer while joining a Character player - or vice-versa
-        VerifySameForce(game.players[requesterName], joiningPlayer)
-
+        VerifySameForce(baseOwnerPlayer, joiningPlayer)
         -- Send the joiningPlayer there - each have their potentially different moat choices
-        QueuePlayerForDelayedSpawn(joiningPlayer.name, newSpawn, global.players[joiningPlayer.index].moatChoice, false)
-        QueuePlayerForDelayedSpawn(requesterName, buddySpawn, global.players[game.players[requesterName].index].moatChoice, false)
+        QueuePlayerForDelayedSpawn(requesterName, newSpawn, global.players[baseOwnerPlayer.index].moatChoice, false)
+        log ("SpawnBuddyIntoAdjoiningBase: joiningPlayer " .. joiningPlayer.name .. ", baseOwner : " .. baseOwnerPlayer.name .. ", joiningOwnTeam: " .. tostring(joiningOwnTeam))
+        SpawnBuddyIntoAdjoiningBase(joiningPlayer, baseOwnerPlayer, joinOwnTeam)
         SendBroadcastMsg(requesterName .. " and " .. joiningPlayer.name .. " are joining the game together!")
 
         -- Unlock spawn control gui tab
-        SetOarcGuiTabEnabled(joiningPlayer, OARC_SPAWN_CTRL_GUI_NAME, true)
-        SetOarcGuiTabEnabled(game.players[requesterName], OARC_SPAWN_CTRL_GUI_NAME, true)
+        SetOarcGuiTabEnabled(baseOwnerPlayer, OARC_SPAWN_CTRL_GUI_NAME, true)
 
-        joiningPlayer.print({"oarc-please-wait"})
-        joiningPlayer.print({"", {"oarc-please-wait"}, "!"})
-        joiningPlayer.print({"", {"oarc-please-wait"}, "!!"})
-        game.players[requesterName].print({"oarc-please-wait"})
-        game.players[requesterName].print({"", {"oarc-please-wait"}, "!"})
-        game.players[requesterName].print({"", {"oarc-please-wait"}, "!!"})
-
-        global.ocore.buddyPairs[joiningPlayer.name] = requesterName
+        baseOwnerPlayer.print({"oarc-please-wait"})
+        baseOwnerPlayer.print({"", {"oarc-please-wait"}, "!"})
+        baseOwnerPlayer.print({"", {"oarc-please-wait"}, "!!"})
         global.ocore.buddyPairs[requesterName] = joiningPlayer.name
-
-        global.players[joiningPlayer.index].inSpawn=false
-        global.players[game.players[requesterName].index].inSpawn=false
+        global.players[baseOwnerPlayer.index].inSpawn=false
 
 
     -- Check if player is cancelling the request.

@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.58
+    - Krastorio2: Disable iron pickaxe and advanced pickage for BNO Player, this increases the 
+      mining options so that a bno player can mine - this is not allowed. Avail for character.
+---------------------------------------------------------------------------------------------------
 Version: 4.2.57
     - Protection added on clicking items for creation in BNO mode. BNO uses the prototype of the
       item you select to build, to load the players hand. Some craftable items in SeaBlock can not

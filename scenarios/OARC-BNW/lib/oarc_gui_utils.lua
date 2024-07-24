@@ -19,6 +19,14 @@ my_label_style = {
     top_padding = 0,
     bottom_padding = 0
 }
+my_label_style_red = {
+    -- minimal_width = 450,
+    -- maximal_width = 50,
+    single_line = false,
+    font_color = {r=1,g=0.2,b=0.2},
+    top_padding = 0,
+    bottom_padding = 0
+}
 my_label_header_style = {
     single_line = false,
     font = "heading-1",
@@ -141,8 +149,7 @@ end
 
 -- Shorter way to add a label with a style
 function AddLabel(guiIn, name, message, style)
-    local g = guiIn.add{name = name, type = "label",
-                    caption=message}
+    local g = guiIn.add{name = name, type = "label", caption=message}
     if (type(style) == "table") then
         ApplyStyle(g, style)
     else
