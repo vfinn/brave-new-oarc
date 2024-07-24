@@ -12,6 +12,8 @@ data:extend(
 	{
 		type = "explosion",
 		name = "huge-explosion",
+		localised_description = {"entity-description.assembling-machine-bno"},
+
 		animation_speed = 5,
 		animations =
 		{
