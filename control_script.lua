@@ -1258,11 +1258,15 @@ script.on_event(defines.events.on_entity_died, function(event)
                 RemoveOrResetPlayer(player, false, true, true, true)
             end
         end
+        local playerThatDiedIndex=0
+        if playerThatDied ~= nil then    -- this crashed once when it was nil - so fix here
+            playerThatDiedIndex=playerThatDied.index
+        end
         for name, player in pairs(game.connected_players) do
-            if player.index ~= playerThatDied.index then 
-                player.play_sound { path = 'player-lost' }
-            else
+            if (player.index == playerThatDiedIndex) then
                 player.play_sound { path = 'you-lost' }  -- if the player that died is still online - play random sound
+            else
+                player.play_sound { path = 'player-lost' }
             end
         end
     end
