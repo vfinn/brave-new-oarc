@@ -1014,8 +1014,8 @@ function itemCountAllowed(name, count, player)
         -- temporary holding location for original blueprint, should only ever be one of these.
         return count
         -- allow poles and combinators for circuitissimo
-    elseif global.ocfg.circuitissimo and (string.match(name, ".*combinator*") or string.match(name, ".*pole")) then
-        return math.min(20, count)
+    elseif global.ocfg.circuitissimo and (string.match(name, ".*combinator*") or string.match(name, ".*wire-pole")) then
+        return count
     end
     return 0
 end
