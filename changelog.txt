@@ -2,6 +2,10 @@
 Version: 4.2.58
     - Krastorio2: Disable iron pickaxe and advanced pickage for BNO Player, this increases the 
       mining options so that a bno player can mine - this is not allowed. Avail for character.
+    - Fix for crash when new BNO Large Roboport is killed - Boom.  Fixed, copy this into your 
+      current game and you'll get all these fixes
+    - if player is not online the new bno assemblers will not take damage and explode if power
+      drops below 20%.
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.57
     - Protection added on clicking items for creation in BNO mode. BNO uses the prototype of the

@@ -297,7 +297,7 @@ function SendPlayerToNewSpawnAndCreateIt(delayedSpawn)
 
         -- remove more items from research if you are Space Block and BNO Player
         if global.players[player.index].characterMode then
-            for _,v in ipairs(SPACE_BLOCK_UNLOCKED_TECHNOLOGIES_CHAR) do
+            for _,v in ipairs(SPACE_BLOCK_LOCKED_TECHNOLOGIES_CHAR) do
                 EnableTech(player.force, v.t)
             end
         else
@@ -698,9 +698,9 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     local destination_for_inventory = chest_inventory
 
     if characterMode then
-        if global.ocfg.space_block then 
-            player.insert{name="power-armor", count = 1}
-        end
+--        if global.ocfg.space_block then 
+--            player.insert{name="power-armor", count = 1}
+--        end
         destination_for_inventory = player
     end
     -- everyone always gets 4 red circuits

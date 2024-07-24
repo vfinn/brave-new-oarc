@@ -1241,15 +1241,17 @@ script.on_event(defines.events.on_entity_died, function(event)
         return
     end
     local entity = event.entity
-    -- check if roboport was destroyed
-    if entity.name=="roboport-bno" then
-        log("Force DIED: " .. entity.force.name)
-        SendBroadcastMsg("Oh No someone on '" .. entity.force.name ..  "'' Gone like a fart in the wind")
+    -- check if roboport was destroyed - the backer_name is the friendly name given to each roboport - the main one is named after to player
+    log("BNO Roboport died for " .. entity.force.name .. " at " .. GetGPStext(entity.position))
+    if (entity.name=="roboport-bno") then
         for name,player in pairs(game.players) do
             local SP=entity.position
-            SP.y=SP.y+10        -- move them down 10 tiles, otherwise they spawn inside the walls, next to large roboport
-            if (GetGPStext(global.spawn[player.index]) == GetGPStext(SP)) then
+            SP.y=SP.y+10        -- global.spawn is player spawn position - not roboport, and that is 10 tiles down from roboport. 
+            -- it has to be at this location - could also compare (entity.backer_name == player.name) 
+            if (GetGPStext(global.spawn[player.index]) == GetGPStext(SP)) then 
                 playerThatDied=global.spawn[player.index]   -- capture the player that died
+                SendBroadcastMsg("Oh No " .. playerThatDied.name .. " on '" .. entity.force.name ..  "'' Gone like a fart in the wind")
+                log("Force DIED: " .. entity.force.name .. ", player: " .. playerThatDied.name )
                 global.spawn[player.index]=nil  -- solves a race condition - player dies, then roboport dies, on respawn - crash without this in SafeTeleport
                 log ("player: " .. player.name .. " at " ..GetGPStext(global.spawn[player.index]) .. " Died due to the starting roboport being destroyed.")
                 log ("and entity at " .. GetGPStext(SP))
@@ -1258,15 +1260,14 @@ script.on_event(defines.events.on_entity_died, function(event)
                 RemoveOrResetPlayer(player, false, true, true, true)
             end
         end
-        local playerThatDiedIndex=0
+        -- other bno roboports will die - no need to kill off the player unless it's the main one.
         if playerThatDied ~= nil then    -- this crashed once when it was nil - so fix here
-            playerThatDiedIndex=playerThatDied.index
-        end
-        for name, player in pairs(game.connected_players) do
-            if (player.index == playerThatDiedIndex) then
-                player.play_sound { path = 'you-lost' }  -- if the player that died is still online - play random sound
-            else
-                player.play_sound { path = 'player-lost' }
+            for name, player in pairs(game.connected_players) do
+                if (player.index == playerThatDied.index) then
+                    player.play_sound { path = 'you-lost' }  -- if the player that died is still online - play random sound
+                else
+                    player.play_sound { path = 'player-lost' }
+                end
             end
         end
     end
