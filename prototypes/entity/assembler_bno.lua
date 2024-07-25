@@ -167,18 +167,19 @@ data:extend(
 					priority = "high",
 					width = 108,
 					height = 119,
+					scale = 1.5,
 					frame_count = 1,
 					line_length = 1,
 					shift = util.by_pixel(0, -0.5),
 					hr_version = {
-					filename = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/hr-assembling-machine-bno-entity.png",
-					priority = "high",
-					width = 214,
-					height = 237,
-					frame_count = 1,
-					line_length = 1,
-					shift = util.by_pixel(0, -0.75),
-					scale = .75
+						filename = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/hr-assembling-machine-bno-entity.png",
+						priority = "high",
+						width = 214,
+						height = 237,
+						frame_count = 1,
+						line_length = 1,
+						shift = util.by_pixel(0, -0.75),
+						scale = .75
 					}
 				},
 				{
@@ -188,18 +189,19 @@ data:extend(
 					height = 82,
 					frame_count = 1,
 					line_length = 1,
+					scale = 1.50,
 					draw_as_shadow = true,
 					shift = util.by_pixel(28, 4),
 					hr_version = {
-					filename = "__base__/graphics/entity/assembling-machine-3/hr-assembling-machine-3-shadow.png",
-					priority = "high",
-					width = 260,
-					height = 162,
-					frame_count = 1,
-					line_length = 1,
-					draw_as_shadow = true,
-					shift = util.by_pixel(28, 4),
-					scale = .75
+						filename = "__base__/graphics/entity/assembling-machine-3/hr-assembling-machine-3-shadow.png",
+						priority = "high",
+						width = 260,
+						height = 162,
+						frame_count = 1,
+						line_length = 1,
+						draw_as_shadow = true,
+						shift = util.by_pixel(28, 4),
+						scale = .75
 					}
 				},
 			},

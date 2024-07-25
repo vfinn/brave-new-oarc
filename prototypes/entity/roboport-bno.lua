@@ -50,27 +50,34 @@ roboportmain.base.layers[1].hr_version.filename =			"__brave-new-oarc__/graphics
 log ("Using large roboport with 16 charging ports")
 roboportmain.collision_box = {{-2.85, -1.9}, {2.75, 3.65}}
 roboportmain.selection_box = {{-2.85, -1.9}, {2.75, 3.65}}
-roboportmain.base.layers[1].shift = util.by_pixel(-8, 40)		
+roboportmain.base.layers[1].shift = util.by_pixel(30, 40)	-- -8
+roboportmain.base.layers[1].scale = 1.80
 roboportmain.base.layers[1].hr_version.shift = util.by_pixel(-8, 40)		-- this is main base
 roboportmain.base.layers[1].hr_version.scale = .9
 
 roboportmain.base.layers[2].filename = "__base__/graphics/entity/roboport/roboport-shadow.png"
 roboportmain.base.layers[2].shift = util.by_pixel(36, 76)
+roboportmain.base.layers[2].scale = 1.80
 roboportmain.base.layers[2].hr_version.shift = util.by_pixel(36, 76)
 roboportmain.base.layers[2].hr_version.scale = .9
 
 
 roboportmain.base_patch.filename =							"__brave-new-oarc__/graphics/entity/roboport-bno/roboport-bno-base-patch.png"
+roboportmain.base_patch.scale = 1.8
+roboportmain.base_patch.shift = util.by_pixel(3,32)
 roboportmain.base_patch.hr_version.filename =				"__brave-new-oarc__/graphics/entity/roboport-bno/hr-roboport-bno-base-patch.png"
 roboportmain.base_patch.hr_version.scale = .9
 roboportmain.base_patch.hr_version.shift= util.by_pixel(-9,36)
 
 roboportmain.door_animation_down.filename =					"__brave-new-oarc__/graphics/entity/roboport-bno/roboport-bno-door-down.png"
+roboportmain.door_animation_down.scale = 1.8
+roboportmain.door_animation_down.shift = util.by_pixel(1,8)
 roboportmain.door_animation_down.hr_version.filename =		"__brave-new-oarc__/graphics/entity/roboport-bno/hr-roboport-bno-door-down.png"
 roboportmain.door_animation_down.hr_version.scale = .9
 roboportmain.door_animation_down.hr_version.shift = util.by_pixel(-11.5,5)
 
 roboportmain.door_animation_up.filename =					"__brave-new-oarc__/graphics/entity/roboport-bno/roboport-bno-door-up.png"
+roboportmain.door_animation_up.scale = 1.8
 roboportmain.door_animation_up.hr_version.filename =		"__brave-new-oarc__/graphics/entity/roboport-bno/hr-roboport-bno-door-up.png"
 roboportmain.door_animation_up.hr_version.scale = .9
 roboportmain.door_animation_up.hr_version.shift = util.by_pixel(-11.5,-30.5)
@@ -138,7 +145,7 @@ data:extend({
 
 ---------------------------------
 -- Roboport BNO remnants
----------------------------------
+---------------------------------s
 roboportmain_remnants = table.deepcopy(data.raw.corpse["roboport-remnants"])
 roboportmain_remnants.name = "roboport-bno-remnants"
 
