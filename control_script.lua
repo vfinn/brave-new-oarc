@@ -1143,17 +1143,20 @@ script.on_event(defines.events.on_player_fast_transferred, function(event)
     local items=""
 
     if (player.force.name ~= entity.force.name) then   -- taking something 
-        if player.selected then
-            itemsStolen = player.selected.get_output_inventory().get_contents()
-            for  name, count in pairs(itemsStolen) do
-                items = items ..  name .. " of qty : " ..  count .. " | "
+        log("Player: ".. player.name .. " stealing from " .. entity.force.name)
+        pcall(function()    -- this has been known to crash - on get_contents
+            if player.selected then
+                itemsStolen = player.selected.get_output_inventory().get_contents()
+                for  name, count in pairs(itemsStolen) do
+                    items = items ..  name .. " of qty : " ..  count .. " | "
+                end
             end
-        end
+        end)
 
         for idx,p in pairs(game.connected_players) do
-            if (p.force.name ~= player.force.name) then
+--          if (p.force.name ~= player.force.name) then
                 screamViolationToPlayers(player, entity, items)
-            end
+--          end
         end
         log("WTF (on_player_fast_transferred)" .. player.name .. "just took from " .. entity.last_user.name .. " type: [" .. entity.type .. "] " .. entity.name .. " " .. items ..  GetGPStext(entity.position))
     end
@@ -1242,8 +1245,8 @@ script.on_event(defines.events.on_entity_died, function(event)
     end
     local entity = event.entity
     -- check if roboport was destroyed - the backer_name is the friendly name given to each roboport - the main one is named after to player
-    log("BNO Roboport died for " .. entity.force.name .. " at " .. GetGPStext(entity.position))
     if (entity.name=="roboport-bno") then
+        log("BNO Roboport died for " .. entity.force.name .. " at " .. GetGPStext(entity.position))
         for name,player in pairs(game.players) do
             local SP=entity.position
             SP.y=SP.y+10        -- global.spawn is player spawn position - not roboport, and that is 10 tiles down from roboport. 
