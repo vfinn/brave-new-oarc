@@ -74,8 +74,14 @@ if mods["enderlinkedchest"] then
 		next_upgrade						= nil
 	})
 	newlinkedChest.picture.layers[1].filename			= "__enderlinkedchest__/graphics/entity/ender-linked-chest.png"
-	--newlinkedChest.picture.layers[2].filename 			= "__enderlinkedchest__/graphics/entity/ender-linked-chest-shadow.png"
-	newlinkedChest.picture.layers[1].scale				= 0.15
+	newlinkedChest.picture.layers[1].height = 128
+	newlinkedChest.picture.layers[1].width = 128
+	newlinkedChest.picture.layers[1].scale				= 0.3
+	newlinkedChest.picture.layers[2].filename 			= "__enderlinkedchest__/graphics/entity/ender-linked-chest-shadow.png"
+	newlinkedChest.picture.layers[2].height = 48
+	newlinkedChest.picture.layers[2].width = 116
+	newlinkedChest.picture.layers[2].shift = util.by_pixel(25, 10)	-- move shadown down/right
+	newlinkedChest.picture.layers[2].scale				= 0.4
 	
 	newlinkedChest.picture.layers[1].hr_version.filename = "__enderlinkedchest__/graphics/entity/ender-linked-chest.png"
 	newlinkedChest.picture.layers[1].hr_version.height 	= 128
@@ -85,7 +91,9 @@ if mods["enderlinkedchest"] then
 	newlinkedChest.picture.layers[2].hr_version.filename = "__enderlinkedchest__/graphics/entity/ender-linked-chest-shadow.png"
 	newlinkedChest.picture.layers[2].hr_version.height = 48
 	newlinkedChest.picture.layers[2].hr_version.width  = 116
-	data:extend({newlinkedChest})
+	newlinkedChest.picture.layers[2].hr_version.shift	= util.by_pixel(25, 10)	-- move shadown down/right
+	newlinkedChest.picture.layers[2].hr_version.scale	= 0.4
+		data:extend({newlinkedChest})
 
 	linkedChest = table.deepcopy(data.raw["linked-container"]["ender-linked-chest"])
 

@@ -191,7 +191,7 @@ data:extend(
 					line_length = 1,
 					scale = 1.50,
 					draw_as_shadow = true,
-					shift = util.by_pixel(28, 4),
+					shift = util.by_pixel(48, 4),
 					hr_version = {
 						filename = "__base__/graphics/entity/assembling-machine-3/hr-assembling-machine-3-shadow.png",
 						priority = "high",
@@ -200,7 +200,7 @@ data:extend(
 						frame_count = 1,
 						line_length = 1,
 						draw_as_shadow = true,
-						shift = util.by_pixel(28, 4),
+						shift = util.by_pixel(48, 4),
 						scale = .75
 					}
 				},
