@@ -1,5 +1,11 @@
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.59
+    - Modified sprites for Ender Linked Chests to fix Normal Mode. 
+    - Modified BNO Roboport and Assembling Machines sprites for Normal mode.
+    - Overhaul how buddy spawn works. Your frieds can join later and no longer will be able to
+      join your base. They can spawn their own base near yours. BNO supports upto 3 friends in 
+      a square configuration. This is a seed for later use of PvP and PvE games.
+      Open your team for players to join - they will NOT spawn inside your base. Try it !
     - Modified how SeaBlock worms spawn - BNO will now clear worms close to each spawn based on
       starting area size. This removes some of the challenge, so for previous configuration 
       set starting area size to 17%.
