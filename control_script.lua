@@ -264,7 +264,16 @@ script.on_event(defines.events.on_chunk_generated, function(event)
     if global.ocfg.enable_undecorator then
         UndecorateOnChunkGenerate(event)
     end
-    if not global.ocfg.seablock then
+    if global.ocfg.seablock then    -- clear only safe area
+        local surface = event.surface
+        local chunkArea = event.area
+        for name,spawn in pairs(global.ocore.uniqueSpawns) do
+            local chunkAreaCenter = {x=chunkArea.left_top.x+(CHUNK_SIZE/2), y=chunkArea.left_top.y+(CHUNK_SIZE/2)}
+            if (getDistance(spawn.pos, chunkAreaCenter) < global.ocfg.spawn_config.safe_area.safe_radius) then
+                RemoveAliensInArea(surface, chunkArea)
+            end
+        end      
+    else
         SeparateSpawnsGenerateChunk(event)
     end
 
@@ -1168,12 +1177,16 @@ function screamViolationToPlayers(player, entity, items, logOnly)
     if not logOnly then
         for idx,p in pairs(game.connected_players) do
             if (p.force.name ~= player.force.name) then
-                p.print("WTF " .. player.name .. "just took from " .. entity.last_user.name .. " " .. entity.name .. " " .. items ..  GetGPStext(entity.position))
+                p.print("WTF " .. player.name .. "just took from " .. entity.last_user.name .. " " .. entity.name .. GetGPStext(entity.position))
                 p.play_sound { path = 'wtf' }
             end
         end
     end
-    log("WTF " .. player.name .. "just took from " .. entity.last_user.name .. " " .. entity.name .. " " .. items ..  GetGPStext(entity.position))
+    if items then
+        log("WTF " .. player.name .. "just took from " .. entity.last_user.name .. " " .. entity.name .. " " .. items ..  GetGPStext(entity.position))
+    else
+        log("WTF " .. player.name .. "just took from " .. entity.last_user.name .. " " .. entity.name .. " unknown items " ..  GetGPStext(entity.position))
+    end
 end
 
 -- called when players stack changes

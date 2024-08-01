@@ -118,7 +118,7 @@ end
 function SeparateSpawnsPlayerCreated(player_index, clear_inv)
     local player = game.players[player_index]
 
-log("SeparateSpawnsPlayerCreated: " .. player.force.name)
+log("SeparateSpawnsPlayerCreated: Player: " .. player.name .. ", Force: " .. player.force.name .. "Character: " .. tostring(global.players[player_index].characterMode))
     -- Make sure spawn control tab is disabled
     SetOarcGuiTabEnabled(player, OARC_SPAWN_CTRL_GUI_NAME, false)
     SwitchOarcGuiTab(player, OARC_GAME_OPTS_GUI_TAB_NAME)
@@ -411,7 +411,7 @@ function SetupCharacterOrBNOPlayer(player)
     preventMining(player)   -- enables or prevents based on character mode
     player.cheat_mode=not gPlayer.characterMode
     if gPlayer.characterMode then 
-        if not player.character then 
+        if player.character == nil then 
             player.create_character() 
         end
     else

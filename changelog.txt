@@ -1,4 +1,17 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.59
+    - Modified how SeaBlock worms spawn - BNO will now clear worms close to each spawn based on
+      starting area size. This removes some of the challenge, so for previous configuration 
+      set starting area size to 17%.
+    - More robustness improvements
+    - Exploding BNO Assemblers do not now degrade or explode while you are offline.
+    - Pipe connection removed from BNO Assembler, until I fix the alignment issue
+    - Ability for BNO player to mine in Krastorio2 fixed.
+    - Character player in Space Block may now research military and make armor, and armor components
+      which also means you no longer start with power-armor.
+    - Tool help for BNO Assembler and Roboports
+    - BNO Roboports now researchable and placeable.
+---------------------------------------------------------------------------------------------------
 Version: 4.2.58
     - Krastorio2: Disable iron pickaxe and advanced pickage for BNO Player, this increases the 
       mining options so that a bno player can mine - this is not allowed. Avail for character.
