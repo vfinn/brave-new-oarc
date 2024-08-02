@@ -1,6 +1,8 @@
 -- oarc_gui_tabs.lua
 
 local mod_gui = require("mod-gui")
+-- Save all config settings to global table.
+require("oarc_global_cfg")
 --------------------------------------------------------------------------------
 -- GUI Tab Handler
 --------------------------------------------------------------------------------
@@ -17,7 +19,7 @@ OARC_ROCKETS_GUI_TAB_NAME = "Rockets"
 OARC_SHARED_ITEMS_GUI_TAB_NAME = "Shared Items"
 OARC_NOTEPAD_GUI_TAB_NAME = "Notepad"
 
-local OARC_GUI_TAB_CONTENT_FUNCTIONS = {}
+OARC_GUI_TAB_CONTENT_FUNCTIONS = {}
 OARC_GUI_TAB_CONTENT_FUNCTIONS["Server Info"] = CreateGameOptionsTab
 OARC_GUI_TAB_CONTENT_FUNCTIONS["Spawn Controls"] = CreateSpawnCtrlGuiTab
 OARC_GUI_TAB_CONTENT_FUNCTIONS["Players"] = CreatePlayerListGuiTab

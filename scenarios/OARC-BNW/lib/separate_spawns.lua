@@ -118,7 +118,6 @@ end
 function SeparateSpawnsPlayerCreated(player_index, clear_inv)
     local player = game.players[player_index]
 
-log("SeparateSpawnsPlayerCreated: Player: " .. player.name .. ", Force: " .. player.force.name .. "Character: " .. tostring(global.players[player_index].characterMode))
     -- Make sure spawn control tab is disabled
     SetOarcGuiTabEnabled(player, OARC_SPAWN_CTRL_GUI_NAME, false)
     SwitchOarcGuiTab(player, OARC_GAME_OPTS_GUI_TAB_NAME)
@@ -154,6 +153,7 @@ log("SeparateSpawnsPlayerCreated: Player: " .. player.name .. ", Force: " .. pla
     HideOarcGui(player)
     HideOarcStore(player)
     DisplayWelcomeTextGui(player)
+    log("SeparateSpawnsPlayerCreated: Player: " .. player.name .. ", Force: " .. player.force.name .. ", Character: " .. tostring(global.players[player_index].characterMode))
 end
 
 
@@ -297,7 +297,7 @@ function SendPlayerToNewSpawnAndCreateIt(delayedSpawn)
 
         -- remove more items from research if you are Space Block and BNO Player
         if global.players[player.index].characterMode then
-            for _,v in ipairs(SPACE_BLOCK_LOCKED_TECHNOLOGIES_CHAR) do
+            for _,v in ipairs(SPACE_BLOCK_UNLOCKED_TECHNOLOGIES_CHAR) do
                 EnableTech(player.force, v.t)
             end
         else

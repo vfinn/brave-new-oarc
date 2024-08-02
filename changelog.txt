@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.61
+    - Bug fix when player joins a as character crash at 
+      separate_spawns.lua:300: bad argument #1 of 2 to 'ipairs' (table expected, got nil)
+      This was untested code giving character ability to research military for armor items
+---------------------------------------------------------------------------------------------------
+Version: 4.2.60
+    - Bug fix when player joins a buddy team. Dumb log entry fail
+---------------------------------------------------------------------------------------------------
 Version: 4.2.59
     - Modified sprites for Ender Linked Chests to fix Normal Mode. 
     - Modified BNO Roboport and Assembling Machines sprites for Normal mode.

@@ -248,6 +248,7 @@ function CreateGameOptionsTab(tab_container, player)
             buttonTable.add{name="restart_player", type="button", caption="Restart Player"}
         end
         buttonTable.add{name="ban_player", type="button", caption="Ban Player"}
+log ("ban_players_dropdown index = " .. si)
         buttonTable.add{name="ban_players_dropdown",type = "drop-down",items = player_list, selected_index = si}
     else
         if not (player.position.x==0 and player.position.y==0) then 
