@@ -153,7 +153,7 @@ function SeparateSpawnsPlayerCreated(player_index, clear_inv)
     HideOarcGui(player)
     HideOarcStore(player)
     DisplayWelcomeTextGui(player)
-    log("SeparateSpawnsPlayerCreated: Player: " .. player.name .. ", Force: " .. player.force.name .. ", Character: " .. tostring(global.players[player_index].characterMode))
+    log("SeparateSpawnsPlayerCreated: Player: " .. player.name .. ", Force: " .. player.force.name)
 end
 
 

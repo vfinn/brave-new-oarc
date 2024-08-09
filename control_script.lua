@@ -146,11 +146,41 @@ commands.add_command("trigger-map-cleanup",
     RegrowthForceRemoveChunksCmd)
 
 
+-- add loaders into game as default and available at start
 local function update_loaders()
     for _, force in pairs(game.forces) do
         force.recipes["loader"].enabled = force.technologies["logistics"].researched
         force.recipes["fast-loader"].enabled = force.technologies["logistics-2"].researched
         force.recipes["express-loader"].enabled = force.technologies["logistics-3"].researched
+    end
+end
+
+-- BNO player permission group to remove mining ability
+local function init_permissions()
+    if global.bnoPlayerGroup==nil then
+        global.bnoPlayerGroup = game.permissions.get_group("BNO_PLAYER") or game.permissions.create_group("BNO_PLAYER") -- LuaPermissionGroup
+        global.bnoPlayerGroup.set_allows_action( defines.input_action.begin_mining,false)
+        global.bnoPlayerGroup.set_allows_action( defines.input_action.begin_mining_terrain,false)
+    end
+end
+
+-- instead of using force based player.force.manual_mining_speed_modifier to remove mining - use permissions
+local function configure_permissions(player)
+    local charPlayer = global.players[player.index].characterMode
+    if charPlayer==nil then charPlayer = true end
+    if not global.bnoPlayerGroup then
+        init_permissions()
+    end
+    local found=false
+    if charPlayer then
+        for idx, p in pairs(global.bnoPlayerGroup.players) do   -- find this player in a permission group
+            if p==player then
+                global.bnoPlayerGroup.remove_player(p)
+                break
+            end
+        end
+    else
+        global.bnoPlayerGroup.add_player(player)
     end
 end
 
@@ -229,7 +259,8 @@ script.on_init(function(event)
     OARC_CFG.safe_area.danger_radius = OARC_CFG.safe_area.danger_radius * starting_area
 
     update_loaders()   -- loaders
-
+    -- permissions to disallow mining
+    init_permissions()
 end)
 
 
@@ -1031,30 +1062,30 @@ function itemCountAllowed(name, count, player)
     return 0
 end
 
-
+-- use permissions
 function preventMining(player)
-    if global.players[player.index].characterMode then 
-        player.force.manual_mining_speed_modifier = 0  -- allow mining
-        EnableTech(player.force, "steel-axe")
-        return
-    else
-    -- prevent mining (this appeared to be reset when loading a 0.16.26 save in 0.16.27)
-        player.force.manual_mining_speed_modifier = -0.99999999 -- allows removing ghosts with right-click
-        if global.ocfg.krastorio2 then
-            if global.players[player.index].characterPlayer then
-                EnableTech(player.force, "kr-iron-pickaxe")
-                EnableTech(player.force, "kr-advanced-pickaxe")
-            else
-                DisableTech(player.force, "kr-iron-pickaxe")
-                DisableTech(player.force, "kr-advanced-pickaxe")
-            end
-        end
-        DisableTech(player.force, "steel-axe") -- researching this upgrades the above manual_mining_speed_modifier by 1 - not good !
-    end
+    configure_permissions(player)
+--    if global.players[player.index].characterMode then 
+--        player.force.manual_mining_speed_modifier = 0  -- allow mining
+--        EnableTech(player.force, "steel-axe")
+--        return
+--    else
+--    -- prevent mining (this appeared to be reset when loading a 0.16.26 save in 0.16.27)
+--        player.force.manual_mining_speed_modifier = -0.99999999 -- allows removing ghosts with right-click
+--        if global.ocfg.krastorio2 then
+--            if global.players[player.index].characterPlayer then
+--                EnableTech(player.force, "kr-iron-pickaxe")
+--                EnableTech(player.force, "kr-advanced-pickaxe")
+--            else
+--                DisableTech(player.force, "kr-iron-pickaxe")
+--                DisableTech(player.force, "kr-advanced-pickaxe")
+--            end
+--        end
+--        DisableTech(player.force, "steel-axe") -- researching this upgrades the above manual_mining_speed_modifier by 1 - not good !
+--    end
 end
 
 script.on_configuration_changed(function(chgdata)
-log("on_configuration_changed")
     local new = game.active_mods["brave-new-oarc"]
     if new ~= nil then
         local old = global.bnw_scenario_version
@@ -1153,54 +1184,62 @@ script.on_event(defines.events.on_player_fast_transferred, function(event)
 
     if (player.force.name ~= entity.force.name) then   -- taking something 
         log("Player: ".. player.name .. " stealing from " .. entity.force.name)
-        pcall(function()    -- this has been known to crash - on get_contents
+        if not pcall(function()    -- this has been known to crash - on get_contents
             if player.selected then
                 itemsStolen = player.selected.get_output_inventory().get_contents()
                 for  name, count in pairs(itemsStolen) do
                     items = items ..  name .. " of qty : " ..  count .. " | "
                 end
             end
-        end)
 
-        for idx,p in pairs(game.connected_players) do
---          if (p.force.name ~= player.force.name) then
-                screamViolationToPlayers(player, entity, items)
---          end
+            for idx,p in pairs(game.connected_players) do
+    --          if (p.force.name ~= player.force.name) then
+                    screamViolationToPlayers(player, entity, items)
+    --          end
+            end
+            log("WTF (on_player_fast_transferred)" .. player.name .. "just took from " .. entity.last_user.name .. " type: [" .. entity.type .. "] " .. entity.name .. " " .. items ..  GetGPStext(entity.position))
+        end) then
+            log("WTF (on_player_fast_transferred) Attempt to report theft failed")
         end
-        log("WTF (on_player_fast_transferred)" .. player.name .. "just took from " .. entity.last_user.name .. " type: [" .. entity.type .. "] " .. entity.name .. " " .. items ..  GetGPStext(entity.position))
     end
 end)
 
 function screamViolationToPlayers(player, entity, items, logOnly)            
     logOnly = logOnly or false
+    local player_who_stole=""
 
     if not logOnly then
         for idx,p in pairs(game.connected_players) do
             if (p.force.name ~= player.force.name) then
-                p.print("WTF " .. player.name .. "just took from " .. entity.last_user.name .. " " .. entity.name .. GetGPStext(entity.position))
+                if entity.last_user.name then
+                    player_who_stole="just took from " .. entity.last_user.name
+                else -- nil - happens when chest is empty
+                    player_who_stole="tried to steal from "
+                end
+                p.print("WTF " .. player.name .. player_who_stole .. " " .. entity.name .. GetGPStext(entity.position))
                 p.play_sound { path = 'wtf' }
             end
         end
     end
     if items then
-        log("WTF " .. player.name .. "just took from " .. entity.last_user.name .. " " .. entity.name .. " " .. items ..  GetGPStext(entity.position))
+        log("WTF " .. player.name .. player_who_stole .. " " .. entity.name .. " " .. items ..  GetGPStext(entity.position))
     else
-        log("WTF " .. player.name .. "just took from " .. entity.last_user.name .. " " .. entity.name .. " unknown items " ..  GetGPStext(entity.position))
+        log("WTF " .. player.name .. player_who_stole .. " " .. entity.name .. " unknown items " ..  GetGPStext(entity.position))
     end
 end
 
 -- called when players stack changes
 function checkForStealing(player, entity)
     -- warn players that someone is touching a chest - unless it's a /o player (admin) accessing a chest
-        if (entity) then
+    if (entity) then
         if (not string.contains(entity.type, "frame")) then     -- menu open
             if (entity.is_player()) then    -- admin accessing another players inventory
                 log("WTF (admin function)" .. player.name .. " just took something from inventory of " .. entity.name .. " body! " ..  GetGPStext(entity.position))
             else
                 -- if the player and we're not processing a menu of ANY MOD 
-                if (player.opened and (pcall(function () return player.opened.gui == nil end))) then
-                    -- fast transfer only of accessing a box/entity of another players
-                    if (pcall(function() return (not player.opened_self and (player.opened.force.name ~= player.force.name)) end)) then   -- taking something from someone else
+                if (player.opened and (pcall(function () return player.opened.gui == nil end))) then    -- menu open ?
+                    -- fast transfer only of accessing a box/entity of another players that is not neutral force
+                    if (pcall(function() return (not player.opened_self and (player.opened.force.name ~= player.force.name) and (player.opened.force.name~="neutral"))end)) then   -- taking something from someone else
                         log("Debug info: " .. player.name .. " player.opened.name - " .. player.opened.name .. "player force: " .. player.force.name .. ", opened force: " .. player.opened.force.name)
                         local illegalTypes = {"container", "linked-container", "logistic-container", "furnace", "item", "boiler", "assembling-machine-1", "assembling-machine-2", "assembling-machine-3", "car"}
                         local reported=false

@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.63
+    - further changes to anti-cheat code
+---------------------------------------------------------------------------------------------------
+Version: 4.2.62
+    - continued bug fixes:
+        1) Anti theft threw a report that an unknown entity was taken from a neutral force. I need
+           to investigate this further - but patched.
+        2) A log statement accessed a variable that was invalid immediately after a player restart
+           fixed.
+---------------------------------------------------------------------------------------------------
 Version: 4.2.61
     - Bug fix when player joins a as character crash at 
       separate_spawns.lua:300: bad argument #1 of 2 to 'ipairs' (table expected, got nil)
