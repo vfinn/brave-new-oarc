@@ -161,6 +161,7 @@ local function init_permissions()
         global.bnoPlayerGroup = game.permissions.get_group("BNO_PLAYER") or game.permissions.create_group("BNO_PLAYER") -- LuaPermissionGroup
         global.bnoPlayerGroup.set_allows_action( defines.input_action.begin_mining,false)
         global.bnoPlayerGroup.set_allows_action( defines.input_action.begin_mining_terrain,false)
+--        global.bnoPlayerGroup.set_allows_action( defines.input_action.craft,false)        - this won't allow selecting item from menu for putting on ground - alternative requires cheat_mode
     end
 end
 
@@ -245,6 +246,8 @@ script.on_init(function(event)
         RenderPermanentGroundText(game.surfaces[GAME_SURFACE_NAME], {x=-11,y=-17}, 8, "Krastorio2", {0.9, 0.7, 0.3, 0.8}) 
     elseif global.ocfg.alien_module then -- Alien ore
         RenderPermanentGroundText(game.surfaces[GAME_SURFACE_NAME], {x=-15,y=-17}, 8, "Alien Modules", {0.9, 0.7, 0.3, 0.8}) 
+    elseif global.ocfg.dangOreus then -- Danger Ores
+        RenderPermanentGroundText(game.surfaces[GAME_SURFACE_NAME], {x=-15,y=-17}, 8, "DangOreus", {0.9, 0.7, 0.3, 0.8}) 
     end
     BNOSwarmGroupInit()
     log("Applying new values for Starting Area: " .. game.surfaces.oarc.map_gen_settings.starting_area *100 .. "%")
@@ -511,7 +514,9 @@ script.on_event(defines.events.on_player_left_game, function(event)
 log("on_event::on_player_left_game - " .. game.players[event.player_index].name)
     ServerWriteFile("player_events", game.players[event.player_index].name .. " left the game." .. "\n")
     local player = game.players[event.player_index]
-
+    if player.gui.screen.stats_gui then     -- if stats menu is open - close it
+        player.gui.screen.stats_gui.destroy() 
+    end
     -- If players leave early, say goodbye.
     if (player and (player.online_time < (global.ocfg.minimum_online_time * TICKS_PER_MINUTE))) then
         log("Player left early - removing: " .. player.name)
@@ -1305,13 +1310,13 @@ script.on_event(defines.events.on_entity_died, function(event)
             -- it has to be at this location - could also compare (entity.backer_name == player.name) 
             if (GetGPStext(global.spawn[player.index]) == GetGPStext(SP)) then 
                 playerThatDied=global.spawn[player.index]   -- capture the player that died
-                SendBroadcastMsg("Oh No " .. playerThatDied.name .. " on '" .. entity.force.name ..  "'' Gone like a fart in the wind")
-                log("Force DIED: " .. entity.force.name .. ", player: " .. playerThatDied.name )
-                global.spawn[player.index]=nil  -- solves a race condition - player dies, then roboport dies, on respawn - crash without this in SafeTeleport
+                SendBroadcastMsg("Oh No " .. player.name .. " on '" .. entity.force.name ..  "' Gone like a fart in the wind")
+                log("Force DIED: " .. entity.force.name .. ", player: " .. player.name )
                 log ("player: " .. player.name .. " at " ..GetGPStext(global.spawn[player.index]) .. " Died due to the starting roboport being destroyed.")
                 log ("and entity at " .. GetGPStext(SP))
                 SendBroadcastMsg("Our buddy " .. player.name .. " on force: '" .. entity.force.name .. "' Died due to the starting roboport being destroyed.")        
                 SendMsg(player.name, "Sorry '" .. player.name .. "' you LOSE! Rejoin if you like, and give it another try")
+                global.spawn[player.index]=nil  -- solves a race condition - player dies, then roboport dies, on respawn - crash without this in SafeTeleport
                 RemoveOrResetPlayer(player, false, true, true, true)
             end
         end

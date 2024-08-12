@@ -282,7 +282,7 @@ end
 function SendPlayerToNewSpawnAndCreateIt(delayedSpawn)
     -- DOUBLE CHECK and make sure the area is super safe.
     local player = game.players[delayedSpawn.playerName]
-    log("SendPlayerToNewSpawnAndCreateIt: " .. player.name)
+    log("SendPlayerToNewSpawnAndCreateIt: " .. player.name .. ", force: " .. player.force.name)
     if global.ocfg.space_block then
         if (global.ocfg.frontier_rocket_silo and not global.ocfg.enable_magic_factories) then
             if not global.make_silos then
@@ -422,6 +422,24 @@ function SetupCharacterOrBNOPlayer(player)
         end
     end
 end
+
+-- Convert player char to bno or vice versa
+-- BUT this does not add/remove bots !
+-- Also take items from inventory and put into chest
+function convertPlayer(player, toBNO)
+	global.players[player.index].characterMode= not toBNO
+	player.cheat_mode=toBNO
+	preventMining(player)
+    if toBNO then
+		player.character.destroy()
+        player.character = nil
+	else
+        if player.character == nil then 
+            player.create_character()
+        end
+	end
+end
+
 
 -- likely not needed - all chunks within the spawn area are deleted in OarcRegrowthRemoveAllChunks
 function removeBNWForce(x, y)
@@ -1817,4 +1835,3 @@ function ValidateVanillaSpawns(surface)
         end
     end
 end
-
