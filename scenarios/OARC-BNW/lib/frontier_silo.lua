@@ -161,7 +161,7 @@ end
 function BuildSiloAttempt(event)
 
     -- Validation
-    if (event.created_entity == nil) then return end
+    if ((event.created_entity == nil) or (not event.created_entity.valid)) then return end
 
     local e_name = event.created_entity.name
     if (event.created_entity.name == "entity-ghost") then
