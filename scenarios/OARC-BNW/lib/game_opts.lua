@@ -24,7 +24,7 @@ function GameOptionsGuiClick(event)
             end
         end
     end
-
+    
     if (name == "popup_close_gui") then
         player.gui.screen.popup_gui.destroy()
     elseif (name == "restart_player") then

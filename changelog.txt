@@ -1,6 +1,19 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.64
+    - crash control_script.lua 1313 attempt to concatenate field 'name'(a nil value)
+    when a players roboport died - fixed - just restart your game with 4.2.64 and this will be fixed.
+
+---------------------------------------------------------------------------------------------------
 Version: 4.2.63
+    - Mod supports allowing character and bno player on the same team. This is primed for what
+      will become a path to supporting Factorio 2.0. A BNO player may be changed to character for 
+      transport to another planet, and setup of that planet, then conversion back to BNO player.
     - further changes to anti-cheat code
+    SeaBlock changes: 
+    - Lots of changes to SeaBlock resulting in releases 4.2.56 through 4.2.63
+    - Biters will be cleared following the Starting Area slider, but only the first of three rings, 
+      they will be between 6 and 36 chunks if left 100%-600%. You can make them equal to what they 
+      are in previous versions by setting starting area to 17%.
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.62
     - continued bug fixes:

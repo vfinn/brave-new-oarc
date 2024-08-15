@@ -192,7 +192,11 @@ function DisplaySpawnOptions(player)
             end
         end
     end    
-    DisplayCharacterSpawnOptions(player, soloSpawnFlow, global.ocfg.main_team)
+    soloSpawnFlow.add{name = "character_mode_option_checkbox",
+                type = "checkbox",
+                caption={"bno-mode-option"},
+                state=global.players[player.index].characterMode}
+
 
     -- if (global.ocfg.enable_vanilla_spawns and (#global.vanillaSpawns > 0)) then
     --     soloSpawnFlow.add{name = "isolated_spawn_vanilla_option_checkbox",
@@ -277,50 +281,6 @@ function DisplaySpawnOptions(player)
     AddLabel(sGui, "note_lbl1", spawn_distance_notes, my_note_style)
 end
 
-function DisplayCharacterSpawnOptions(player, SpawnFlow, mainTeamBool)
-    local characterModeState = CharacterOptionChosenForThisPlayersForce(player, mainTeamBool) --0 not chosen, 1 char, 2 bno
-    if characterModeState == 0 then
-        if global.players[player.index].characterMode then
-            characterModeState = 1
-        else    
-            characterModeState = 2
-        end
-    end
-    AddLabel(SpawnFlow, "bno-character-warning-lbl1", "Character Mode checkbox will be enforced by options that may have already been selected for this team", my_green_style)
-    SpawnFlow.add{name = "character_mode_option_checkbox",
-                type = "checkbox",
-                caption={"bno-mode-option"},
-                state=characterModeState==1}
---    AddLabel(SpawnFlow, "character_mode_spawn_lbl1",{"bno-mode-start"}, my_label_style)
-end
-
--- returns  0 if no team has chosen 
---          1= character mode
---          2= bno mode
-function CharacterOptionChosenForThisPlayersForce(thisPlayer, bMainTeam)
-    -- if choosing start your own team - that will ALWAYS be choosable, only main-team might have already spawned as char or bno
-    -- if at least 1 team has already joined then Character option has been selected already
-    if bMainTeam then 
-        for idx,player in pairs(game.players) do
-            if not global.players[game.players[idx].index].inSpawn then    -- ignore players in spawn area
-                local t = player.force.name
-                if idx ~= thisPlayer.index then     -- don't count this player
-                    if (player.force.name == thisPlayer.force.name)  then
-                        log("char option selection- team: " .. tostring(t) .. " in characterMode - " ..tostring(global.players[idx].characterMode))
-                        if global.players[idx].characterMode then
-                            return 1
-                        else
-                            return 2
-                        end
-                    end
-                end
-            end
-        end
-    end
-    log("No Character option selected for this team and no one else on this team: " .. thisPlayer.force.name .. ". Either option available")
-    return 0
-end
-
 -- This just updates the radio buttons/checkboxes when players click them.
 function SpawnOptsRadioSelect(event)
     
@@ -336,51 +296,9 @@ function SpawnOptsRadioSelect(event)
     elseif (elemName == "isolated_spawn_new_team_radio") then
         event.element.parent.isolated_spawn_main_team_radio.state=false
     end
-    local mainTeamState=false
-    if (elemName == "character_mode_option_checkbox") or (elemName == "isolated_spawn_main_team_radio") then
-        -- If this returned 0 then nothing chosen yet, 1=char, 2=BNO mode
-        if (event.element.parent.isolated_spawn_main_team_radio and event.element.parent.isolated_spawn_main_team_radio.state) then
-            mainTeamState = event.element.parent.isolated_spawn_main_team_radio.state
-        end
-        if (event.element.parent.buddy_spawn_main_team_radio    and event.element.parent.buddy_spawn_main_team_radio.state) then
-            mainTeamState = event.element.parent.buddy_spawn_main_team_radio.state
-        end
-        -- sync my machine to what some other buddy spawn player has chosen for character mode
-        if pcall(function()
---            log("SpawnOptsRadioSelect: pcall processing of event for character mode from player: " .. player.name)
-            -- keep the characterMode variable in sync with player menu selection - while running - easier to debug 
-            local menuSpawnFlow = nil
-            if player.gui.screen.spawn_opts then
-                menuSpawnFlow = player.gui.screen.spawn_opts.spawn_solo_flow
-            elseif player.gui.screen.buddy_spawn_opts then       -- we're in the buddy screen
-                menuSpawnFlow = player.gui.screen.buddy_spawn_opts
-            end
-            if mainTeamState then 
-                if menuSpawnFlow.character_mode_option_checkbox.state==true then
-                    create_popup_gui(game.players[event.player_index],"Character option not supported for Main Force", {"If you'd like to play normal Factorio character mode", "please select 'Create You Own Team' checkbox","", "Main Team is for BNO players only", ""})
-                end
-                menuSpawnFlow.character_mode_option_checkbox.state=false
-            end
-            if player.gui.screen.buddy_spawn_opts then
-                local characterState=false  -- main team is always BNO mode
-                if not mainTeamState then 
-                    characterState = event.element.parent.character_mode_option_checkbox.state
-                end
-                -- only in buddy mode - every player in this menu gets their checkbox checked when any other player clicks it
-                for i=#global.ocore.waitingBuddies,1,-1 do
-                    local playerName = global.ocore.waitingBuddies[i]
-                    global.players[game.players[playerName].index].characterMode = characterState
-                    game.players[playerName].gui.screen.buddy_spawn_opts.spawn_buddy_flow.character_mode_option_checkbox.state = characterState
-                end
-            end
-            if (menuSpawnFlow and (menuSpawnFlow.character_mode_option_checkbox ~= nil)) then
-                gPlayer.characterMode = menuSpawnFlow.character_mode_option_checkbox.state        
-            end
-        end) then
---            log("SpawnOptsRadioSelect: Successfully completed pcall processing of character mode buddy capture")
-        else
-            log("SpawnOptsRadioSelect: Error processing pcall processing of character mode buddy capture, ".. player.name)
-        end
+    if (elemName == "character_mode_option_checkbox") then
+        -- to see the sync code for forces and character mode diff with 4.2.62
+        gPlayer.characterMode = event.element.enabled
     end
 
     local buddy = getBuddy(player)
@@ -396,7 +314,7 @@ function SpawnOptsRadioSelect(event)
         -- event.element.parent.buddy_spawn_main_team_radio.state=false
         event.element.parent.buddy_spawn_buddy_team_radio.state=false
         if buddy then
-            -- buddy.gui.screen.buddy_spawn_opts.buddy_spawn_main_team_radio.state=false
+            buddy.gui.screen.buddy_spawn_opts.buddy_spawn_main_team_radio.state=false
             buddy.gui.screen.buddy_spawn_opts.spawn_buddy_flow.buddy_spawn_new_team_radio.state=true
             buddy.gui.screen.buddy_spawn_opts.spawn_buddy_flow.buddy_spawn_buddy_team_radio.state=false
         end
@@ -946,14 +864,12 @@ function SpawnCtrlGuiClick(event)
                     return
                 end
 
-                -- Patch in case - rarely someone can change to BNO player while joining a Character player - or vice-versa
-                VerifySameForce(player, joiningPlayer)
-
+                
                 SpawnBuddyIntoAdjoiningBase(joiningPlayer, baseOwnerPlayer, false, spawnPosOffset)
 
 --                ChangePlayerSpawn(joiningPlayer, global.ocore.sharedSpawns[player.name].position)
                 if global.players[joiningPlayer.index].characterMode then
-                    joiningPlayer.insert{name="power-armor", count = 1}
+--                    joiningPlayer.insert{name="power-armor", count = 1}
                     joiningPlayer.insert{name = "firearm-magazine", count = 20}
                 end
 --                SendPlayerToSpawn(joiningPlayer)
@@ -1066,7 +982,10 @@ function DisplayBuddySpawnOptions(player)
                         state=global.players[player.index].moatChoice}
     end
 
-    DisplayCharacterSpawnOptions(player, buddySpawnFlow, false) -- main team not allowed in buddy spawn
+    buddySpawnFlow.add{name = "character_mode_option_checkbox",
+                type = "checkbox",
+                caption={"bno-mode-option"},
+                state=global.players[player.index].characterMode}
 
     -- AddSpacerLine(buddySpawnFlow)
     buddySpawnFlow.add{name = "buddy_spawn_request_near",
@@ -1344,7 +1263,6 @@ end
 -- Spawn a buddy into a buddy base next to yours
 function SpawnBuddyIntoAdjoiningBase(joiningPlayer, baseOwnerPlayer, joinOwnTeam, offsetPos)
     local baseOwnerSpawnPos=global.ocore.playerSpawns[baseOwnerPlayer.name]
-log("base owner: " .. baseOwnerPlayer.name .. ", baseOwnerSpawnPos = " .. GetGPStext(baseOwnerSpawnPos))
     -- default to pos 6 chunks away east
     if offsetPos==nil then offsetPos = {x=global.ocfg.spawn_config.gen_settings.land_area_tiles*6, y=0} end
     -- Create a new force for each player if they chose that option
@@ -1355,7 +1273,7 @@ log("base owner: " .. baseOwnerPlayer.name .. ", baseOwnerSpawnPos = " .. GetGPS
 --        joiningPlayer.force = CreatePlayerCustomForce(baseOwnerPlayer)
         joiningPlayer.force = game.players[baseOwnerPlayer.name].force
     end
-    
+    log("SpawnBuddyIntoAdjoiningBase - joining own team: " .. tostring(joinOwnTeam) .. ", base owner: " .. baseOwnerPlayer.name .. ", Force: " .. joiningPlayer.force.name .. ", baseOwnerSpawnPos = " .. GetGPStext(baseOwnerSpawnPos))
     -- Create that spawn in the global vars
     -- buddy spawns 6 * land_area_tiles (2.5 chunks)
     local buddySpawnPos = {x=(baseOwnerSpawnPos.x + offsetPos.x), y=(baseOwnerSpawnPos.y + offsetPos.y)} 
@@ -1433,6 +1351,18 @@ function BuddySpawnRequestMenuClick(event)
         end
         -- Create a new spawn point
         local newSpawn = {x=0,y=0}
+
+        -- Create a new force for each player if they chose that option
+        if requesterOptions.joinOwnTeamRadio then
+            local newForce = CreatePlayerCustomForce(player)
+            local buddyForce = CreatePlayerCustomForce(game.players[requesterName])
+
+        -- Create a new force for the combined players if they chose that option
+        elseif requesterOptions.joinBuddyTeamRadio then
+            local buddyForce = CreatePlayerCustomForce(game.players[requesterName])
+            joiningPlayer.force = buddyForce
+        end
+
         -- Find coordinates of a good place to spawn
         if (farSpawn) then
             newSpawn = FindUngeneratedCoordinates(global.ocfg.far_dist_start,global.ocfg.far_dist_end, joiningPlayer.surface)
@@ -1445,11 +1375,9 @@ function BuddySpawnRequestMenuClick(event)
             log("Resorting to find map edge! x=" .. newSpawn.x .. ",y=" .. newSpawn.y)
         end
         ChangePlayerSpawn(baseOwnerPlayer, newSpawn)
-        -- Patch in case - rarely someone can change to BNO joiningPlayer while joining a Character player - or vice-versa
-        VerifySameForce(baseOwnerPlayer, joiningPlayer)
         -- Send the joiningPlayer there - each have their potentially different moat choices
         QueuePlayerForDelayedSpawn(requesterName, newSpawn, global.players[baseOwnerPlayer.index].moatChoice, false)
-        log ("SpawnBuddyIntoAdjoiningBase: joiningPlayer " .. joiningPlayer.name .. ", baseOwner : " .. baseOwnerPlayer.name .. ", joiningOwnTeam: " .. tostring(joiningOwnTeam))
+        log ("SpawnBuddyIntoAdjoiningBase: joiningPlayer " .. joiningPlayer.name .. ", baseOwner : " .. baseOwnerPlayer.name .. ", joinOwnTeam: " .. tostring(joinOwnTeam))
         SpawnBuddyIntoAdjoiningBase(joiningPlayer, baseOwnerPlayer, joinOwnTeam)
         SendBroadcastMsg(requesterName .. " and " .. joiningPlayer.name .. " are joining the game together!")
 
@@ -1500,20 +1428,4 @@ function DisplayPleaseWaitForSpawnDialog(player, delay_seconds)
     local wait_warning_text = {"oarc-wait-text", delay_seconds}
 
     AddLabel(pleaseWaitGui, "warning_lbl1", wait_warning_text, my_warning_style)
-end
-
-
--- Patch in case - rarely someone can change to BNO player while joining a Character player - or vice-versa
-function VerifySameForce(player, joiningPlayer)
-    if global.players[joiningPlayer.index].characterMode ~= global.players[player.index].characterMode then
-        log("Verifying Forces: Buddies not of same mode " )
-        if global.players[joiningPlayer.index].characterMode then
-            log("Forcing ".. joiningPlayer.name .. " to join as BNP" )
-            joiningPlayer.print("You chose character mode - Sorry to say this team has already chosen BRAVE NEW PLAYER mode of player - switching you to that mode. Feel free to start your own team as a Character.")
-        else
-            log("Forcing ".. joiningPlayer.name .. " to join as Character" )
-            joiningPlayer.print("You chose brave new player - Sorry to say this team has already chosen 'CHARACTER' mode of player - switching you to that mode. Feel free to start your own team as a Brave New Player.")
-        end                    
-        global.players[joiningPlayer.index].characterMode = global.players[player.index].characterMode 
-    end
 end
