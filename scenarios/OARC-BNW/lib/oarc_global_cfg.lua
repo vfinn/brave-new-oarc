@@ -128,6 +128,7 @@ function InitOarcConfig()
     
     global.ocfg.warn_biter_setting = {}
     global.ocfg.share_chart = {}
+    global.ocfg.assembling_machine_bno = {}
 
 
     global.ocfg.space_block = game.active_mods["spaceblock"]
@@ -147,6 +148,7 @@ function InitOarcConfig()
     global.ocfg.alien_module        = game.active_mods["alien-module"]
     global.ocfg.LootChestPlus       = game.active_mods["LootChestPlus"]
     global.ocfg.dangOreus           = game.active_mods["dangOreus"]
+    global.ocfg.claustorephobic     = game.active_mods["zzz-claustorephobic"]
     global.ocfg.circuitissimo       = game.active_mods["circuitissimo"]
     global.ocfg.forceRegenerationOfSilos = global.ocfg.dangOreus
 

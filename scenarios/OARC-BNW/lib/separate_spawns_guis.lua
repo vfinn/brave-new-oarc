@@ -298,7 +298,7 @@ function SpawnOptsRadioSelect(event)
     end
     if (elemName == "character_mode_option_checkbox") then
         -- to see the sync code for forces and character mode diff with 4.2.62
-        gPlayer.characterMode = event.element.enabled
+        gPlayer.characterMode = event.element.state
     end
 
     local buddy = getBuddy(player)
@@ -312,15 +312,17 @@ function SpawnOptsRadioSelect(event)
         end
     elseif (elemName == "buddy_spawn_new_team_radio") then
         -- event.element.parent.buddy_spawn_main_team_radio.state=false
+        event.element.parent.buddy_spawn_new_team_radio.state=true
         event.element.parent.buddy_spawn_buddy_team_radio.state=false
         if buddy then
-            buddy.gui.screen.buddy_spawn_opts.buddy_spawn_main_team_radio.state=false
+            -- buddy.gui.screen.buddy_spawn_opts.buddy_spawn_main_team_radio.state=false
             buddy.gui.screen.buddy_spawn_opts.spawn_buddy_flow.buddy_spawn_new_team_radio.state=true
             buddy.gui.screen.buddy_spawn_opts.spawn_buddy_flow.buddy_spawn_buddy_team_radio.state=false
         end
     elseif (elemName == "buddy_spawn_buddy_team_radio") then
         -- event.element.parent.buddy_spawn_main_team_radio.state=false
         event.element.parent.buddy_spawn_new_team_radio.state=false
+        event.element.parent.buddy_spawn_buddy_team_radio.state=true
         if buddy then
             -- buddy.gui.screen.buddy_spawn_opts.buddy_spawn_main_team_radio.state=false
             buddy.gui.screen.buddy_spawn_opts.spawn_buddy_flow.buddy_spawn_new_team_radio.state=false
@@ -619,7 +621,7 @@ function SharedSpawnJoinWaitMenuClick(event)
             if (sharedSpawn.joinQueue ~= nil) then
                 for index,requestingPlayer in pairs(sharedSpawn.joinQueue) do
                     if (requestingPlayer == player.name) then
-                        global.ocore.sharedSpawns[spawnName].joinQueue[index] = false
+                        global.ocore.sharedSpawns[spawnName].joinQueue[index] = nil
                         game.players[spawnName].print({"oarc-player-cancel-join-request", player.name})
                         return
                     end
@@ -670,7 +672,7 @@ function CreateSpawnCtrlGuiTab(tab_container, player)
 
     if global.ocfg.enable_shared_spawns then
         if (global.ocore.uniqueSpawns[player.name] ~= nil) then
-            -- This checkbox allows people to join your base when they first
+            -- This checkbox allows people to join your team when they first
             -- start the game.
             spwnCtrls.add{type="checkbox", name="accessToggle",
                             caption={"oarc-spawn-allow-joiners"},
@@ -843,11 +845,12 @@ function SpawnCtrlGuiClick(event)
 
                 local baseOwnerPlayer = game.players[player.name]
                 -- auto generate location of spawn - UPTO 4 additional players (E, SE, S) for buddies
-                local landTileArea = global.ocfg.spawn_config.gen_settings.land_area_tiles
+                local landTileArea = global.ocfg.spawn_config.gen_settings.land_area_tiles               
                 local spawnPosOffset={0,0}
 
                 local numBuddiesJoined = #global.ocore.sharedSpawns[baseOwnerPlayer.name].players
                 local distanceBetweenSpawns = DISTANCE_BETWEEN_SPAWNS
+                log("Spawn Buddy: " .. ({[0]='East', 'South-East', 'South'})[numBuddiesJoined])
                 if distanceBetweenSpawns<10 then distanceBetweenSpawns=5 end
                 if distanceBetweenSpawns>20 then distanceBetweenSpawns=20 end
                 if  numBuddiesJoined== 0 then
@@ -864,9 +867,8 @@ function SpawnCtrlGuiClick(event)
                     return
                 end
 
-                
                 SpawnBuddyIntoAdjoiningBase(joiningPlayer, baseOwnerPlayer, false, spawnPosOffset)
-
+                
 --                ChangePlayerSpawn(joiningPlayer, global.ocore.sharedSpawns[player.name].position)
                 if global.players[joiningPlayer.index].characterMode then
 --                    joiningPlayer.insert{name="power-armor", count = 1}
@@ -874,7 +876,7 @@ function SpawnCtrlGuiClick(event)
                 end
 --                SendPlayerToSpawn(joiningPlayer)
                 GivePlayerStarterItems(joiningPlayer)
-                table.insert(global.ocore.sharedSpawns[player.name].players, joiningPlayer.name)
+--                table.insert(global.ocore.sharedSpawns[player.name].players, joiningPlayer.name)  -- done in SpawnBuddyIntoAdjoiningBase
 --                joiningPlayer.force = game.players[player.name].force
                 global.spawn[joiningPlayer.index] = global.spawn[game.players[player.name].index]       -- vf update the global.spawn table, so when one dies, both die
 
@@ -1261,10 +1263,14 @@ function DisplayBuddySpawnRequestMenu(player, requestingBuddyName)
 end
 
 -- Spawn a buddy into a buddy base next to yours
-function SpawnBuddyIntoAdjoiningBase(joiningPlayer, baseOwnerPlayer, joinOwnTeam, offsetPos)
+function SpawnBuddyIntoAdjoiningBase(joiningPlayer, baseOwnerPlayer, joinOwnTeam, offsetPosParam)
     local baseOwnerSpawnPos=global.ocore.playerSpawns[baseOwnerPlayer.name]
-    -- default to pos 6 chunks away east
-    if offsetPos==nil then offsetPos = {x=global.ocfg.spawn_config.gen_settings.land_area_tiles*6, y=0} end
+
+    if offsetPosParam==nil then 
+        offsetPos = {x=global.ocfg.spawn_config.gen_settings.land_area_tiles*DISTANCE_BETWEEN_SPAWNS, y=0} 
+    else
+        offsetPos = offsetPosParam
+    end
     -- Create a new force for each player if they chose that option
     if joinOwnTeam then
         -- Create a new force for the combined players if they chose that option
@@ -1281,11 +1287,15 @@ function SpawnBuddyIntoAdjoiningBase(joiningPlayer, baseOwnerPlayer, joinOwnTeam
     -- Send the joiningPlayer there - each have their potentially different moat choices
     QueuePlayerForDelayedSpawn(joiningPlayer.name, buddySpawnPos, global.players[joiningPlayer.index].moatChoice, false)
     -- Unlock spawn control gui tab
+    global.ocore.buddyPairs[joiningPlayer.name] = baseOwnerPlayer.name
+    if (not global.ocore.sharedSpawns[baseOwnerPlayer.name]) then
+        CreateNewSharedSpawn(baseOwnerPlayer)
+    end
+    table.insert(global.ocore.sharedSpawns[baseOwnerPlayer.name].players, joiningPlayer.name)   -- keep track of all players on a team
     SetOarcGuiTabEnabled(joiningPlayer, OARC_SPAWN_CTRL_GUI_NAME, true)
     joiningPlayer.print({"oarc-please-wait"})
     joiningPlayer.print({"", {"oarc-please-wait"}, "!"})
     joiningPlayer.print({"", {"oarc-please-wait"}, "!!"})
-    global.ocore.buddyPairs[joiningPlayer.name] = baseOwnerPlayer.name
     global.players[joiningPlayer.index].inSpawn=false
 end
 
@@ -1342,7 +1352,7 @@ function BuddySpawnRequestMenuClick(event)
         local baseOwnerPlayer = game.players[requesterName]
         local joinOwnTeam = requesterOptions.joinOwnTeamRadio
         local farSpawn=requesterOptions.distChoice == "buddy_spawn_request_far"
-        
+
         -- make base for primary player
         -- Create a new force for each player if they chose that option
         if joinOwnTeam then
@@ -1387,7 +1397,7 @@ function BuddySpawnRequestMenuClick(event)
         baseOwnerPlayer.print({"oarc-please-wait"})
         baseOwnerPlayer.print({"", {"oarc-please-wait"}, "!"})
         baseOwnerPlayer.print({"", {"oarc-please-wait"}, "!!"})
-        global.ocore.buddyPairs[requesterName] = joiningPlayer.name
+        global.ocore.buddyPairs[joiningPlayer.name] = requesterName
         global.players[baseOwnerPlayer.index].inSpawn=false
 
 

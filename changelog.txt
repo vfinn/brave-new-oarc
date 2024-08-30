@@ -1,8 +1,32 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.66
+  NEW FEATURES:
+- Big Red asm will be outfit with fluid support, and it should look, act pretty cool. 
+  Dual input and dual output on each side of the assembling machine.
+- DangOreus: increased the clear space around the oil spots by a few tiles. Enabling 5 petro 
+  refineries or 4 advanced refineries for a small oil processing area.
+- Added support for ClaustOrePhobic. Recommend turning on mod setting "Enable Custom Difficulty"
+  and using a prototype list of:
+  inserter transport-belt splitter underground-belt electric-pole pipe pipe-to-ground pump container 
+  logistic-container storage-tank offshore-pump wall gate roboport ammo-turret wall
+
+  BUGS FIXED: 
+  All bug fixes will update your save, by adding this version to your mods folder.
+- A race condition occurs when your big red asm is about to explode, you tag it for deletion, but it 
+  explodes before the bots get to pick it up. The crash that occurs when this happens is 
+  control_script.lua: 628: attempt to index field'?' (a nil value).
+  After the big red asm explodes I remove the ghost that normally would be left in it's place. This 
+  keeps bots from continually dropping new asm's only for them each to explode. If the player deletes 
+  the asm and it explodes before the bots take it away, the ghost is already deleted. This is fixed!
+- Character spawning, then restarting and not able uncheck character from GUI. FIXED
+
+---------------------------------------------------------------------------------------------------
+Version: 4.2.65
+  Bug fix
+---------------------------------------------------------------------------------------------------
 Version: 4.2.64
     - crash control_script.lua 1313 attempt to concatenate field 'name'(a nil value)
-    when a players roboport died - fixed - just restart your game with 4.2.64 and this will be fixed.
-
+      when a players roboport died - fixed - just restart your game with 4.2.64 and this will be fixed.
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.63
     - Mod supports allowing character and bno player on the same team. This is primed for what

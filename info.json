@@ -1,6 +1,6 @@
 {
   "name": "brave-new-oarc",
-  "version": "4.2.64",
+  "version": "4.2.66",
   "factorio_version": "1.1",
   "title": "Brave New OARC Scenario",
   "author": "JustGoFly + Oarcinae + canidae",
@@ -25,8 +25,8 @@
     "? enderlinkedchest",
     "? scrap-resource",
     "? dangOreus",
+    "? zzz-claustorephobic",
     "? circuitissimo",
-    "? pvp_td",
     "! LootChestPlus",
     "! Braver_New_World",
     "! brave-new-world"

@@ -240,6 +240,7 @@ end
 function SetOarGuiTabContent(player, tab_name)
     if (not DoesOarcGuiExist(player)) then return end
 
+
     local otabs = GetOarcGuiTabsPane(player)
 
     for _,t in ipairs(otabs.tabs) do
@@ -253,7 +254,19 @@ end
 
 function SetOarcGuiTabEnabled(player, tab_name, enable)
     if (not DoesOarcGuiExist(player)) then return end
-
+    if enable and tab_name == OARC_SPAWN_CTRL_GUI_NAME then
+        if (global.ocore.buddyPairs[player.name] ~= nil) then
+            return
+        end
+--        log("Searching buddyPairs array ...")
+--        for teamMateName,hostPlayer in pairs(global.ocore.buddyPairs) do 
+--            log("global.ocore.buddyPairs[".. teamMateName .."] = " .. hostPlayer)
+--            if player.name == teamMateName then -- if you joined someone's team - you don't get to invite to your team
+--                return
+--            end
+--        end
+    end
+    log ("continuing to process SetOarcGuiTabEnabled")
     local otabs = GetOarcGuiTabsPane(player)
 
     for _,t in ipairs(otabs.tabs) do
