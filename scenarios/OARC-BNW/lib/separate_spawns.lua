@@ -1127,7 +1127,9 @@ function DowngradeResourcesDistanceBasedOnChunkGenerate(surface, chunkArea)
     if modifier > 1 then return end
 
     local ore_per_tile_cap = math.floor(100000 * modifier)
-
+    if global.ocfg.dangOreus then
+        ore_per_tile_cap = math.floor(500 * modifier)
+    end
     for key, entity in pairs(surface.find_entities_filtered{area=chunkArea, type="resource"}) do
         if entity.valid and entity and entity.position and entity.amount then
             local new_amount = math.ceil(entity.amount * modifier)
