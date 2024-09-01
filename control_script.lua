@@ -441,6 +441,7 @@ log("on_event::On Player created: " .. player.name)
             inSpawn = true,
             moatChoice=moatChoice
         }
+        global.spawn[player.index]={x=0,y=0}
     end
     -- Move the player to the game surface immediately.  First time spawning - character has to be deleted
     global.players[event.player_index].emptyInventory = true    -- postpone until on_player_joined, since space block fills inventory in their on_player_created, which is done AFTER ours.
@@ -598,7 +599,7 @@ function checkKillBnoAssembler()
     local entities = global.ocfg.assembling_machine_bno
 	for indx, entity in pairs(entities) do
 	    if entity and entity.valid and entity.health and ((entity.energy / entity.electric_buffer_size)<.20) then
-            if entity.last_user.connected then  -- is player online - then damage bno assembler
+            if entity.last_user and entity.last_user.connected then  -- is player online - then damage bno assembler
                 entityPos=entity.position
 	            entity.damage(40, "neutral", "explosion")   -- entity becomes invalid when health == 0
                 -- if the bots have repair packs they will typically keep the assembler above 700 in health

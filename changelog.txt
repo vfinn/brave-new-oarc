@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.67
+- Changed how fluids flow through Big Red Assembling Machines. This should fix say an ASM making 
+  Rocket fuel with output of a pipe into an ASM making solid fuel via light oil.
+- Someone joining, watching but not joining gamee, quiting, then later rejoining could be thrown 
+  into a random location in the game. This is fixed.
+---------------------------------------------------------------------------------------------------
 Version: 4.2.66
   NEW FEATURES:
 - Big Red asm will be outfit with fluid support, and it should look, act pretty cool. 

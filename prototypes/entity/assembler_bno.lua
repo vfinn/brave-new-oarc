@@ -121,7 +121,7 @@ data:extend(
 				pipe_picture = assembler3pipepictures(),
 				pipe_covers = pipecoverspictures(),
 				base_area = 10,
-				base_level = -1,
+				base_level = 0,
 				pipe_connections = {{ type="input-output", position = {0.5, -2.5} }},
 				secondary_draw_orders = { north = -1 }
 			},
@@ -130,7 +130,7 @@ data:extend(
 				pipe_picture = assembler3pipepictures(),
 				pipe_covers = pipecoverspictures(),
 				base_area = 10,
-				base_level = -1,
+				base_level = 0,
 				pipe_connections = {{ type="input-output", position = {-0.5, -2.5} }},
 				secondary_draw_orders = { north = -1 }
 			},
@@ -139,7 +139,7 @@ data:extend(
 				pipe_picture = assembler3pipepictures(),
 				pipe_covers = pipecoverspictures(),
 				base_area = 10,
-				base_level = -1,
+				base_level = 0,
 				pipe_connections = {{ type="input-output", position = {0.5, 2.5} }},
 				secondary_draw_orders = { north = -1 }
 			},
@@ -148,7 +148,7 @@ data:extend(
 				pipe_picture = assembler3pipepictures(),
 				pipe_covers = pipecoverspictures(),
 				base_area = 10,
-				base_level = -1,
+				base_level = 0,
 				pipe_connections = {{ type="input-output", position = {-0.5, 2.5} }},
 				secondary_draw_orders = { north = -1 }
 			},
