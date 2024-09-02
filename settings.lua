@@ -21,7 +21,7 @@ data:extend({
         name = "bno-assembler-choice",     
         setting_type = "startup",
         minimum_value=0,
-        maximum_value=30,
+        maximum_value=10,
         default_value = 0,
         order="bnw-016"
     },

@@ -1,11 +1,18 @@
 -- based on: TheReturnOfUtraFastAssemblingMachine_0.0.1
 
 -- set crafting speed
+math.log5 = function (x)
+    return math.log(x) / math.log(5)
+end
 local BNO_Assembler_Crafting_Speed = settings.startup["bno-assembler-choice"].value
 if BNO_Assembler_Crafting_Speed > 0 then
 -- 1000 +(lvl/2) x (lvl x 40) 
-if BNO_Assembler_Crafting_Speed > 50 then BNO_Assembler_Crafting_Speed = 10 end
-local powerCost = 1000 + (BNO_Assembler_Crafting_Speed / 2) * (BNO_Assembler_Crafting_Speed * 40)
+if BNO_Assembler_Crafting_Speed > 10 then BNO_Assembler_Crafting_Speed = 10 end
+
+-- more costly powerwise based on crafting speed - range 5..10 is 1172 to 5272
+local powerCost = 1000 + BNO_Assembler_Crafting_Speed ^ (2.2 + math.log5(BNO_Assembler_Crafting_Speed))
+-- old formula
+--local powerCost = 1000 + (BNO_Assembler_Crafting_Speed / 2) * (BNO_Assembler_Crafting_Speed * 40)
 
 data:extend(
 {
