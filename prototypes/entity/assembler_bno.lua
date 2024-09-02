@@ -110,32 +110,86 @@ data:extend(
 		resistances =
 		{
 			{
-			type = "fire",
-			percent = 70
+				type = "fire",
+				percent = 70
 			}
 		},
---		fluid_boxes =
---		{
---			{
---				production_type = "input",
---				pipe_picture = assembler3pipepictures(),
---				pipe_covers = pipecoverspictures(),
---				base_area = 10,
---				base_level = -1,
---				pipe_connections = {{ type="input", position = {0, -2.5} }},
---				secondary_draw_orders = { north = -1 }
---			},
---			{
---				production_type = "output",
---				pipe_picture = assembler3pipepictures(),
---				pipe_covers = pipecoverspictures(),
---				base_area = 10,
---				base_level = 1,
---				pipe_connections = {{ type="output", position = {0, 2.5} }},
---				secondary_draw_orders = { north = -1 }
---			},
---			off_when_no_fluid_recipe = true
---		},
+		fluid_boxes =
+		{
+			{
+				production_type = "input",
+				pipe_picture = assembler3pipepictures(),
+				pipe_covers = pipecoverspictures(),
+				base_area = 10,
+				base_level = 0,
+				pipe_connections = {{ type="input-output", position = {0.5, -2.5} }},
+				secondary_draw_orders = { north = -1 }
+			},
+			{
+				production_type = "input",
+				pipe_picture = assembler3pipepictures(),
+				pipe_covers = pipecoverspictures(),
+				base_area = 10,
+				base_level = 0,
+				pipe_connections = {{ type="input-output", position = {-0.5, -2.5} }},
+				secondary_draw_orders = { north = -1 }
+			},
+			{
+				production_type = "input",
+				pipe_picture = assembler3pipepictures(),
+				pipe_covers = pipecoverspictures(),
+				base_area = 10,
+				base_level = 0,
+				pipe_connections = {{ type="input-output", position = {0.5, 2.5} }},
+				secondary_draw_orders = { north = -1 }
+			},
+			{
+				production_type = "input",
+				pipe_picture = assembler3pipepictures(),
+				pipe_covers = pipecoverspictures(),
+				base_area = 10,
+				base_level = 0,
+				pipe_connections = {{ type="input-output", position = {-0.5, 2.5} }},
+				secondary_draw_orders = { north = -1 }
+			},
+			{
+				production_type = "output",
+				pipe_picture = assembler3pipepictures(),
+				pipe_covers = pipecoverspictures(),
+				base_area = 10,
+				base_level = 1,
+				pipe_connections = {{ type="input-output", position = {2.5, 0.5} }},
+				secondary_draw_orders = { north = -1 }
+			},
+			{
+				production_type = "output",
+				pipe_picture = assembler3pipepictures(),
+				pipe_covers = pipecoverspictures(),
+				base_area = 10,
+				base_level = 1,
+				pipe_connections = {{ type="input-output", position = {2.5, -0.5} }},
+				secondary_draw_orders = { north = -1 }
+			},
+			{
+				production_type = "output",
+				pipe_picture = assembler3pipepictures(),
+				pipe_covers = pipecoverspictures(),
+				base_area = 10,
+				base_level = 1,
+				pipe_connections = {{ type="input-output", position = {-2.5, 0.5} }},
+				secondary_draw_orders = { north = -1 }
+			},
+			{
+				production_type = "output",
+				pipe_picture = assembler3pipepictures(),
+				pipe_covers = pipecoverspictures(),
+				base_area = 10,
+				base_level = 1,
+				pipe_connections = {{ type="input-output", position = {-2.5, -0.5} }},
+				secondary_draw_orders = { north = -1 }
+			},
+			off_when_no_fluid_recipe = true
+		},
 		open_sound = { filename = "__base__/sound/machine-open.ogg", volume = 0.85 },
 		close_sound = { filename = "__base__/sound/machine-close.ogg", volume = 0.75 },
 		vehicle_impact_sound =  { filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65 },
