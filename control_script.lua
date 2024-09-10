@@ -1383,7 +1383,7 @@ script.on_event(defines.events.on_player_driving_changed_state, function(event)
     log("Changed driver state: " .. event.entity.name)
     -- distance between two points √((x2 – x1)² + (y2 – y1)²)
     local distance = getDistance(event.entity.position, global.players[event.player_index].previous_position)
-    if (distance > 1500) then
+    if (distance > DISTANCE_BETWEEN_BUDDIES*32 * 5) then
         log(string.format("msg: %s, sent to %d players", msg, #game.connected_players-1))
         for idx,p in pairs(game.connected_players) do
             if (p.index ~= player.index) then

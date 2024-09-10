@@ -413,7 +413,7 @@ MAIN_FORCE = "Main Force"
 -- And specify how many including the host are allowed.
 ENABLE_SHARED_SPAWNS = true
 MAX_PLAYERS_AT_SHARED_SPAWN = 3 -- 3 max - or update SpawnCtrlGuiClick
-DISTANCE_BETWEEN_SPAWNS = 10    -- in chunks valid = 10..20
+DISTANCE_BETWEEN_BUDDIES = 10    -- in chunks valid = 10..20
 
 -- Share local team chat with all teams
 -- This makes it so you don't have to use /s

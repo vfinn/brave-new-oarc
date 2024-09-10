@@ -847,9 +847,9 @@ function SpawnCtrlGuiClick(event)
                 local spawnPosOffset={0,0}
 
                 local numBuddiesJoined = #global.ocore.sharedSpawns[baseOwnerPlayer.name].players
-                local distanceBetweenSpawns = DISTANCE_BETWEEN_SPAWNS
+                local distanceBetweenSpawns = DISTANCE_BETWEEN_BUDDIES
                 log("Spawn Buddy: " .. ({[0]='East', 'South-East', 'South'})[numBuddiesJoined])
-                if distanceBetweenSpawns<10 then distanceBetweenSpawns=5 end
+                if distanceBetweenSpawns<10 then distanceBetweenSpawns=10 end
                 if distanceBetweenSpawns>20 then distanceBetweenSpawns=20 end
                 if  numBuddiesJoined== 0 then
                     spawnPosOffset={x=landTileArea * distanceBetweenSpawns, y=0}    -- east
@@ -1265,7 +1265,7 @@ function SpawnBuddyIntoAdjoiningBase(joiningPlayer, baseOwnerPlayer, joinOwnTeam
     local baseOwnerSpawnPos=global.ocore.playerSpawns[baseOwnerPlayer.name]
 
     if offsetPosParam==nil then 
-        offsetPos = {x=global.ocfg.spawn_config.gen_settings.land_area_tiles*DISTANCE_BETWEEN_SPAWNS, y=0} 
+        offsetPos = {x=global.ocfg.spawn_config.gen_settings.land_area_tiles*DISTANCE_BETWEEN_BUDDIES, y=0} 
     else
         offsetPos = offsetPosParam
     end
