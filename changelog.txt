@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.68
+BNO Assembling Machines:
+- Big Red ASM's - limit crafting speed to 10 max.
+  Power usage set to an exponentially increasing amount based on max level.
+  Some of the lower levels will be lower power usage than before since the levels were flatter levels.
+BNO Roboport:
+- Selection and collision box increased a bit, to cover more of the image. 
+---------------------------------------------------------------------------------------------------
 Version: 4.2.67
 - Changed how fluids flow through Big Red Assembling Machines. This should fix say an ASM making 
   Rocket fuel with output of a pipe into an ASM making solid fuel via light oil.

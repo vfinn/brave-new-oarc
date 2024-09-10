@@ -46,8 +46,8 @@ roboportmain.charging_offsets = {
 
 -- new textures
 log ("Using large roboport with 16 charging ports")
-roboportmain.collision_box = {{-2.85, -1.9}, {2.75, 3.65}}
-roboportmain.selection_box = {{-2.85, -1.9}, {2.75, 3.65}}
+roboportmain.collision_box = {{-3, -2}, {3, 4}}
+roboportmain.selection_box = {{-3, -2}, {3, 4}}
 
 -- normal resolution
 roboportmain.base.layers[1].filename =						"__brave-new-oarc__/graphics/entity/roboport-bno/roboport-bno-base.png"

@@ -106,8 +106,6 @@ function getBuddy(player)
     end
     if (buddy) then
         log ("Buddy is " .. buddy.name)
-    else
-        log ("no buddy")
     end
     return buddy
 end

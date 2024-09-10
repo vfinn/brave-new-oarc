@@ -1,25 +1,14 @@
 -- based on: TheReturnOfUtraFastAssemblingMachine_0.0.1
-
--- set crafting speed
-math.log5 = function (x)
-    return math.log(x) / math.log(5)
-end
 local BNO_Assembler_Crafting_Speed = settings.startup["bno-assembler-choice"].value
 if BNO_Assembler_Crafting_Speed > 0 then
--- 1000 +(lvl/2) x (lvl x 40) 
 if BNO_Assembler_Crafting_Speed > 10 then BNO_Assembler_Crafting_Speed = 10 end
 
--- more costly powerwise based on crafting speed - range 5..10 is 1172 to 5272
-local powerCost = 1000 + BNO_Assembler_Crafting_Speed ^ (2.2 + math.log5(BNO_Assembler_Crafting_Speed))
--- old formula
---local powerCost = 1000 + (BNO_Assembler_Crafting_Speed / 2) * (BNO_Assembler_Crafting_Speed * 40)
-
-data:extend(
-{
+local assembling_machine = function(name, indx, BNO_Assembler_Crafting_Speed, powerCost, color, ingredients)
+return {
 	{
 		type = "explosion",
 		name = "huge-explosion",
-		localised_description = {"entity-description.assembling-machine-bno"},
+		localised_description = {"entity-description." .. name},
 
 		animation_speed = 5,
 		animations =
@@ -50,29 +39,21 @@ data:extend(
 	-- TECHNOLOGY
 	{
 		type = "technology",
-		name = "assembling-machine-bno",
+		name = "automation-"..tostring(indx), 
 		icon_size = 256,
-		icon = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/automation-bno-tech.png",
-	--   icon = "__base__/graphics/technology/automation-3.png",
-	--   tint = {r = 0.95, g = 0.25, b = 0.05, a = 1},
+		icon = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/automation-bno-tech"..color..".png",
 		effects =
 		{
 			{
 			type = "unlock-recipe",
-			recipe = "assembling-machine-bno"
+			recipe = name		-- "assembling-machine-4", 5, 6
 			}
 		},
-		prerequisites = {"automation-3"},
+		prerequisites = {"automation-"..tostring(indx-1)},	-- automation-3, 4 ,5
 		unit =
 		{
-			count = 500,
-			ingredients =
-			{
-			{"automation-science-pack", 1},
-			{"logistic-science-pack", 1},
-			{"chemical-science-pack", 1},
-			{"production-science-pack", 1}
-			},
+			count = (indx-1)*100,
+			ingredients = ingredients,
 			time = 60
 		},
 		order = "a-b-c"
@@ -80,36 +61,36 @@ data:extend(
     -- RECIPE
 	{
 		type = "recipe",
-		name = "assembling-machine-bno",
+		name = name,
 		enabled = false,
 		ingredients =
 		{
-			{"speed-module", 12},
-			{"assembling-machine-3", 4}
+			{"speed-module", BNO_Assembler_Crafting_Speed * (indx-2)},
+			{"assembling-machine-"..tostring(indx-1), 4}
 		},
-		result = "assembling-machine-bno"
+		result = name
 	},
 	-- ITEM
 	{
 		type = "item",
-		name = "assembling-machine-bno",
-		icon = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/assembling-machine-bno-icon.png",
+		name = name,
+		icon = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/assembling-machine-bno-icon"..color..".png",
 		icon_size = 64,
 		-- flags = {"goes-to-quickbar"},
 		subgroup = "production-machine",
 		order = "c[assembling-machine-4]",
-		place_result = "assembling-machine-bno",
+		place_result = name,
 		stack_size = 50,
 		scale=.75
 	},
     -- ASSEMBLING MACHINE
 	{
 		type = "assembling-machine",
-		name = "assembling-machine-bno",
-		icon = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/assembling-machine-bno-icon.png",
+		name = name,
+		icon = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/assembling-machine-bno-icon"..color..".png",
 		icon_size = 64,
 		flags = {"placeable-neutral","placeable-player", "player-creation"},
-		minable = {hardness = 0.2, mining_time = 0.5, result = "assembling-machine-bno"},
+		minable = {hardness = 0.2, mining_time = 0.5, result = name},
 		max_health = 800,
 		corpse = "big-remnants",
 		dying_explosion = "medium-explosion",
@@ -224,7 +205,7 @@ data:extend(
 			layers =
 			{
 				{
-					filename = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/assembling-machine-bno-entity.png",
+					filename = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/assembling-machine-bno-entity"..color..".png",
 					priority = "high",
 					width = 108,
 					height = 119,
@@ -233,7 +214,7 @@ data:extend(
 					line_length = 1,
 					shift = util.by_pixel(0, -0.5),
 					hr_version = {
-						filename = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/hr-assembling-machine-bno-entity.png",
+						filename = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/hr-assembling-machine-bno-entity"..color..".png",
 						priority = "high",
 						width = 214,
 						height = 237,
@@ -285,5 +266,52 @@ data:extend(
 		allowed_effects = {"consumption", "speed", "productivity", "pollution"}
 	},
 }
-)
 end
+
+
+math.log5 = function (x)
+	return math.log(x) / math.log(5)
+end
+
+local color = {"-red", "-cyan", "-green"}
+local speeds = {.75, 1, 1.2}
+local ingredients=nil
+
+for i=1,3 do
+	if i==1 then
+		ingredients =
+		{
+			{"automation-science-pack", 1},
+			{"logistic-science-pack", 1},
+			{"chemical-science-pack", 1},
+			{"production-science-pack", 1}		}
+	elseif i==2 then
+		ingredients =
+		{
+			{"automation-science-pack", 1},
+			{"logistic-science-pack", 1},
+			{"chemical-science-pack", 1},
+			{"production-science-pack", 1}		}
+	elseif i==3 then
+		ingredients =
+		{
+			{"automation-science-pack", 1},
+			{"logistic-science-pack", 1},
+			{"chemical-science-pack", 1},
+			{"production-science-pack", 1},
+			{"utility-science-pack", 1}
+		}
+	end
+	-- set crafting speed
+
+	-- more costly powerwise based on crafting speed - range 5..10 is 1172 to 5272
+--	local speed = BNO_Assembler_Crafting_Speed * (i/2)
+	local speed = BNO_Assembler_Crafting_Speed * speeds[i]
+	local powerCost = 1000 + speed ^ (2.2 + math.log5(speed))
+	-- old formula 
+	--local powerCost = 1000 + (BNO_Assembler_Crafting_Speed / 2) * (BNO_Assembler_Crafting_Speed * 40)
+
+	data:extend(assembling_machine("assembling-machine-"..tostring(i+3), i+3, speed, powerCost, color[i], ingredients))
+end
+
+end 

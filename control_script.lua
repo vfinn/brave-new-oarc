@@ -405,7 +405,7 @@ script.on_event(defines.events.on_player_joined_game, function(event)
         rendering.destroy(global.players[event.player_index].drawOnExit)
         global.players[event.player_index].drawOnExit=nil
     end
-    if (global.spawn[event.player_index]) then
+    if ((global.spawn[event.player_index].x ~= 0) and (global.spawn[event.player_index].y ~= 0)) then
         DisplayWelcomeBackGroundTextAtSpawn (joiningPlayer, global.spawn[event.player_index])
     end
     if (global.players[event.player_index].emptyInventory)  then    -- this has to be done here since Space Block on_created
@@ -595,12 +595,16 @@ end)
 function checkKillBnoAssembler()
     local entityPos={}
     local surface = game.surfaces[GAME_SURFACE_NAME]
---	local entities = surface.find_entities_filtered{name="assembling-machine-bno"}      -- too lengthy - causes game to stutter
-    local entities = global.ocfg.assembling_machine_bno
+--	local entities = surface.find_entities_filtered{name="assembling-machine-4"}      -- too lengthy - causes game to stutter
+    local entities =  global.ocfg.assembling_machine_bno
+    local entityCopy = nil
 	for indx, entity in pairs(entities) do
 	    if entity and entity.valid and entity.health and ((entity.energy / entity.electric_buffer_size)<.20) then
             if entity.last_user and entity.last_user.connected then  -- is player online - then damage bno assembler
                 entityPos=entity.position
+                if entity.health <=40 then  -- ASM will explode - we won't have access to the entity then, so do work here
+                    table.remove(global.ocfg.assembling_machine_bno, indx)
+                end
 	            entity.damage(40, "neutral", "explosion")   -- entity becomes invalid when health == 0
                 -- if the bots have repair packs they will typically keep the assembler above 700 in health
                 if (entity.valid and entity.health <= 600) then
@@ -627,11 +631,13 @@ function checkKillBnoAssembler()
                 end
                 if not entity.valid then
                     local tile = surface.get_tile(entityPos.x,entityPos.y)
-                    local ghost = surface.find_entities_filtered{ghost_name="assembling-machine-bno",position=entityPos}
-                    if ghost and (ghost[1]~= nil) then  -- if ghost is still there
-                        ghost[1].destroy()              -- remove the ghost
+                    for i=5,6 do
+                        local ghost = surface.find_entities_filtered{ghost_name="assembling-machine-"..tostring(i),position=entityPos}
+                        if ghost and (ghost[1]~= nil) then  -- if ghost is still there
+                            ghost[1].destroy()              -- remove the ghost
+                            break
+                        end
                     end
-                    table.remove(global.ocfg.assembling_machine_bno, indx)
                 end
             end
 	    end
@@ -664,7 +670,7 @@ script.on_event(defines.events.on_built_entity, function(event)
         if (event.created_entity.surface.name ~= GAME_SURFACE_NAME) then return end
         RegrowthMarkAreaSafeGivenTilePos(event.created_entity.position, 2, false)
     end
-    if event.created_entity.name == "assembling-machine-bno" then
+    if ((event.created_entity.name == "assembling-machine-5") or (event.created_entity.name == "assembling-machine-6")) then
         table.insert(global.ocfg.assembling_machine_bno, event.created_entity)
 --        game.print("on_built_entity- Added one more BNO assembler to array of size ".. #global.ocfg.assembling_machine_bno .. "  " .. event.created_entity.gps_tag)
     end
@@ -684,7 +690,7 @@ script.on_event(defines.events.on_robot_built_entity, function (event)
         if (event.created_entity.surface.name ~= GAME_SURFACE_NAME) then return end
         RegrowthMarkAreaSafeGivenTilePos(event.created_entity.position, 2, false)
     end
-    if event.created_entity.name == "assembling-machine-bno" then
+    if ((event.created_entity.name == "assembling-machine-5") or (event.created_entity.name == "assembling-machine-6")) then
         table.insert(global.ocfg.assembling_machine_bno, event.created_entity)
 --        game.print("on_robot_built_entity- Added one more BNO assembler to array of size ".. #global.ocfg.assembling_machine_bno .. "  " .. event.created_entity.gps_tag)
     end
@@ -694,7 +700,7 @@ script.on_event(defines.events.on_robot_built_entity, function (event)
 end)
 
 function process_mined_entity(event)
-    if (event.entity.name == "assembling-machine-bno") then
+    if ((event.entity.name == "assembling-machine-5") or (event.entity.name == "assembling-machine-6")) then
         for idx, v in pairs (global.ocfg.assembling_machine_bno) do
            if v.valid and (v.position.x == event.entity.position.x) and (v.position.y == event.entity.position.y) then
              table.remove(global.ocfg.assembling_machine_bno, idx)

@@ -48,6 +48,7 @@ function GameOptionsGuiClick(event)
                                     characterMode = global.players[idx].characterMode, -- They are placed onto MainForce on restart - set to main force character mode                                
                                     inSpawn=true,
                                     moatChoice=global.players[idx].moatChoice}
+                global.spawn[player.index]={x=0,y=0}
                 log("Resetting " .. resetPlayerName)
             end
         end

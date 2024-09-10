@@ -725,7 +725,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     destination_for_inventory.insert{name="advanced-circuit", count=4}
     if (settings.startup["bno-assembler-choice"].value >0) then -- large assemblers ?  Give them one !
         local numAssemblers= settings.startup["bno-assembler-at-start"].value
-        destination_for_inventory.insert{name = "assembling-machine-bno", count = numAssemblers}
+        destination_for_inventory.insert{name = "assembling-machine-4", count = numAssemblers}
     end
 
     -- S P A C E   B L O C K
