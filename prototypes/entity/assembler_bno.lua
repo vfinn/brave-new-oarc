@@ -3,7 +3,7 @@ local BNO_Assembler_Crafting_Speed = settings.startup["bno-assembler-choice"].va
 if BNO_Assembler_Crafting_Speed > 0 then
 if BNO_Assembler_Crafting_Speed > 10 then BNO_Assembler_Crafting_Speed = 10 end
 
-local assembling_machine = function(name, level, BNO_Assembler_Crafting_Speed, powerCost, color, ingredients)
+local assembling_machine = function(name, level, BNO_Assembler_Crafting_Speed, powerCost, color, ingredients, next_upgrade)
 return {
 	{
 		type = "explosion",
@@ -92,6 +92,7 @@ return {
 		flags = {"placeable-neutral","placeable-player", "player-creation"},
 		minable = {hardness = 0.2, mining_time = 0.5, result = name},
 		max_health = level*200,		-- 		previously 800 - 40 damage every second = 20 seconds, now 800, 1000, 1200
+		next_upgrade=next_upgrade[level-3],
 		corpse = "big-remnants",
 		dying_explosion = "medium-explosion",
 		alert_icon_shift = util.by_pixel(-3, -12),
@@ -275,8 +276,9 @@ end
 
 local color = {"-red", "-cyan", "-green"}
 local speeds = {.7, 1, 1.25}
-local ingredients=nil
+local next_upgrade = {"assembling-machine-5", "assembling-machine-6", nil}
 
+local ingredients=nil
 for i=1,3 do
 	if i==1 then
 		ingredients =
@@ -311,7 +313,7 @@ for i=1,3 do
 	-- old formula 
 	--local powerCost = 1000 + (BNO_Assembler_Crafting_Speed / 2) * (BNO_Assembler_Crafting_Speed * 40)
 
-	data:extend(assembling_machine("assembling-machine-"..tostring(i+3), i+3, speed, powerCost, color[i], ingredients))
+	data:extend(assembling_machine("assembling-machine-"..tostring(i+3), i+3, speed, powerCost, color[i], ingredients, next_upgrade))
 end
 
 end 

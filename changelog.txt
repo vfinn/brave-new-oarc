@@ -1,4 +1,7 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.69
+  Fixed new ASM's so that upgrading a 4 goes to a 5, and 5 goes to 6.
+---------------------------------------------------------------------------------------------------
 Version: 4.2.68
 BNO Assembling Machines:
 - Big Red ASM's - limit crafting speed to 10 max.
