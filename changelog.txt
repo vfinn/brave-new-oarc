@@ -4,6 +4,8 @@ BNO Assembling Machines:
 - Big Red ASM's - limit crafting speed to 10 max.
   Power usage set to an exponentially increasing amount based on max level.
   Some of the lower levels will be lower power usage than before since the levels were flatter levels.
+  Many settings for each ASM level 4..6 scale with the level, health, speed, cost to research and 
+  create
 BNO Roboport:
 - Selection and collision box increased a bit, to cover more of the image. 
 ---------------------------------------------------------------------------------------------------

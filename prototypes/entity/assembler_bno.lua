@@ -3,7 +3,7 @@ local BNO_Assembler_Crafting_Speed = settings.startup["bno-assembler-choice"].va
 if BNO_Assembler_Crafting_Speed > 0 then
 if BNO_Assembler_Crafting_Speed > 10 then BNO_Assembler_Crafting_Speed = 10 end
 
-local assembling_machine = function(name, indx, BNO_Assembler_Crafting_Speed, powerCost, color, ingredients)
+local assembling_machine = function(name, level, BNO_Assembler_Crafting_Speed, powerCost, color, ingredients)
 return {
 	{
 		type = "explosion",
@@ -39,7 +39,7 @@ return {
 	-- TECHNOLOGY
 	{
 		type = "technology",
-		name = "automation-"..tostring(indx), 
+		name = "automation-"..tostring(level), 
 		icon_size = 256,
 		icon = "__brave-new-oarc__/graphics/entity/bno-assembling-machine/automation-bno-tech"..color..".png",
 		effects =
@@ -49,10 +49,10 @@ return {
 			recipe = name		-- "assembling-machine-4", 5, 6
 			}
 		},
-		prerequisites = {"automation-"..tostring(indx-1)},	-- automation-3, 4 ,5
+		prerequisites = {"automation-"..tostring(level-1)},	-- automation-3, 4 ,5
 		unit =
 		{
-			count = (indx-1)*100,
+			count = (level-1)*100,
 			ingredients = ingredients,
 			time = 60
 		},
@@ -65,8 +65,8 @@ return {
 		enabled = false,
 		ingredients =
 		{
-			{"speed-module", BNO_Assembler_Crafting_Speed * (indx-2)},
-			{"assembling-machine-"..tostring(indx-1), 4}
+			{"speed-module", BNO_Assembler_Crafting_Speed * (level-2)},
+			{"assembling-machine-"..tostring(level-1), 4}
 		},
 		result = name
 	},
@@ -91,7 +91,7 @@ return {
 		icon_size = 64,
 		flags = {"placeable-neutral","placeable-player", "player-creation"},
 		minable = {hardness = 0.2, mining_time = 0.5, result = name},
-		max_health = 800,
+		max_health = level*200,		-- 		previously 800 - 40 damage every second = 20 seconds, now 800, 1000, 1200
 		corpse = "big-remnants",
 		dying_explosion = "medium-explosion",
 		alert_icon_shift = util.by_pixel(-3, -12),
@@ -274,7 +274,7 @@ math.log5 = function (x)
 end
 
 local color = {"-red", "-cyan", "-green"}
-local speeds = {.75, 1, 1.2}
+local speeds = {.7, 1, 1.25}
 local ingredients=nil
 
 for i=1,3 do

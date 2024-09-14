@@ -581,7 +581,7 @@ script.on_event(defines.events.on_tick, function(event)
         end
     end
     -- check to see if a bno assembler is in the game and needs to be damaged and then exploded
-    if  (game.tick % (TICKS_PER_SECOND) == 59) 
+    if  ((game.tick % TICKS_PER_SECOND) == 59)
     and (settings.startup["bno-assembler-choice"].value >0) 
     and global.ocfg.bno_assembler_explodes then         -- (settings.startup["bno-assembler-explode"].value==true) then
         checkKillBnoAssembler()
