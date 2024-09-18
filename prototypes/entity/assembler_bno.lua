@@ -109,7 +109,8 @@ return {
 				production_type = "input",
 				pipe_picture = assembler3pipepictures(),
 				pipe_covers = pipecoverspictures(),
-				base_area = 10,
+				base_area = 1,
+				height=1,
 				base_level = 0,
 				pipe_connections = {{ type="input-output", position = {0.5, -2.5} }},
 				secondary_draw_orders = { north = -1 }
@@ -118,7 +119,8 @@ return {
 				production_type = "input",
 				pipe_picture = assembler3pipepictures(),
 				pipe_covers = pipecoverspictures(),
-				base_area = 10,
+				base_area = 1,
+				height=1,
 				base_level = 0,
 				pipe_connections = {{ type="input-output", position = {-0.5, -2.5} }},
 				secondary_draw_orders = { north = -1 }
@@ -127,7 +129,8 @@ return {
 				production_type = "input",
 				pipe_picture = assembler3pipepictures(),
 				pipe_covers = pipecoverspictures(),
-				base_area = 10,
+				base_area = 1,
+				height=1,
 				base_level = 0,
 				pipe_connections = {{ type="input-output", position = {0.5, 2.5} }},
 				secondary_draw_orders = { north = -1 }
@@ -136,7 +139,8 @@ return {
 				production_type = "input",
 				pipe_picture = assembler3pipepictures(),
 				pipe_covers = pipecoverspictures(),
-				base_area = 10,
+				base_area = 1,
+				height=1,
 				base_level = 0,
 				pipe_connections = {{ type="input-output", position = {-0.5, 2.5} }},
 				secondary_draw_orders = { north = -1 }
@@ -145,7 +149,8 @@ return {
 				production_type = "output",
 				pipe_picture = assembler3pipepictures(),
 				pipe_covers = pipecoverspictures(),
-				base_area = 10,
+				base_area = 1,
+				height=1,
 				base_level = 1,
 				pipe_connections = {{ type="input-output", position = {2.5, 0.5} }},
 				secondary_draw_orders = { north = -1 }
@@ -154,7 +159,8 @@ return {
 				production_type = "output",
 				pipe_picture = assembler3pipepictures(),
 				pipe_covers = pipecoverspictures(),
-				base_area = 10,
+				base_area = 1,
+				height=1,
 				base_level = 1,
 				pipe_connections = {{ type="input-output", position = {2.5, -0.5} }},
 				secondary_draw_orders = { north = -1 }
@@ -163,7 +169,8 @@ return {
 				production_type = "output",
 				pipe_picture = assembler3pipepictures(),
 				pipe_covers = pipecoverspictures(),
-				base_area = 10,
+				base_area = 1,
+				height=1,
 				base_level = 1,
 				pipe_connections = {{ type="input-output", position = {-2.5, 0.5} }},
 				secondary_draw_orders = { north = -1 }
@@ -172,7 +179,8 @@ return {
 				production_type = "output",
 				pipe_picture = assembler3pipepictures(),
 				pipe_covers = pipecoverspictures(),
-				base_area = 10,
+				base_area = 1,
+				height=1,
 				base_level = 1,
 				pipe_connections = {{ type="input-output", position = {-2.5, -0.5} }},
 				secondary_draw_orders = { north = -1 }
