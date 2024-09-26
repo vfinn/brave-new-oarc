@@ -723,7 +723,7 @@ log("setupBNWForce: x=" .. x .. ", y=" .. y)
     end
     -- everyone always gets 4 red circuits
     destination_for_inventory.insert{name="advanced-circuit", count=4}
-    if (settings.startup["bno-assembler-choice"].value >0) then -- large assemblers ?  Give them one !
+    if (global.ocfg.brave_new_assembling_machines) then
         local numAssemblers= settings.startup["bno-assembler-at-start"].value
         destination_for_inventory.insert{name = "assembling-machine-4", count = numAssemblers}
     end

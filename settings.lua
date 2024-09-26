@@ -17,31 +17,6 @@ data:extend({
         order="bnw-015"
     },    
     {
-        type = "int-setting",
-        name = "bno-assembler-choice",     
-        setting_type = "startup",
-        minimum_value=0,
-        maximum_value=10,
-        default_value = 0,
-        order="bnw-016"
-    },
-    {
-        type = "int-setting",
-        name = "bno-assembler-at-start",     
-        setting_type = "startup",
-        minimum_value=0,
-        maximum_value=6,
-        default_value = 0,
-        order="bnw-017"
-    },
-    {
-        type = "bool-setting",
-        name = "bno-assembler-explode",     
-        setting_type = "startup",
-        default_value = true,
-        order="bnw-018"
-    },
-    {
         type = "string-setting",
         name = "bno-map-size",     
         setting_type = "startup",
@@ -199,16 +174,21 @@ data:extend({
         setting_type = "startup",
         default_value = false,
         order="bnw-93"
-    },
-	{
-		type = "bool-setting",
-		name = "bno-exploding-assemblers",
-		setting_type = "runtime-global",
-		order = "a",
-		default_value = true
-	},
-    
+    }
 })
+if (mods["brave-new-assembling-machines"]) then
+data:extend({
+    {
+        type = "int-setting",
+        name = "bno-assembler-at-start",     
+        setting_type = "startup",
+        minimum_value=0,
+        maximum_value=6,
+        default_value = 0,
+        order="bnw-017"
+    },
+})
+end
 
 if (mods["scrap-resource"]) then
 data:extend({

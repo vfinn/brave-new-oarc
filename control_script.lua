@@ -387,6 +387,11 @@ script.on_event(defines.events.on_player_joined_game, function(event)
         remote.call("kr-creep", "set_creep_on_surface", game.surfaces["oarc"].index, true)      -- oarc
         remote.call("kr-creep", "set_creep_on_surface", game.surfaces["nauvis"].index, false)     -- nauvis
         global.ocfg.creep_initialized=true
+
+    end
+    if global.ocfg.brave_new_assembling_machines and not global.ocfg.surface_index_set then
+        remote.call("set_surface", "set_surface_asms_reside", game.surfaces["oarc"].index)
+        global.ocfg.surface_index_set=true
     end
 
     if global.ocfg.dangOreus and not global.ocfg.danOreus_initialized then
@@ -580,70 +585,7 @@ script.on_event(defines.events.on_tick, function(event)
             global.swarmCheckTick = game.tick + TICKS_PER_SECOND*2    -- check again in 2 seconds
         end
     end
-    -- check to see if a bno assembler is in the game and needs to be damaged and then exploded
-    if  ((game.tick % TICKS_PER_SECOND) == 59)
-    and (settings.startup["bno-assembler-choice"].value >0) 
-    and global.ocfg.bno_assembler_explodes then         -- (settings.startup["bno-assembler-explode"].value==true) then
-        checkKillBnoAssembler()
-    end
 end)
-
-----------------------------------------
---  Checks to see if a new bno assembler needs to be damaged due to low power, exploded and ghost removed
---  Only notify a player once every 2 minutes, and only if damaged assembler is in a shared map
-----------------------------------------
-function checkKillBnoAssembler()
-    local entityPos={}
-    local surface = game.surfaces[GAME_SURFACE_NAME]
---	local entities = surface.find_entities_filtered{name="assembling-machine-4"}      -- too lengthy - causes game to stutter
-    local entities =  global.ocfg.assembling_machine_bno
-    local entityCopy = nil
-	for indx, entity in pairs(entities) do
-	    if entity and entity.valid and entity.health and ((entity.energy / entity.electric_buffer_size)<.20) then
-            if entity.last_user and entity.last_user.connected then  -- is player online - then damage bno assembler
-                entityPos=entity.position
-                if entity.health <=40 then  -- ASM will explode - we won't have access to the entity then, so do work here
-                    table.remove(global.ocfg.assembling_machine_bno, indx)
-                end
-	            entity.damage(40, "neutral", "explosion")   -- entity becomes invalid when health == 0
-                -- if the bots have repair packs they will typically keep the assembler above 700 in health
-                if (entity.valid and entity.health <= 600) then
-                    if global.ocfg.share_chart[entity.last_user.index] then
-                        for _,player in pairs(game.connected_players) do
-                            if global.ocfg.notify_assembler_explode_notification[player.name] == nil then
-                                global.ocfg.notify_assembler_explode_notification[player.name] = true
-                            end
-                            if global.ocfg.notify_assembler_explode_notification[player.name] then
-                                local notify = false
-                                -- only notify once every 2 minutes
-                                if  global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] == nil then
-                                    notify = true
-                                elseif global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] < game.tick then
-                                    notify = true
-                                end
-                                if notify then
-                                    global.ocfg.notify_assembler_explode_notification[player.name .. " tick"] = game.tick  + (2 * TICKS_PER_MINUTE)
-                                    player.print("Large assembler owned by " .. entity.last_user.name .. " is about to explode! " .. GetGPStext(entityPos))
-                                end
-                            end
-                        end
-                    end
-                end
-                if not entity.valid then
-                    local tile = surface.get_tile(entityPos.x,entityPos.y)
-                    for i=5,6 do
-                        local ghost = surface.find_entities_filtered{ghost_name="assembling-machine-"..tostring(i),position=entityPos}
-                        if ghost and (ghost[1]~= nil) then  -- if ghost is still there
-                            ghost[1].destroy()              -- remove the ghost
-                            break
-                        end
-                    end
-                end
-            end
-	    end
-	end
-end
-
 
 script.on_event(defines.events.on_sector_scanned, function (event)   
     if global.disableRegrowthWhileWaitingToRemoveAllChunks then
@@ -670,10 +612,6 @@ script.on_event(defines.events.on_built_entity, function(event)
         if (event.created_entity.surface.name ~= GAME_SURFACE_NAME) then return end
         RegrowthMarkAreaSafeGivenTilePos(event.created_entity.position, 2, false)
     end
-    if ((event.created_entity.name == "assembling-machine-5") or (event.created_entity.name == "assembling-machine-6")) then
-        table.insert(global.ocfg.assembling_machine_bno, event.created_entity)
---        game.print("on_built_entity- Added one more BNO assembler to array of size ".. #global.ocfg.assembling_machine_bno .. "  " .. event.created_entity.gps_tag)
-    end
 
     if global.ocfg.enable_anti_grief then
         SetItemBlueprintTimeToLive(event)
@@ -690,34 +628,18 @@ script.on_event(defines.events.on_robot_built_entity, function (event)
         if (event.created_entity.surface.name ~= GAME_SURFACE_NAME) then return end
         RegrowthMarkAreaSafeGivenTilePos(event.created_entity.position, 2, false)
     end
-    if ((event.created_entity.name == "assembling-machine-5") or (event.created_entity.name == "assembling-machine-6")) then
-        table.insert(global.ocfg.assembling_machine_bno, event.created_entity)
---        game.print("on_robot_built_entity- Added one more BNO assembler to array of size ".. #global.ocfg.assembling_machine_bno .. "  " .. event.created_entity.gps_tag)
-    end
     if global.ocfg.frontier_rocket_silo then
         BuildSiloAttempt(event)
     end
 end)
 
-function process_mined_entity(event)
-    if ((event.entity.name == "assembling-machine-5") or (event.entity.name == "assembling-machine-6")) then
-        for idx, v in pairs (global.ocfg.assembling_machine_bno) do
-           if v.valid and (v.position.x == event.entity.position.x) and (v.position.y == event.entity.position.y) then
-             table.remove(global.ocfg.assembling_machine_bno, idx)
-             return
-           end
-        end 
-   end
-end
 
 script.on_event(defines.events.on_robot_mined_entity, function(event)
 --    game.print("on_robot_mined_entity -  picked up " .. event.entity.name)
-    process_mined_entity(event)
 end)
 
 script.on_event(defines.events.on_player_mined_entity, function(event)
 --    game.print("on_player_mined_entity - " .. game.players[event.player_index].name.. " picked up " .. event.entity.name)
-    process_mined_entity(event)
 end)
 
 
@@ -788,6 +710,20 @@ script.on_event(defines.events.on_research_finished, function(event)
         if (player.force.name == force.name) then
             player.print("Your team completed researching [technology=" .. event.research.name .. "]", {r=0, g=102/255, b=0, a=1}) -- green
             log("Team " .. force.name .. " completed researching [technology=" .. event.research.name .. "]")
+        end
+    end
+end)
+
+
+----------------------------------------
+-- On Research Started
+----------------------------------------
+script.on_event(defines.events.on_research_started, function(event)
+    local force = event.research.force
+    for indx,player in pairs(game.connected_players) do
+        if (player.force.name == force.name) then
+            player.print("Your team started researching [technology=" .. event.research.name .. "]", {r=252, g=186, b=3, a=1}) -- Yellow
+            log("Team " .. force.name .. " started researching [technology=" .. event.research.name .. "]")
         end
     end
 end)
@@ -1453,21 +1389,6 @@ script.on_event(defines.events.on_player_changed_position, function(event)
     global.players[event.player_index].previous_position = player.position
 end)
 
-
-script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
-	if event.setting == "bno-exploding-assemblers" then
-        if not game.players[event.player_index].admin then
-            player.print("Sorry but this is an admin only function - request that it be changed")
-            return
-        end
-        global.ocfg.bno_assembler_explodes = settings.global["bno-exploding-assemblers"].value
-        local onOff = " OFF"
-        if global.ocfg.bno_assembler_explodes then 
-            onOff = " ON" 
-        end
-        game.print("The admin turned " .. onOff .. " exploding large assemblers", {color={r=0, g=1, b=1, a=1}})
-	end
-end)
 
 --script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
 --    log("events.on_runtime_mod_setting_changed: setting " .. event.setting .. " for: " .. game.players[event.player_index].name .. "type: " .. event.setting_type)

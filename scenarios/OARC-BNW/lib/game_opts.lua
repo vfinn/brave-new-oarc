@@ -98,16 +98,6 @@ function GameOptionsGuiClick(event)
         if global.ocfg.enable_miner_decon_notification[player.force.name] then onOff = " ON" end
         player.print(player.name .. " changed the 'Auto Miner Deconstruct notification' option to " .. onOff)
    end  
-  
-   if (name == "bno_assembler_explosion_notification") then
-        if global.ocfg.notify_assembler_explode_notification[player.name] ==nil then
-            global.ocfg.notify_assembler_explode_notification[player.name] = true
-        end
-        global.ocfg.notify_assembler_explode_notification[player.name] = not global.ocfg.notify_assembler_explode_notification[player.name]
-        local onOff = " Mute"
-        if global.ocfg.notify_assembler_explode_notification[player.name] then onOff = " Notify me" end
-        player.print(player.name .. " changed the 'Mute notification of assembler explosions' option to " .. onOff)
-   end
    if (name == "share_chart_checkbox") then
         if (global.ocfg.share_chart[event.player_index] == nil) then
             global.ocfg.share_chart[event.player_index] = true
@@ -122,7 +112,7 @@ function GameOptionsGuiClick(event)
         end
         player.print(player.name .. " changed the 'Sharing of Chart' option to " .. onOff)
     end
-    
+
     if (string_starts_with(name, "player:")) then
         local p = string.sub(name,string.len("player:")+1)
         game.players[event.player_index].print(p .. " located: " .. GetGPStext(game.players[p].position) )
@@ -308,15 +298,6 @@ log ("ban_players_dropdown index = " .. si)
                             type = "checkbox",
                             caption={"decon-empty-miners-notification"},
                             state=(global.ocfg.enable_miner_decon_notification[player.force.name])}
-            if (settings.startup["bno-assembler-choice"].value >0) then
-                if global.ocfg.notify_assembler_explode_notification[player.name] ==nil then
-                    global.ocfg.notify_assembler_explode_notification[player.name] = true
-                end        
-                tab_container.add{name = "bno_assembler_explosion_notification",
-                                type = "checkbox",
-                                caption={"bno-assembler-notify-pending-explosion"},
-                                state=(global.ocfg.notify_assembler_explode_notification[player.name])}
-            end                            
         end
     end
 end

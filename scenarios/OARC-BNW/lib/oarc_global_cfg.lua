@@ -52,7 +52,6 @@ function InitOarcConfig()
     global.ocfg.offline_protect = {}
     global.ocfg.enable_miner_decon = {} -- forces
     global.ocfg.enable_miner_decon_notification = {} -- forces
-    global.ocfg.notify_assembler_explode_notification = {} -- players
     global.oarc_decon_miners = {}       -- table of miners to decon on_nth_tick
     global.ocfg.enable_power_armor_start = ENABLE_POWER_ARMOR_QUICK_START
     global.ocfg.enable_modular_armor_start = ENABLE_MODULAR_ARMOR_QUICK_START
@@ -128,7 +127,6 @@ function InitOarcConfig()
     
     global.ocfg.warn_biter_setting = {}
     global.ocfg.share_chart = {}
-    global.ocfg.assembling_machine_bno = {}
 
 
     global.ocfg.space_block = game.active_mods["spaceblock"]
@@ -150,12 +148,18 @@ function InitOarcConfig()
     global.ocfg.dangOreus           = game.active_mods["dangOreus"]
     global.ocfg.claustorephobic     = game.active_mods["zzz-claustorephobic"]
     global.ocfg.circuitissimo       = game.active_mods["circuitissimo"]
+    global.ocfg.brave_new_assembling_machines       = game.active_mods["brave-new-assembling-machines"]
     global.ocfg.forceRegenerationOfSilos = global.ocfg.dangOreus
 
     if (global.ocfg.krastorio2) then 
         global.ocfg.spawn_config.gen_settings.land_area_tiles = global.ocfg.spawn_config.gen_settings.land_area_tiles + 32 
         global.ocfg.creep_initialized=false
     end
+
+    if global.ocfg.brave_new_assembling_machines then
+        global.ocfg.surface_index_set=false
+    end
+
     if global.ocfg.seablock then
         global.ocfg.spawn_config.gen_settings.moat_choice_enabled = false  -- moat makes no sense for seablock
     end
@@ -166,7 +170,6 @@ function InitOarcConfig()
         global.ocfg.danOreus_initialized=false
     end
 
-    global.ocfg.bno_assembler_explodes = settings.startup["bno-assembler-explode"].value
     -----------------------
     -- VALIDATION CHECKS --
     -----------------------

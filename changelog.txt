@@ -1,7 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.69
-  Fixed new ASM's so that upgrading a 4 goes to a 5, and 5 goes to 6.
-  ASM's - mad max liquid storage in the asm to 400
+  Removed Big ASM's - putting them into new brave-new-assembling-machines mod.
 ---------------------------------------------------------------------------------------------------
 Version: 4.2.68
 BNO Assembling Machines:
